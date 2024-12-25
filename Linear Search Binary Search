@@ -1,0 +1,48 @@
+def linear_search(arr, target):
+    """
+    線形探索: 配列内の要素を先頭から順に探索
+    """
+    for index, value in enumerate(arr):
+        if value == target:
+            return index  # 要素が見つかった場合のインデックスを返す
+    return -1  # 要素が見つからなかった場合
+
+def binary_search(arr, target):
+    """
+    二分探索: ソートされた配列内で対象を探索
+    ※ 配列は事前にソートされている必要がある
+    """
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2  # 中央のインデックスを計算
+        if arr[mid] == target:
+            return mid  # 要素が見つかった場合のインデックスを返す
+        elif arr[mid] < target:
+            left = mid + 1  # 探索範囲を右半分に絞る
+        else:
+            right = mid - 1  # 探索範囲を左半分に絞る
+    return -1  # 要素が見つからなかった場合
+
+# --- 実行例 ---
+if __name__ == "__main__":
+    # 配列とターゲット
+    data = [64, 34, 25, 12, 22, 11, 90]
+    target = 25
+
+    # 線形探索
+    print("=== Linear Search ===")
+    result = linear_search(data, target)
+    if result != -1:
+        print(f"Element {target} found at index {result}.")
+    else:
+        print(f"Element {target} not found.")
+
+    # 二分探索
+    print("\n=== Binary Search ===")
+    sorted_data = sorted(data)  # 二分探索にはソートが必要
+    print(f"Sorted Data: {sorted_data}")
+    result = binary_search(sorted_data, target)
+    if result != -1:
+        print(f"Element {target} found at index {result}.")
+    else:
+        print(f"Element {target} not found.")
