@@ -1,0 +1,33 @@
+import pytesseract
+from pdf2image import convert_from_path
+import os
+from google.colab import files
+
+# Google ColabでPDFをアップロード
+uploaded = files.upload()
+
+# アップロードしたPDFファイルの名前を取得
+pdf_file = list(uploaded.keys())[0]
+print(f"Uploaded PDF: {pdf_file}")
+
+# PDFを画像に変換
+pages = convert_from_path(pdf_file, 300)  # 300DPIで変換
+
+# 画像の文字起こし
+text_output = ""
+for i, page in enumerate(pages):
+    # 各ページをOCRで文字起こし
+    text = pytesseract.image_to_string(page, lang='eng')  # 英語のOCR
+    text_output += f"Page {i+1}:\n{text}\n\n"
+
+# 文字起こし結果を表示
+print("OCR Output:")
+print(text_output)
+
+# 文字起こし結果をファイルに保存
+output_filename = "/content/ocr_output.txt"
+with open(output_filename, "w") as output_file:
+    output_file.write(text_output)
+
+# 出力ファイルをダウンロード
+files.download(output_filename)
