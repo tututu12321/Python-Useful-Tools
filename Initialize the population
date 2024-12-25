@@ -1,0 +1,75 @@
+import numpy as np
+import random
+
+# 適応度関数（ここでは x^2 を最小化）
+def fitness_function(x):
+    return x**2
+
+# 個体群を初期化
+def initialize_population(size, lower_bound, upper_bound):
+    return np.random.uniform(lower_bound, upper_bound, size)
+
+# 適応度を評価
+def evaluate_population(population):
+    return np.array([fitness_function(ind) for ind in population])
+
+# 個体を選択（ルーレット選択）
+def select_parents(population, fitness):
+    total_fitness = np.sum(1 / (fitness + 1e-6))  # 適応度が小さいほど選ばれやすい
+    probabilities = (1 / (fitness + 1e-6)) / total_fitness
+    parents = np.random.choice(population, size=2, p=probabilities)
+    return parents
+
+# 交叉
+def crossover(parent1, parent2):
+    alpha = random.random()
+    child = alpha * parent1 + (1 - alpha) * parent2
+    return child
+
+# 突然変異
+def mutate(child, mutation_rate, lower_bound, upper_bound):
+    if random.random() < mutation_rate:
+        mutation = np.random.uniform(lower_bound, upper_bound)
+        child += mutation
+        child = np.clip(child, lower_bound, upper_bound)
+    return child
+
+# 遺伝的アルゴリズムのメインループ
+def genetic_algorithm(pop_size, generations, mutation_rate, lower_bound, upper_bound):
+    # 初期化
+    population = initialize_population(pop_size, lower_bound, upper_bound)
+    
+    for generation in range(generations):
+        # 適応度を評価
+        fitness = evaluate_population(population)
+        
+        # 次世代の個体群を生成
+        next_population = []
+        for _ in range(pop_size):
+            # 親を選択
+            parent1, parent2 = select_parents(population, fitness)
+            # 交叉
+            child = crossover(parent1, parent2)
+            # 突然変異
+            child = mutate(child, mutation_rate, lower_bound, upper_bound)
+            next_population.append(child)
+        
+        population = np.array(next_population)
+        
+        # 最良の個体を出力
+        best_fitness = np.min(fitness)
+        best_individual = population[np.argmin(fitness)]
+        print(f"Generation {generation + 1}: Best Fitness = {best_fitness:.6f}, Best Individual = {best_individual:.6f}")
+    
+    return best_individual
+
+# パラメータ設定
+pop_size = 20
+generations = 50
+mutation_rate = 0.1
+lower_bound = -10
+upper_bound = 10
+
+# アルゴリズム実行
+best_solution = genetic_algorithm(pop_size, generations, mutation_rate, lower_bound, upper_bound)
+print(f"\nOptimal Solution: x = {best_solution:.6f}")
