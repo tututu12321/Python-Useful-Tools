@@ -1,0 +1,53 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
+def create_character_relationship_graph():
+    """
+    登場人物の関係図を作成
+    登場人物同士の関係をネットワークグラフとして可視化
+    """
+    # グラフの作成
+    G = nx.Graph()
+
+    # 登場人物とその関係を定義（名前、関係）
+    relationships = [
+        ("Alice", "Bob", "Friend"),
+        ("Alice", "Charlie", "Sister"),
+        ("Bob", "Charlie", "Friend"),
+        ("Bob", "David", "Colleague"),
+        ("Charlie", "David", "Friend"),
+        ("David", "Eve", "Neighbor"),
+        ("Eve", "Alice", "Acquaintance")
+    ]
+    
+    # ノードとエッジをグラフに追加
+    for person1, person2, relationship in relationships:
+        G.add_edge(person1, person2, relationship=relationship)
+
+    return G
+
+def plot_relationship_graph(G):
+    """
+    ネットワークグラフをプロット
+    """
+    pos = nx.spring_layout(G)  # ノードのレイアウトを決定
+    plt.figure(figsize=(8, 8))
+    
+    # グラフのプロット
+    nx.draw(G, pos, with_labels=True, node_size=3000, node_color="skyblue", font_size=12, font_weight="bold", edge_color="gray")
+    
+    # ラベルの表示（エッジに関係名を追加）
+    edge_labels = nx.get_edge_attributes(G, "relationship")
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=10)
+    
+    # タイトル
+    plt.title("Character Relationship Network", fontsize=15)
+    plt.show()
+
+# --- 実行例 ---
+if __name__ == "__main__":
+    # 登場人物の関係図を作成
+    G = create_character_relationship_graph()
+
+    # ネットワークグラフをプロット
+    plot_relationship_graph(G)
