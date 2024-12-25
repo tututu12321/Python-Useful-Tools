@@ -1,0 +1,21 @@
+from PIL import Image
+
+# 画像を開く
+image = Image.open('example.jpg')
+
+# 画像のリサイズ
+resized_image = image.resize((200, 200))
+
+# 画像の回転
+rotated_image = image.rotate(90)  # 90度回転
+
+# 画像のトリミング（左、上、右、下）
+cropped_image = image.crop((50, 50, 150, 150))
+
+# 画像の保存
+resized_image.save('resized_image.jpg')
+rotated_image.save('rotated_image.jpg')
+cropped_image.save('cropped_image.jpg')
+
+# 表示
+resized_image.show()
