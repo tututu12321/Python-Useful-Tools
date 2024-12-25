@@ -1,0 +1,50 @@
+# --- 入力装置 ---
+def input_device():
+    """ユーザーからデータを入力"""
+    data = input("Enter some text to process: ")
+    return data
+
+# --- 記憶装置 ---
+class Memory:
+    """データを保存するクラス"""
+    def __init__(self):
+        self.storage = None
+
+    def save(self, data):
+        self.storage = data
+        print("Data saved to memory.")
+
+    def load(self):
+        print("Data loaded from memory.")
+        return self.storage
+
+# --- CPU ---
+def cpu_processing(data):
+    """データの処理を行う (例: テキストの大文字化)"""
+    processed_data = data.upper()
+    print("CPU processed the data.")
+    return processed_data
+
+# --- 出力装置 ---
+def output_device(data):
+    """処理結果を出力"""
+    print("\n=== Output Device ===")
+    print(f"Processed Data: {data}")
+
+# --- メインプログラム ---
+if __name__ == "__main__":
+    print("=== Simulated Computer System ===")
+
+    # 入力装置
+    input_data = input_device()
+
+    # 記憶装置
+    memory = Memory()
+    memory.save(input_data)
+
+    # CPU
+    loaded_data = memory.load()
+    processed_data = cpu_processing(loaded_data)
+
+    # 出力装置
+    output_device(processed_data)
