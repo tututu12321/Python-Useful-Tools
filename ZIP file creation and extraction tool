@@ -1,0 +1,35 @@
+import zipfile
+import os
+
+# ZIPファイルを作成する関数
+def create_zip(zip_name, files):
+    with zipfile.ZipFile(zip_name, 'w') as zipf:
+        for file in files:
+            if os.path.exists(file):
+                zipf.write(file, os.path.basename(file))
+                print(f"Added to ZIP: {file}")
+            else:
+                print(f"File not found: {file}")
+    print(f"ZIP file created: {zip_name}")
+
+# ZIPファイルを解凍する関数
+def extract_zip(zip_name, extract_to):
+    if os.path.exists(zip_name):
+        with zipfile.ZipFile(zip_name, 'r') as zipf:
+            zipf.extractall(extract_to)
+            print(f"Extracted all files to: {extract_to}")
+    else:
+        print(f"ZIP file not found: {zip_name}")
+
+# 実行例
+if __name__ == "__main__":
+    # 圧縮するファイルリスト
+    files_to_zip = ["example1.txt", "example2.txt"]  # 対象ファイルをリストで指定
+    zip_file_name = "my_files.zip"  # 作成するZIPファイル名
+    extract_directory = "extracted_files"  # 解凍先ディレクトリ
+
+    # ZIPファイルの作成
+    create_zip(zip_file_name, files_to_zip)
+
+    # ZIPファイルの解凍
+    extract_zip(zip_file_name, extract_directory)
