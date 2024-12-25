@@ -1,0 +1,37 @@
+import random
+
+# トランプのデッキ（52枚）
+suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
+ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+
+# デッキの作成
+def create_deck():
+    deck = []
+    for suit in suits:
+        for rank in ranks:
+            deck.append(f'{rank} of {suit}')
+    random.shuffle(deck)
+    return deck
+
+# カードをゲームの列に配置する
+def setup_columns(deck):
+    columns = [[] for _ in range(7)]  # 7列のセット
+    for i in range(7):
+        for j in range(i, 7):
+            columns[j].append(deck.pop())  # カードを列に追加
+    return columns
+
+# ゲーム開始
+def start_game():
+    deck = create_deck()
+    columns = setup_columns(deck)
+    return columns
+
+# ゲーム状態を表示
+def print_game_state(columns):
+    for i, column in enumerate(columns):
+        print(f"Column {i+1}: {column}")
+    
+# ゲームを開始し、状態を表示
+columns = start_game()
+print_game_state(columns)
