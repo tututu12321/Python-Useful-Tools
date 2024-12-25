@@ -1,0 +1,37 @@
+# PyPDF2のインストール（必要に応じて実行）
+!pip install PyPDF2
+
+# 必要なライブラリをインポート
+import PyPDF2
+from google.colab import files
+
+# Google ColabにPDFファイルをアップロード
+print("PDFファイルをアップロードしてください")
+uploaded = files.upload()
+
+# アップロードされたPDFファイル名を取得
+pdf_file = list(uploaded.keys())[0]
+
+# PDFからテキストを抽出
+def extract_text_from_pdf(pdf_path):
+    with open(pdf_path, 'rb') as file:
+        # PDFリーダーオブジェクトの作成
+        reader = PyPDF2.PdfReader(file)
+        text = ""
+        # 各ページのテキストを抽出
+        for page in reader.pages:
+            text += page.extract_text()
+        return text
+
+# テキスト抽出を実行
+pdf_text = extract_text_from_pdf(pdf_file)
+
+# 抽出したテキストを表示
+print("抽出したテキスト:")
+print(pdf_text)
+
+# 抽出したテキストをテキストファイルに保存（オプション）
+with open("extracted_text.txt", "w", encoding="utf-8") as text_file:
+    text_file.write(pdf_text)
+
+print("抽出したテキストを extracted_text.txt に保存しました。")
