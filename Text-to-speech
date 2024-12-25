@@ -1,0 +1,19 @@
+# 必要なライブラリをインストール
+!pip install gTTS
+!pip install IPython
+
+from gtts import gTTS
+from IPython.display import Audio, display
+
+# --- 音声生成と再生 ---
+def text_to_speech(text, lang='en'):
+    """テキストを音声に変換して再生"""
+    tts = gTTS(text=text, lang=lang)
+    tts.save("output.mp3")  # 音声をファイルに保存
+    print("Generated speech audio saved as 'output.mp3'.")
+    display(Audio("output.mp3", autoplay=True))
+
+# --- 実行例 ---
+text = "Hello, this is a demonstration of text-to-speech in Google Colab."
+language = 'en'  # 言語: 'en' (英語), 'ja' (日本語) など
+text_to_speech(text, language)
