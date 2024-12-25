@@ -1,0 +1,61 @@
+# 1. 変数、データ型、演算
+# 変数の宣言
+x = 10  # 整数
+y = 3.14  # 浮動小数点数
+name = "Python"  # 文字列
+
+# 演算
+sum_result = x + y  # 加算
+product_result = x * y  # 乗算
+
+print("Sum:", sum_result)
+print("Product:", product_result)
+
+# 2. 制御構文（if文、ループ）
+# if文（条件分岐）
+if x > 5:
+    print("x is greater than 5")
+else:
+    print("x is less than or equal to 5")
+
+# ループ（for文）
+for i in range(5):  # 0から4までの数字を繰り返し
+    print(f"Iteration {i}")
+
+# 3. 関数、モジュール、パッケージ
+# 関数定義
+def greet(name):
+    return f"Hello, {name}!"
+
+# 関数呼び出し
+print(greet("Alice"))
+
+# モジュールとパッケージ
+import math  # mathモジュールをインポート
+print("Square root of 16:", math.sqrt(16))  # mathモジュールの関数を使用
+
+# 4. クラス、オブジェクト指向プログラミング（OOP）
+# クラス定義
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def greet(self):
+        return f"Hello, my name is {self.name} and I am {self.age} years old."
+
+# クラスのインスタンス化
+person1 = Person("Alice", 30)
+print(person1.greet())
+
+# 5. エラーハンドリング（例外処理）
+# 例外処理（try-except）
+try:
+    result = 10 / 0  # ゼロ除算の例
+except ZeroDivisionError:
+    print("Error: Division by zero is not allowed.")
+else:
+    print("Division result:", result)
+finally:
+    print("This block is always executed.")
+
