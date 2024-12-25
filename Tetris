@@ -1,0 +1,172 @@
+import pygame
+import random
+
+# 初期化
+pygame.init()
+
+# 画面サイズの設定
+SCREEN_WIDTH = 300
+SCREEN_HEIGHT = 600
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Tetris")
+
+# 色の設定
+WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
+CYAN = (0, 255, 255)
+ORANGE = (255, 165, 0)
+YELLOW = (255, 255, 0)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+PURPLE = (128, 0, 128)
+COLOR_MAP = [CYAN, BLUE, ORANGE, YELLOW, GREEN, RED, PURPLE]
+
+# 定数設定
+BLOCK_SIZE = 30
+BOARD_WIDTH = 10
+BOARD_HEIGHT = 20
+
+# テトリスの形を定義
+SHAPES = [
+    [[1, 1, 1], [0, 1, 0]],  # T
+    [[1, 1, 1, 1]],           # I
+    [[1, 1], [1, 1]],         # O
+    [[1, 1, 0], [0, 1, 1]],   # S
+    [[0, 1, 1], [1, 1, 0]],   # Z
+    [[1, 0, 0], [1, 1, 1]],   # L
+    [[0, 0, 1], [1, 1, 1]]    # J
+]
+
+# 初期設定
+clock = pygame.time.Clock()
+font = pygame.font.Font(None, 36)
+
+# ボードを初期化
+def create_board():
+    return [[0] * BOARD_WIDTH for _ in range(BOARD_HEIGHT)]
+
+# ボードの描画
+def draw_board(board):
+    for y in range(BOARD_HEIGHT):
+        for x in range(BOARD_WIDTH):
+            if board[y][x]:
+                pygame.draw.rect(screen, COLOR_MAP[board[y][x] - 1],
+                                 (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
+            pygame.draw.rect(screen, WHITE, (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 1)
+
+# テトリスのブロックを描画
+def draw_shape(shape, offset):
+    shape_color = COLOR_MAP[random.randint(0, len(COLOR_MAP) - 1)]
+    for y, row in enumerate(shape):
+        for x, cell in enumerate(row):
+            if cell:
+                pygame.draw.rect(screen, shape_color,
+                                 ((offset[0] + x) * BLOCK_SIZE, (offset[1] + y) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
+
+# シェイプがボードに衝突するかチェック
+def check_collision(board, shape, offset):
+    for y, row in enumerate(shape):
+        for x, cell in enumerate(row):
+            if cell:
+                board_x = offset[0] + x
+                board_y = offset[1] + y
+                if board_x < 0 or board_x >= BOARD_WIDTH or board_y >= BOARD_HEIGHT:
+                    return True
+                if board_y >= 0 and board[board_y][board_x]:
+                    return True
+    return False
+
+# シェイプをボードに配置
+def place_shape(board, shape, offset):
+    for y, row in enumerate(shape):
+        for x, cell in enumerate(row):
+            if cell:
+                board[offset[1] + y][offset[0] + x] = 1
+
+# 行を消去
+def clear_lines(board):
+    lines_to_clear = []
+    for y in range(BOARD_HEIGHT):
+        if all(board[y]):
+            lines_to_clear.append(y)
+    for y in lines_to_clear:
+        del board[y]
+        board.insert(0, [0] * BOARD_WIDTH)
+    return len(lines_to_clear)
+
+# ランダムにシェイプを選ぶ
+def new_shape():
+    return random.choice(SHAPES)
+
+# メインゲームループ
+def game():
+    board = create_board()
+    current_shape = new_shape()
+    current_offset = [BOARD_WIDTH // 2 - len(current_shape[0]) // 2, 0]
+
+    score = 0
+    game_over = False
+
+    while not game_over:
+        screen.fill((0, 0, 0))  # 画面を黒で塗りつぶす
+
+        # イベント処理
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game_over = True
+
+        # キー入力で動かす
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            current_offset[0] -= 1
+            if check_collision(board, current_shape, current_offset):
+                current_offset[0] += 1
+        if keys[pygame.K_RIGHT]:
+            current_offset[0] += 1
+            if check_collision(board, current_shape, current_offset):
+                current_offset[0] -= 1
+        if keys[pygame.K_DOWN]:
+            current_offset[1] += 1
+            if check_collision(board, current_shape, current_offset):
+                current_offset[1] -= 1
+        if keys[pygame.K_UP]:
+            current_shape = [list(row) for row in zip(*current_shape[::-1])]
+            if check_collision(board, current_shape, current_offset):
+                current_shape = [list(row) for row in zip(*current_shape)][::-1]
+
+        # シェイプをボードに落とす
+        current_offset[1] += 1
+        if check_collision(board, current_shape, current_offset):
+            current_offset[1] -= 1
+            place_shape(board, current_shape, current_offset)
+            score += clear_lines(board)
+            current_shape = new_shape()
+            current_offset = [BOARD_WIDTH // 2 - len(current_shape[0]) // 2, 0]
+
+            # ゲームオーバー判定
+            if check_collision(board, current_shape, current_offset):
+                game_over = True
+
+        # ボードを描画
+        draw_board(board)
+
+        # 現在のシェイプを描画
+        draw_shape(current_shape, current_offset)
+
+        # スコアを表示
+        draw_text(f"Score: {score}", 10, 10)
+
+        # 画面更新
+        pygame.display.flip()
+        clock.tick(10)  # 速度の設定（FPS）
+
+    pygame.quit()
+
+# スコア表示
+def draw_text(text, x, y):
+    label = font.render(text, True, WHITE)
+    screen.blit(label, (x, y))
+
+# ゲーム開始
+if __name__ == "__main__":
+    game()
