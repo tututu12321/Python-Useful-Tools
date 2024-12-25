@@ -1,0 +1,80 @@
+import os
+import random
+
+# 問題データベース
+questions = [
+    {
+        "question": "現在のディレクトリの内容を一覧表示するコマンドは？",
+        "answer": "ls"
+    },
+    {
+        "question": "現在の作業ディレクトリのパスを表示するコマンドは？",
+        "answer": "pwd"
+    },
+    {
+        "question": "ディレクトリを作成するコマンドは？",
+        "answer": "mkdir"
+    },
+    {
+        "question": "空のファイルを作成するコマンドは？",
+        "answer": "touch"
+    },
+    {
+        "question": "ファイルまたはディレクトリを削除するコマンドは？",
+        "answer": "rm"
+    },
+    {
+        "question": "ディレクトリを移動するコマンドは？",
+        "answer": "cd"
+    },
+    {
+        "question": "ファイルの内容を表示するコマンドは？",
+        "answer": "cat"
+    },
+    {
+        "question": "ファイルの先頭10行を表示するコマンドは？",
+        "answer": "head"
+    },
+    {
+        "question": "ファイルの最後10行を表示するコマンドは？",
+        "answer": "tail"
+    },
+    {
+        "question": "ファイルをコピーするコマンドは？",
+        "answer": "cp"
+    },
+    {
+        "question": "ファイルの名前を変更または移動するコマンドは？",
+        "answer": "mv"
+    },
+]
+
+# 練習ツール
+def linux_command_practice():
+    print("=== Linux Command Practice ===")
+    print("答えを入力してください (qで終了)\n")
+
+    correct_count = 0
+    total_questions = len(questions)
+    random.shuffle(questions)
+
+    for i, q in enumerate(questions, start=1):
+        print(f"Q{i}: {q['question']}")
+        user_answer = input("Your answer: ").strip()
+
+        if user_answer.lower() == "q":
+            print("\n練習を終了します。")
+            break
+
+        if user_answer == q["answer"]:
+            print("正解です！\n")
+            correct_count += 1
+        else:
+            print(f"不正解です。正しい答え: {q['answer']}\n")
+
+    print(f"\n結果: {correct_count}/{total_questions} 正解でした！")
+    print("お疲れ様でした！")
+
+# 実行
+if __name__ == "__main__":
+    linux_command_practice()
