@@ -1,0 +1,59 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.linalg import eig
+
+# 1. 行列の加算と乗算
+A = np.array([[1, 2], [3, 4]])
+B = np.array([[5, 6], [7, 8]])
+
+# 行列の加算
+C = A + B
+print("Matrix Addition (A + B):\n", C)
+
+# 行列の乗算
+D = np.dot(A, B)
+print("\nMatrix Multiplication (A * B):\n", D)
+
+# 行列の転置
+A_T = np.transpose(A)
+print("\nTranspose of A:\n", A_T)
+
+# 2. ベクトル演算
+v = np.array([1, 2])
+w = np.array([3, 4])
+
+# ベクトルの加算
+v_plus_w = v + w
+print("\nVector Addition (v + w):", v_plus_w)
+
+# ベクトルの内積
+dot_product = np.dot(v, w)
+print("\nDot Product of v and w:", dot_product)
+
+# 3. 固有値分解
+# 行列Aの固有値と固有ベクトルを計算
+eigenvalues, eigenvectors = eig(A)
+print("\nEigenvalues of A:", eigenvalues)
+print("Eigenvectors of A:\n", eigenvectors)
+
+# 4. 線形回帰の実装
+# y = 2x + 1 の関係を模倣するデータセットを作成
+np.random.seed(42)
+X = np.random.rand(100, 1)  # 100個のランダムなxの値
+y = 2 * X + 1 + np.random.randn(100, 1) * 0.1  # y = 2x + 1 にノイズを加えたもの
+
+# 線形回帰のモデル (y = mx + b の形)
+X_b = np.c_[np.ones((100, 1)), X]  # バイアス項を追加 (x + 1)
+theta_best = np.linalg.inv(X_b.T.dot(X_b)).dot(X_b.T).dot(y)
+print("\nLinear Regression Parameters (m, b):", theta_best.flatten())
+
+# 予測値の計算
+y_pred = X_b.dot(theta_best)
+
+# 5. 回帰結果の可視化
+plt.scatter(X, y, color='blue', label='Data')
+plt.plot(X, y_pred, color='red', label='Linear Fit (y = 2x + 1)')
+plt.xlabel('X')
+plt.ylabel('y')
+plt.legend()
+plt.show()
