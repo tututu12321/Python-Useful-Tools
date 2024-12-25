@@ -1,0 +1,29 @@
+import requests
+from bs4 import BeautifulSoup
+
+def scrape_wikipedia(url):
+    """
+    Wikipediaページから見出し（セクションタイトル）を取得する関数。
+    
+    :param url: スクレイピングするWikipediaページのURL
+    """
+    # URLにリクエストを送信
+    response = requests.get(url)
+    
+    if response.status_code == 200:  # 正常にアクセスできた場合
+        print(f"Successfully accessed {url}")
+        
+        # HTMLコンテンツを解析
+        soup = BeautifulSoup(response.content, "html.parser")
+        
+        # 見出しを取得
+        headings = soup.find_all(["h1", "h2", "h3", "h4", "h5", "h6"])  # h1~h6タグを取得
+        
+        print("Headings found on the page:")
+        for heading in headings:
+            print(f"{heading.name}: {heading.text.strip()}")
+    else:
+        print(f"Failed to access {url}. Status code: {response.status_code}")
+
+# 実行
+scrape_wikipedia("https://ja.wikipedia.org/wiki/%E3%82%A6%E3%82%A7%E3%83%96%E3%82%B9%E3%82%AF%E3%83%AC%E3%82%A4%E3%83%94%E3%83%B3%E3%82%B0")
