@@ -1,0 +1,43 @@
+import tensorflow as tf
+from tensorflow.keras import layers, models
+import numpy as np
+import matplotlib.pyplot as plt
+
+# MNISTデータセットをロード
+(train_images, train_labels), (test_images, test_labels) = tf.keras.datasets.mnist.load_data()
+
+# データの前処理
+# 画像データを正規化（0〜255の範囲を0〜1に変換）
+train_images = train_images / 255.0
+test_images = test_images / 255.0
+
+# モデルの構築
+model = models.Sequential([
+    layers.Flatten(input_shape=(28, 28)),  # 28x28の画像を1次元のベクトルに変換
+    layers.Dense(128, activation='relu'),  # 隠れ層（128ユニット）
+    layers.Dropout(0.2),  # ドロップアウト層（過学習防止）
+    layers.Dense(10, activation='softmax')  # 出力層（10クラス分類、ソフトマックス関数）
+])
+
+# モデルのコンパイル
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+# モデルの学習
+model.fit(train_images, train_labels, epochs=5)
+
+# テストデータでモデルを評価
+test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
+print('\nTest accuracy:', test_acc)
+
+# テストデータに対する予測
+predictions = model.predict(test_images)
+
+# 最初の画像を表示
+plt.imshow(test_images[0], cmap=plt.cm.binary)
+plt.show()
+
+# 最初の画像に対する予測結果
+print("Predicted label:", np.argmax(predictions[0]))
+print("True label:", test_labels[0])
