@@ -1,0 +1,35 @@
+!pip install python-docx # install the necessary package to work with .docx files
+from google.colab import files
+from docx import Document
+
+def extract_text_from_docx(file_path):
+    """
+    .docxファイルから全テキストを抽出する関数。
+    :param file_path: アップロードされた.docxファイルのパス
+    """
+    doc = Document(file_path)
+    text = []
+    for paragraph in doc.paragraphs:
+        text.append(paragraph.text)
+    return "\n".join(text)
+
+# ファイルをアップロード
+print("Upload a .docx file")
+uploaded = files.upload()
+
+# アップロードされたファイル名を取得
+file_name = list(uploaded.keys())[0]
+
+# テキスト抽出
+extracted_text = extract_text_from_docx(file_name)
+
+# 抽出したテキストを表示
+print("\nExtracted Text:\n")
+print(extracted_text)
+
+# 抽出したテキストをファイルに保存
+with open("extracted_text.txt", "w", encoding="utf-8") as output_file:
+    output_file.write(extracted_text)
+
+print("\nExtracted text saved to 'extracted_text.txt'")
+files.download("extracted_text.txt")
