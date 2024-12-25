@@ -1,0 +1,49 @@
+import imaplib
+import email
+from email.header import decode_header
+
+# メールサーバーとログイン情報
+imap_server = "imap.gmail.com"
+username = "your_email@gmail.com"
+password = "your_email_password"  # アプリパスワードを使用
+
+# IMAPサーバーに接続
+mail = imaplib.IMAP4_SSL(imap_server)
+mail.login(username, password)
+
+# メールボックスを選択
+mail.select("inbox")
+
+# メールの検索（すべてのメール）
+status, messages = mail.search(None, "ALL")
+
+# メールIDリストを取得
+messages = messages[0].split()
+
+# 最後のメールを取得
+latest_email_id = messages[-1]
+
+# メールをフェッチ
+status, msg_data = mail.fetch(latest_email_id, "(RFC822)")
+
+# メールの内容を解析
+for response_part in msg_data:
+    if isinstance(response_part, tuple):
+        msg = email.message_from_bytes(response_part[1])
+        subject, encoding = decode_header(msg["Subject"])[0]
+        if isinstance(subject, bytes):
+            subject = subject.decode(encoding if encoding else "utf-8")
+        print("Subject:", subject)
+
+        # メールの本文を取得（マルチパートのメールの場合）
+        if msg.is_multipart():
+            for part in msg.walk():
+                if part.get_content_type() == "text/plain":
+                    body = part.get_payload(decode=True).decode()
+                    print("Body:", body)
+        else:
+            body = msg.get_payload(decode=True).decode()
+            print("Body:", body)
+
+# ログアウト
+mail.logout()
