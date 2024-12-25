@@ -1,0 +1,16 @@
+import requests
+
+# ダウンロードするURL
+url = "https://example.com"  # ここにダウンロードしたいWebページのURLを指定してください
+
+# URLからHTMLを取得
+response = requests.get(url)
+
+# ステータスコードが200（成功）か確認
+if response.status_code == 200:
+    # HTML内容をファイルとして保存
+    with open("downloaded_page.html", "w", encoding="utf-8") as file:
+        file.write(response.text)
+    print("HTMLファイルがダウンロードされ、'downloaded_page.html'として保存されました。")
+else:
+    print(f"Webページのダウンロードに失敗しました。ステータスコード: {response.status_code}")
