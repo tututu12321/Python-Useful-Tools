@@ -1,0 +1,27 @@
+from google.colab import files
+import PyPDF2
+
+# ファイルをアップロード
+print("PDFファイルをアップロードしてください")
+uploaded = files.upload()  # ファイルアップロード
+
+# アップロードされたファイル名を取得
+pdf_files = list(uploaded.keys())
+
+# PDF結合関数
+def merge_pdfs(pdf_list, output_name):
+    pdf_writer = PyPDF2.PdfWriter()
+    for pdf in pdf_list:
+        pdf_reader = PyPDF2.PdfReader(pdf)
+        for page in pdf_reader.pages:
+            pdf_writer.add_page(page)
+    with open(output_name, 'wb') as output_pdf:
+        pdf_writer.write(output_pdf)
+    print(f"Merged into: {output_name}")
+
+# 結合の実行
+output_file = "merged_output.pdf"
+merge_pdfs(pdf_files, output_file)
+
+# 結合されたPDFをダウンロード可能にする
+files.download(output_file)
