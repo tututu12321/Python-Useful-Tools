@@ -1,0 +1,81 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from gensim.models import Word2Vec
+from transformers import BertTokenizer, BertModel
+import torch
+
+# TF-IDFを使った文書のベクトル化とコサイン類似度の計算
+def compute_tfidf_similarity(text1, text2):
+    vectorizer = TfidfVectorizer(stop_words='english')
+    tfidf_matrix = vectorizer.fit_transform([text1, text2])
+    similarity = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])
+    return similarity[0][0]
+
+# Word2Vecによる文体分析
+def compute_word2vec_similarity(text1, text2):
+    # テキストを単語リストに分割
+    words1 = text1.split()
+    words2 = text2.split()
+    
+    # Word2Vecモデルの学習
+    model = Word2Vec([words1, words2], vector_size=100, window=5, min_count=1, workers=4)
+    
+    # 単語ベクトルを取得
+    vec1 = np.mean([model.wv[word] for word in words1 if word in model.wv], axis=0)
+    vec2 = np.mean([model.wv[word] for word in words2 if word in model.wv], axis=0)
+    
+    # コサイン類似度を計算
+    similarity = cosine_similarity([vec1], [vec2])
+    return similarity[0][0]
+
+# BERTによる文体分析
+def compute_bert_similarity(text1, text2):
+    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    model = BertModel.from_pretrained('bert-base-uncased')
+    
+    # テキストをトークン化
+    inputs1 = tokenizer(text1, return_tensors='pt', padding=True, truncation=True)
+    inputs2 = tokenizer(text2, return_tensors='pt', padding=True, truncation=True)
+    
+    # BERTモデルを通して特徴ベクトルを取得
+    with torch.no_grad():
+        outputs1 = model(**inputs1)
+        outputs2 = model(**inputs2)
+    
+    # 特徴ベクトルを抽出（[CLS]トークンのベクトル）
+    vec1 = outputs1.last_hidden_state[:, 0, :].numpy()
+    vec2 = outputs2.last_hidden_state[:, 0, :].numpy()
+    
+    # コサイン類似度を計算
+    similarity = cosine_similarity(vec1, vec2)
+    return similarity[0][0]
+
+# --- 実行例 ---
+if __name__ == "__main__":
+    # 原文と翻訳文の例（サンプルとして簡単な文を使用）
+    original_text = "I love programming in Python. It's great for machine learning."
+    translated_text = "Me encanta programar en Python. Es genial para el aprendizaje automático."
+
+    # TF-IDFによる類似度計算
+    tfidf_similarity = compute_tfidf_similarity(original_text, translated_text)
+    print(f"TF-IDF Similarity: {tfidf_similarity}")
+
+    # Word2Vecによる類似度計算
+    word2vec_similarity = compute_word2vec_similarity(original_text, translated_text)
+    print(f"Word2Vec Similarity: {word2vec_similarity}")
+
+    # BERTによる類似度計算
+    bert_similarity = compute_bert_similarity(original_text, translated_text)
+    print(f"BERT Similarity: {bert_similarity}")
+
+    # 結果を可視化
+    labels = ['TF-IDF', 'Word2Vec', 'BERT']
+    similarities = [tfidf_similarity, word2vec_similarity, bert_similarity]
+    
+    plt.bar(labels, similarities, color=['blue', 'green', 'red'])
+    plt.xlabel('Similarity Measure')
+    plt.ylabel('Similarity Score')
+    plt.title('Comparison of Similarity Measures')
+    plt.show()
