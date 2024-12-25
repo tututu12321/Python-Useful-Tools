@@ -1,0 +1,63 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import zlib
+
+# --- アナログ信号のサンプリングと量子化 ---
+def analog_to_digital():
+    # アナログ信号（正弦波）の生成
+    t = np.linspace(0, 1, 1000)  # 1秒間、1000サンプル
+    analog_signal = np.sin(2 * np.pi * 5 * t)  # 5Hzの正弦波
+
+    # サンプリング
+    sampling_rate = 100  # サンプリング周波数
+    sampled_t = t[::10]  # 10倍に間引き
+    sampled_signal = analog_signal[::10]
+
+    # 量子化
+    quantization_levels = 16
+    quantized_signal = np.round((sampled_signal + 1) * (quantization_levels - 1) / 2)
+    quantized_signal = quantized_signal / (quantization_levels - 1) * 2 - 1
+
+    # プロット
+    plt.figure(figsize=(12, 6))
+    plt.plot(t, analog_signal, label="Analog Signal")
+    plt.stem(sampled_t, sampled_signal, linefmt="r-", markerfmt="ro", basefmt=" ", label="Sampled Signal")
+    plt.stem(sampled_t, quantized_signal, linefmt="g-", markerfmt="go", basefmt=" ", label="Quantized Signal")
+    plt.title("Analog to Digital Conversion")
+    plt.xlabel("Time [s]")
+    plt.ylabel("Amplitude")
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+# --- テキストデータのデジタル化と圧縮 ---
+def text_to_digital_and_compression():
+    text = "This is an example of text data compression using Python. " * 10  # 元のテキスト
+
+    # テキストをバイナリデータにエンコード
+    binary_data = text.encode("utf-8")
+
+    # 圧縮
+    compressed_data = zlib.compress(binary_data)
+
+    # 解凍
+    decompressed_data = zlib.decompress(compressed_data).decode("utf-8")
+
+    # 結果の表示
+    print("Original Text:")
+    print(text)
+    print("\nCompressed Data (bytes):", len(compressed_data))
+    print("\nDecompressed Text:")
+    print(decompressed_data)
+
+    # 圧縮率
+    compression_ratio = len(compressed_data) / len(binary_data)
+    print(f"\nCompression Ratio: {compression_ratio:.2%}")
+
+# --- 実行 ---
+if __name__ == "__main__":
+    print("=== Analog to Digital ===")
+    analog_to_digital()
+
+    print("\n=== Text Digitalization and Compression ===")
+    text_to_digital_and_compression()
