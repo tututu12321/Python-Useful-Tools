@@ -1,0 +1,20 @@
+import random
+
+# 英文リスト
+sentences = [
+    "The quick brown fox jumps over the lazy dog.",
+    "A journey of a thousand miles begins with a single step.",
+    "To be or not to be, that is the question.",
+    "All that glitters is not gold.",
+    "Actions speak louder than words.",
+    "Do not count your chickens before they hatch.",
+    "Rome was not built in a day.",
+    "The early bird catches the worm.",
+    "You miss 100% of the shots you don’t take.",
+    "Practice makes perfect."
+]
+
+# ランダムに英文を表示
+random_sentence = random.choice(sentences)
+print("Random Sentence:")
+print(random_sentence)
