@@ -1,0 +1,38 @@
+# 辞書の作成
+my_dict = {"apple": 1, "banana": 2, "cherry": 3}
+print("Original Dictionary:", my_dict)
+
+# 辞書の値にアクセス
+banana_count = my_dict["banana"]
+print("Banana count:", banana_count)
+
+# 新しいキーと値のペアを追加
+my_dict["date"] = 4
+print("After adding 'date':", my_dict)
+
+# 辞書の要素を削除（del, pop）
+del my_dict["apple"]  # "apple"というキーを削除
+print("After deleting 'apple':", my_dict)
+
+popped_item = my_dict.pop("banana")  # "banana"を削除し、値を取得
+print("After popping 'banana':", my_dict)
+print("Popped item:", popped_item)
+
+# 辞書のキーの一覧
+keys = my_dict.keys()
+print("Keys in dictionary:", keys)
+
+# 辞書の値の一覧
+values = my_dict.values()
+print("Values in dictionary:", values)
+
+# 辞書のキーと値をペアでループ
+for key, value in my_dict.items():
+    print(f"{key}: {value}")
+
+# 存在しないキーを指定する際のエラーハンドリング
+value = my_dict.get("orange", "Not Found")
+print("Orange value:", value)  # 存在しない場合はデフォルト値が返る
+
+# 辞書の長さ
+print("Length of the dictionary:", len(my_dict))
