@@ -1,0 +1,65 @@
+import time
+import random
+
+class VirtualSensor:
+    """仮想センサーをシミュレート"""
+    def __init__(self, trigger_probability=0.3):
+        """
+        trigger_probability: センサーが反応する確率 (0.0〜1.0)
+        """
+        self.trigger_probability = trigger_probability
+
+    def read(self):
+        """センサーの状態を取得 (反応: True, 非反応: False)"""
+        return random.random() < self.trigger_probability
+
+
+class VirtualLED:
+    """仮想LEDをシミュレート"""
+    def __init__(self):
+        self.state = False  # 初期状態: OFF
+
+    def turn_on(self):
+        """LEDをONにする"""
+        self.state = True
+        print("LED ON")
+
+    def turn_off(self):
+        """LEDをOFFにする"""
+        self.state = False
+        print("LED OFF")
+
+    def get_state(self):
+        """現在のLEDの状態を返す"""
+        return "ON" if self.state else "OFF"
+
+
+def simulate_sensor_led():
+    """センサーとLEDのシミュレーション"""
+    sensor = VirtualSensor(trigger_probability=0.5)  # 50%の確率でセンサーが反応
+    led = VirtualLED()
+
+    print("Starting virtual sensor-LED simulation...")
+    try:
+        while True:
+            # センサーの状態を読み取る
+            sensor_triggered = sensor.read()
+
+            if sensor_triggered:
+                # センサーが反応した場合はLEDをON
+                led.turn_on()
+            else:
+                # センサーが非反応の場合はLEDをOFF
+                led.turn_off()
+
+            # LEDの状態を表示
+            print(f"Current LED State: {led.get_state()}")
+
+            # 1秒待機
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("\nSimulation ended.")
+
+
+if __name__ == "__main__":
+    simulate_sensor_led()
