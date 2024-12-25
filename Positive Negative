@@ -1,0 +1,26 @@
+from textblob import TextBlob
+
+# 感情分析関数
+def analyze_sentiment(text):
+    blob = TextBlob(text)
+    polarity = blob.sentiment.polarity  # 感情のポジティブ/ネガティブ度合い（-1 ～ 1）
+    subjectivity = blob.sentiment.subjectivity  # 主観的/客観的度合い（0 ～ 1）
+
+    if polarity > 0:
+        sentiment = "Positive"
+    elif polarity < 0:
+        sentiment = "Negative"
+    else:
+        sentiment = "Neutral"
+
+    return sentiment, polarity, subjectivity
+
+# サンプルテキスト
+text = "I love this product! It's absolutely wonderful."
+sentiment, polarity, subjectivity = analyze_sentiment(text)
+
+# 結果表示
+print(f"Text: {text}")
+print(f"Sentiment: {sentiment}")
+print(f"Polarity: {polarity}")
+print(f"Subjectivity: {subjectivity}")
