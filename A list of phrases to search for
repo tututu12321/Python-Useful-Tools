@@ -1,0 +1,42 @@
+import re
+
+def search_phrase_in_text(text, phrase):
+    """
+    作品内で指定したフレーズが何回出現するかをカウントする
+    text: 作品のテキスト（文字列）
+    phrase: 検索するフレーズ（文字列）
+    """
+    # 正規表現を用いてフレーズを検索（大文字小文字を区別しない）
+    matches = re.findall(re.escape(phrase), text, flags=re.IGNORECASE)
+    return len(matches)
+
+def search_multiple_phrases(text, phrases):
+    """
+    作品内で複数のフレーズが何回出現するかをカウント
+    text: 作品のテキスト（文字列）
+    phrases: 検索するフレーズのリスト（リスト形式）
+    """
+    results = {}
+    for phrase in phrases:
+        count = search_phrase_in_text(text, phrase)
+        results[phrase] = count
+    return results
+
+# --- 実行例 ---
+if __name__ == "__main__":
+    # サンプルテキスト（例として「こころ」などから一部を使用）
+    sample_text = """
+    私はその人を常に先生と呼んでいた。だからここでもただ先生と書くだけで本名は打ち明けない。
+    これは世間を憚る遠慮というよりも、その方が私にとって自然だからである。
+    先生は私にとって一番大切な人だった。
+    """
+
+    # 検索するフレーズのリスト
+    phrases_to_search = ["先生", "私", "自然", "一番"]
+
+    # 複数のフレーズを検索
+    search_results = search_multiple_phrases(sample_text, phrases_to_search)
+
+    # 結果を表示
+    for phrase, count in search_results.items():
+        print(f"The phrase '{phrase}' appeared {count} times.")
