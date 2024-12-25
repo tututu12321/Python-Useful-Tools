@@ -1,0 +1,27 @@
+import spacy
+
+# spaCyの英語モデルをロード
+nlp = spacy.load("en_core_web_sm")
+
+# テキストの入力
+text = "SpaCy is an excellent library for natural language processing. It provides many features."
+
+# テキストの解析
+doc = nlp(text)
+
+# トークン化: 文章を単語や句読点などに分割
+print("Tokens:")
+for token in doc:
+    print(token.text)
+
+# 品詞タグ付け: 各トークンに対して品詞をタグ付け
+print("\nPOS Tags:")
+for token in doc:
+    print(f"{token.text}: {token.pos_}")
+
+# 文解析: 文の構造を解析し、各トークンの依存関係を表示
+print("\nSentence Parsing:")
+for sent in doc.sents:
+    print(f"Sentence: {sent.text}")
+    for token in sent:
+        print(f"{token.text}: {token.dep_} (Head: {token.head.text})")
