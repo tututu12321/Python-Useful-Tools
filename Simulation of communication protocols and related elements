@@ -1,0 +1,80 @@
+import socket
+import requests
+import random
+import time
+
+# --- パケット通信のシミュレーション ---
+def simulate_packet_communication():
+    print("=== Packet Communication Simulation ===")
+    message = "Hello, this is a simulated message."
+    packet_size = 10  # パケットサイズ
+    packets = [message[i:i + packet_size] for i in range(0, len(message), packet_size)]
+
+    print(f"Original Message: {message}")
+    print(f"Packets: {packets}")
+
+    # パケットを受信するシミュレーション
+    received_message = ""
+    for packet in packets:
+        # パケット遅延をランダムに追加
+        time.sleep(random.uniform(0.1, 0.3))
+        print(f"Received Packet: {packet}")
+        received_message += packet
+
+    print(f"Reassembled Message: {received_message}")
+    print("Packet Communication Completed.\n")
+
+# --- 通信信頼性のシミュレーション ---
+def simulate_communication_reliability():
+    print("=== Communication Reliability Simulation ===")
+    packets = ["Packet 1", "Packet 2", "Packet 3", "Packet 4"]
+    loss_probability = 0.2  # パケット損失率
+    received_packets = []
+
+    for packet in packets:
+        if random.random() > loss_probability:
+            received_packets.append(packet)
+            print(f"Received: {packet}")
+        else:
+            print(f"Lost: {packet}")
+
+    print(f"Successfully Received Packets: {received_packets}")
+    print("Communication Reliability Simulation Completed.\n")
+
+# --- IPアドレスとドメイン名の解決 ---
+def resolve_ip_and_domain(domain_name):
+    print("=== IP Address and Domain Name Resolution ===")
+    try:
+        ip_address = socket.gethostbyname(domain_name)
+        print(f"Domain Name: {domain_name}")
+        print(f"Resolved IP Address: {ip_address}\n")
+    except socket.gaierror:
+        print(f"Failed to resolve IP address for domain: {domain_name}\n")
+
+# --- WWWとHTTPリクエスト ---
+def fetch_website_content(url):
+    print("=== Fetching Website Content ===")
+    try:
+        response = requests.get(url)
+        print(f"URL: {url}")
+        print(f"Status Code: {response.status_code}")
+        print(f"Content: {response.text[:200]}...")  # 先頭200文字を表示
+        print("Website Content Fetch Completed.\n")
+    except requests.RequestException as e:
+        print(f"Failed to fetch website content: {e}\n")
+
+# --- 実行例 ---
+if __name__ == "__main__":
+    # パケット通信のシミュレーション
+    simulate_packet_communication()
+
+    # 通信信頼性のシミュレーション
+    simulate_communication_reliability()
+
+    # IPアドレスとドメイン名の解決
+    domain_name = "www.example.com"
+    resolve_ip_and_domain(domain_name)
+
+    # WWWとHTTPリクエスト
+    url = "https://www.example.com"
+    fetch_website_content(url)
