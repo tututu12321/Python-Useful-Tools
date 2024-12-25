@@ -1,0 +1,12 @@
+import calendar
+
+# 2024年12月の月間カレンダーをリスト形式で取得
+month_calendar = calendar.monthcalendar(2024, 12)
+
+# 最初の月曜日を探す
+for week in month_calendar:
+    if week[calendar.MONDAY] != 0:  # 0は日付が存在しない場合
+        first_monday = week[calendar.MONDAY]
+        break
+
+print(f"2024年12月の最初の月曜日は {first_monday} 日です。")
