@@ -1,0 +1,52 @@
+import random
+import matplotlib.pyplot as plt
+
+def monte_carlo_pi(num_points):
+    """
+    モンテカルロ法で円周率を計算
+    num_points: 使用するランダム点の数
+    """
+    inside_circle = 0  # 円の内側の点の数
+    total_points = 0   # 全体の点の数
+
+    x_inside, y_inside = [], []  # 円内の点
+    x_outside, y_outside = [], []  # 円外の点
+
+    for _ in range(num_points):
+        x = random.uniform(-1, 1)  # -1から1の間のランダムなx座標
+        y = random.uniform(-1, 1)  # -1から1の間のランダムなy座標
+        distance = x**2 + y**2
+
+        if distance <= 1:
+            inside_circle += 1
+            x_inside.append(x)
+            y_inside.append(y)
+        else:
+            x_outside.append(x)
+            y_outside.append(y)
+
+        total_points += 1
+
+    # 円周率の推定値
+    pi_estimate = 4 * inside_circle / total_points
+
+    return pi_estimate, x_inside, y_inside, x_outside, y_outside
+
+# --- 実行例 ---
+if __name__ == "__main__":
+    num_points = 10000  # ランダム点の数
+    pi, x_inside, y_inside, x_outside, y_outside = monte_carlo_pi(num_points)
+
+    # 結果の出力
+    print(f"Estimated Pi after {num_points} points: {pi}")
+
+    # プロット
+    plt.figure(figsize=(8, 8))
+    plt.scatter(x_inside, y_inside, color="blue", s=1, label="Inside Circle")
+    plt.scatter(x_outside, y_outside, color="red", s=1, label="Outside Circle")
+    plt.axhline(0, color="black", linewidth=0.5)
+    plt.axvline(0, color="black", linewidth=0.5)
+    plt.gca().set_aspect("equal", adjustable="box")
+    plt.title(f"Monte Carlo Simulation of Pi (Points: {num_points})")
+    plt.legend()
+    plt.show()
