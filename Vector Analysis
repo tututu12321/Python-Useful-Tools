@@ -1,0 +1,66 @@
+import sympy as sp
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.applications import VGG16
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.optimizers import Adam
+import matplotlib.pyplot as plt
+
+# 1. ベクトル解析のシンボリック計算
+x, y, z = sp.symbols('x y z')
+
+# 速度場の定義（例）
+V = sp.Matrix([x**2 + y**2, y**2 + z**2, z**2 + x**2])
+
+# 勾配（Grad）
+grad_V = [sp.diff(V[0], var) for var in (x, y, z)]  # x, y, zに関する勾配
+print("Gradient (∇V):", grad_V)
+
+# ダイバージェンス（Div）
+div_V = sum([sp.diff(V[i], var) for i, var in enumerate((x, y, z))])
+print("Divergence (∇·V):", div_V)
+
+# カール（Curl）
+curl_V = sp.Matrix([
+    sp.diff(V[2], y) - sp.diff(V[1], z),
+    sp.diff(V[0], z) - sp.diff(V[2], x),
+    sp.diff(V[1], x) - sp.diff(V[0], y)
+])
+print("Curl (∇×V):", curl_V)
+
+# 2. 転移学習：VGG16による画像分類
+
+# VGG16の事前訓練されたモデルをロード（最上層は除く）
+base_model = VGG16(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
+
+# 事前訓練された層を凍結
+for layer in base_model.layers:
+    layer.trainable = False
+
+# 新しい層を追加
+x = Flatten()(base_model.output)
+x = Dense(1024, activation='relu')(x)
+x = Dense(1, activation='sigmoid')(x)  # バイナリ分類のため、出力層はsigmoid
+
+# 新しいモデルを作成
+model = Model(inputs=base_model.input, outputs=x)
+
+# モデルのコンパイル
+model.compile(optimizer=Adam(learning_rate=0.0001), loss='binary_crossentropy', metrics=['accuracy'])
+
+# ダミーデータ作成（シミュレーションデータ：速度場の画像データ）
+X = np.random.rand(100, 224, 224, 3)  # 100枚の画像データ（224x224）
+y = np.random.randint(0, 2, 100)  # バイナリラベル（0か1）
+
+# 画像データを使った転移学習
+train_generator_simulated = ImageDataGenerator(rescale=1./255).flow(X, y, batch_size=32)
+
+# モデルの訓練
+model.fit(train_generator_simulated, epochs=5, steps_per_epoch=100)
+
+# 3. 結果の可視化（シミュレーションデータの一部を表示）
+plt.imshow(X[0])  # 最初の画像を表示
+plt.title(f"Prediction: {model.predict(X[0].reshape(1, 224, 224, 3))[0][0]}")
+plt.show()
