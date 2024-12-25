@@ -1,0 +1,38 @@
+import sympy as sp
+
+# 変数の定義
+x, y = sp.symbols('x y')
+
+# 例として、二変数の関数を定義
+f = x**2 + y**2 + 3*x + 4*y
+
+# 1. 常微分（一変数関数の微分）
+f_single_variable = x**2 + 3*x + 2
+f_prime = sp.diff(f_single_variable, x)
+print(f"f'(x) = {f_prime}")
+
+# 2. 偏微分（二変数関数に対する偏微分）
+partial_x = sp.diff(f, x)  # xに関する偏微分
+partial_y = sp.diff(f, y)  # yに関する偏微分
+print(f"∂f/∂x = {partial_x}")
+print(f"∂f/∂y = {partial_y}")
+
+# 3. 全微分（二変数関数に対する全微分）
+df = partial_x * sp.diff(x) + partial_y * sp.diff(y)
+print(f"df = {df}")
+
+# 4. 偏微分と全微分の結果を確認
+# 例として、x = 1, y = 2 の場合
+x_val = 1
+y_val = 2
+
+# 偏微分の評価
+partial_x_val = partial_x.subs({x: x_val, y: y_val})
+partial_y_val = partial_y.subs({x: x_val, y: y_val})
+
+# 全微分の評価
+df_val = df.subs({x: x_val, y: y_val})
+
+print(f"∂f/∂x at (x=1, y=2): {partial_x_val}")
+print(f"∂f/∂y at (x=1, y=2): {partial_y_val}")
+print(f"df at (x=1, y=2): {df_val}")
