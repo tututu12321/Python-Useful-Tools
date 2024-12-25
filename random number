@@ -1,0 +1,39 @@
+import random
+
+# 1. ランダムな整数生成
+random_integer = random.randint(1, 10)
+print(f"Random Integer (1 to 10): {random_integer}")
+
+# 2. 0以上1未満のランダムな浮動小数点数生成
+random_float = random.random()
+print(f"Random Float (0 to 1): {random_float}")
+
+# 3. 指定範囲内でランダムな浮動小数点数生成
+random_float_range = random.uniform(1.5, 10.5)
+print(f"Random Float (1.5 to 10.5): {random_float_range}")
+
+# 4. リストからランダムに1つの要素を選択
+items = ['apple', 'banana', 'cherry']
+random_item = random.choice(items)
+print(f"Random item from list: {random_item}")
+
+# 5. リストからランダムに複数の要素を選択（重複なし）
+random_items = random.sample(items, 2)
+print(f"Random 2 items from list without replacement: {random_items}")
+
+# 6. リストからランダムに複数の要素を選択（重複あり）
+random_items_with_replacement = random.choices(items, k=2)
+print(f"Random 2 items from list with replacement: {random_items_with_replacement}")
+
+# 7. リストをランダムに並べ替える
+random.shuffle(items)
+print(f"Shuffled list: {items}")
+
+# 8. シードを設定して乱数を再現
+random.seed(42)
+random_integer_with_seed = random.randint(1, 10)
+print(f"Random Integer with seed 42: {random_integer_with_seed}")
+
+# 9. 正規分布に従った乱数生成
+random_gaussian = random.gauss(0, 1)  # 平均0, 標準偏差1
+print(f"Random Gaussian (mean=0, stddev=1): {random_gaussian}")
