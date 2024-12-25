@@ -1,0 +1,100 @@
+import imaplib
+import smtplib
+import os
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
+
+# Gmailの設定
+gmail_user = 'your_email@gmail.com'
+gmail_password = 'your_app_password'  # アプリパスワードを使用
+
+# メールサーバー設定
+imap_server = "imap.gmail.com"
+smtp_server = "smtp.gmail.com"
+smtp_port = 587
+
+# 顧客ごとのフォルダ
+customer_folder = "/path/to/your/customer_folder"  # 顧客用ファイルが格納されたディレクトリ
+
+# メール送信関数
+def send_email(subject, body, to_email, attachment_path=None):
+    msg = MIMEMultipart()
+    msg['From'] = gmail_user
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    
+    # メール本文
+    msg.attach(MIMEText(body, 'plain'))
+
+    # 添付ファイルの処理
+    if attachment_path:
+        try:
+            with open(attachment_path, 'rb') as attachment:
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload(attachment.read())
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition', f'attachment; filename={os.path.basename(attachment_path)}')
+                msg.attach(part)
+        except Exception as e:
+            print(f"Error attaching file: {e}")
+    
+    try:
+        # メール送信
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(gmail_user, gmail_password)
+        text = msg.as_string()
+        server.sendmail(gmail_user, to_email, text)
+        print(f"Email sent to {to_email}")
+        server.quit()
+    except Exception as e:
+        print(f"Error sending email: {e}")
+
+# メール受信関数（GmailのIMAPを使用）
+def fetch_email():
+    try:
+        mail = imaplib.IMAP4_SSL(imap_server)
+        mail.login(gmail_user, gmail_password)
+        mail.select('inbox')  # 受信ボックスを選択
+        
+        # 未読メールを検索
+        status, messages = mail.search(None, '(UNSEEN)')
+        messages = messages[0].split()
+        
+        for mail_id in messages:
+            status, msg_data = mail.fetch(mail_id, '(RFC822)')
+            for response_part in msg_data:
+                if isinstance(response_part, tuple):
+                    # メール内容を解析
+                    msg = email.message_from_bytes(response_part[1])
+                    subject = msg['subject']
+                    from_email = msg['from']
+                    print(f"Subject: {subject}, From: {from_email}")
+                    # 顧客に関連するメールを処理（必要な処理をここに追加）
+                    handle_customer_email(from_email, subject)
+    except Exception as e:
+        print(f"Error fetching email: {e}")
+
+# 顧客ごとにファイルを添付して送信する処理
+def handle_customer_email(from_email, subject):
+    # 顧客名や関連情報を抽出（ここでは例として顧客名を抽出）
+    customer_name = extract_customer_name(from_email)  # 顧客の名前を抽出する関数を実装
+    
+    # 顧客用のファイルのパスを決定
+    customer_file = os.path.join(customer_folder, f'{customer_name}_file.pdf')  # 例: 顧客名でファイルを特定
+    
+    # メール内容
+    subject = f"Important document for {customer_name}"
+    body = f"Dear {customer_name},\n\nPlease find the attached document.\n\nBest regards,\nYour Company"
+    
+    # ファイルを添付してメール送信
+    send_email(subject, body, from_email, customer_file)
+
+# 顧客名を抽出する簡単な関数（実際にはメールアドレスから名前を抽出するなどのロジックを追加）
+def extract_customer_name(from_email):
+    return from_email.split('@')[0]  # ここでは単純にメールアドレスから名前を抽出
+
+# 実行例
+fetch_email()
