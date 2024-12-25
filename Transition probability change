@@ -1,0 +1,45 @@
+import numpy as np
+
+# 状態遷移行列を定義
+# 例: 3状態（S1, S2, S3）の遷移確率行列
+P = np.array([
+    [0.5, 0.3, 0.2],  # S1 -> S1, S2, S3
+    [0.2, 0.6, 0.2],  # S2 -> S1, S2, S3
+    [0.3, 0.3, 0.4]   # S3 -> S1, S2, S3
+])
+
+# 初期状態ベクトル（S1にいる確率が1、S2とS3にいる確率が0）
+initial_state = np.array([1, 0, 0])
+
+# 遷移回数
+steps = 10
+
+# マルコフ連鎖をシミュレート
+def simulate_markov_chain(P, initial_state, steps):
+    state = initial_state
+    state_history = [state]
+    
+    for _ in range(steps):
+        state = np.dot(state, P)  # 現在の状態ベクトルと遷移行列の積を取る
+        state_history.append(state)
+    
+    return np.array(state_history)
+
+# シミュレーション実行
+state_history = simulate_markov_chain(P, initial_state, steps)
+
+# 結果の表示
+print("State history after", steps, "steps:")
+print(state_history)
+
+# グラフ表示（遷移確率の推移をプロット）
+import matplotlib.pyplot as plt
+
+plt.plot(state_history[:, 0], label="State S1")
+plt.plot(state_history[:, 1], label="State S2")
+plt.plot(state_history[:, 2], label="State S3")
+plt.xlabel("Steps")
+plt.ylabel("Probability")
+plt.title("Markov Chain State Transitions")
+plt.legend()
+plt.show()
