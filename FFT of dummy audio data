@@ -1,0 +1,41 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.fftpack import fft
+
+# --- ダミー音声データの生成 ---
+# サンプリング周波数
+fs = 44100  # サンプル/秒 (CD品質)
+t = np.linspace(0, 1, fs)  # 1秒間の時間軸
+
+# ダミー信号: 正弦波（440Hz）+ 正弦波（880Hz）+ ノイズ
+freq1 = 440  # 440Hz（A4の音）
+freq2 = 880  # 880Hz（A5の音）
+signal = np.sin(2 * np.pi * freq1 * t) + 0.5 * np.sin(2 * np.pi * freq2 * t)
+noise = 0.2 * np.random.normal(0, 1, len(t))  # 白色ノイズ
+audio_signal = signal + noise
+
+# --- FFT解析 ---
+N = len(audio_signal)  # サンプル数
+fft_result = fft(audio_signal)  # FFTを実行
+frequencies = np.linspace(0, fs / 2, N // 2)  # 周波数軸
+amplitudes = np.abs(fft_result[:N // 2]) / N  # 振幅を正規化
+
+# --- 時間領域でのプロット ---
+plt.figure(figsize=(12, 6))
+plt.subplot(2, 1, 1)
+plt.plot(t[:1000], audio_signal[:1000])  # 最初の1000サンプルをプロット
+plt.title("Audio Signal (Time Domain)")
+plt.xlabel("Time [s]")
+plt.ylabel("Amplitude")
+plt.grid()
+
+# --- 周波数領域でのプロット ---
+plt.subplot(2, 1, 2)
+plt.plot(frequencies, amplitudes)
+plt.title("FFT Analysis (Frequency Domain)")
+plt.xlabel("Frequency [Hz]")
+plt.ylabel("Amplitude")
+plt.grid()
+
+plt.tight_layout()
+plt.show()
