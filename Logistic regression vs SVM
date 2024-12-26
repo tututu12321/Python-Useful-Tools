@@ -1,0 +1,51 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_classification
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# データ生成（2群分類用）
+X, y = make_classification(
+    n_samples=200, n_features=2, n_classes=2, n_redundant=0, random_state=42
+)
+
+# データ分割
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# 統計学: ロジスティック回帰
+logistic_model = LogisticRegression().fit(X_train, y_train)
+logistic_predictions = logistic_model.predict(X_test)
+logistic_accuracy = accuracy_score(y_test, logistic_predictions)
+
+# 機械学習: SVM
+svm_model = SVC(kernel='linear', probability=True).fit(X_train, y_train)
+svm_predictions = svm_model.predict(X_test)
+svm_accuracy = accuracy_score(y_test, svm_predictions)
+
+# モデル精度表示
+print(f"Logistic Regression Accuracy: {logistic_accuracy:.2f}")
+print(f"SVM Accuracy: {svm_accuracy:.2f}")
+
+# 可視化
+def plot_decision_boundary(model, X, y, title, ax):
+    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.01), np.arange(y_min, y_max, 0.01))
+    Z = model.predict(np.c_[xx.ravel(), yy.ravel()])
+    Z = Z.reshape(xx.shape)
+    ax.contourf(xx, yy, Z, alpha=0.8)
+    ax.scatter(X[:, 0], X[:, 1], c=y, edgecolor='k', s=20)
+    ax.set_title(title)
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+
+# ロジスティック回帰の決定境界
+plot_decision_boundary(logistic_model, X, y, "Logistic Regression", axes[0])
+
+# SVMの決定境界
+plot_decision_boundary(svm_model, X, y, "SVM (Support Vector Machine)", axes[1])
+
+plt.tight_layout()
+plt.show()
