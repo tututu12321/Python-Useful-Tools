@@ -1,0 +1,37 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# バグ管理図のデータ (ダミーデータ)
+time_weeks = np.arange(1, 11)  # テスト期間 (1週間から10週間)
+bugs_detected = [10, 15, 22, 30, 35, 40, 45, 48, 50, 51]  # 累積バグ検出数
+
+# 信頼度成長曲線のデータ (ダミーデータ)
+time_continuous = np.linspace(1, 10, 100)  # 1〜10週を連続で表現
+remaining_bugs = 52 - 5 * time_continuous + np.random.normal(0, 2, len(time_continuous))
+remaining_bugs = np.clip(remaining_bugs, 0, None)  # 残存バグ数は0未満にしない
+
+# グラフの描画
+plt.figure(figsize=(12, 6))
+
+# バグ管理図
+plt.subplot(1, 2, 1)
+plt.plot(time_weeks, bugs_detected, marker='o', color='blue', label="Cumulative Bugs Detected")
+plt.title("Bug Management Chart")
+plt.xlabel("Time (Weeks)")
+plt.ylabel("Cumulative Bugs Detected")
+plt.xticks(time_weeks)
+plt.grid(True)
+plt.legend()
+
+# 信頼度成長曲線
+plt.subplot(1, 2, 2)
+plt.plot(time_continuous, remaining_bugs, color='green', label="Remaining Bugs")
+plt.title("Reliability Growth Curve")
+plt.xlabel("Time (Weeks)")
+plt.ylabel("Remaining Bugs (Estimated)")
+plt.grid(True)
+plt.legend()
+
+# グラフを整えて表示
+plt.tight_layout()
+plt.show()
