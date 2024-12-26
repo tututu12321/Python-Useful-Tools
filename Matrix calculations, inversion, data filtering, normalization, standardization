@@ -1,0 +1,55 @@
+import numpy as np
+
+# 1. NumPy配列の作成
+arr = np.array([1, 2, 3, 4, 5])
+print("NumPy配列:", arr)
+
+# 2. NumPyで行列計算
+matrix_a = np.array([[1, 2], [3, 4]])
+matrix_b = np.array([[5, 6], [7, 8]])
+matrix_multiplication = np.dot(matrix_a, matrix_b)
+print("\n行列の積（A * B）:\n", matrix_multiplication)
+
+# 3. 行列の逆行列の計算
+matrix_c = np.array([[4, 7], [2, 6]])
+inverse_matrix = np.linalg.inv(matrix_c)
+print("\n行列Cの逆行列:\n", inverse_matrix)
+
+# 4. 配列のブロードキャスティング
+arr1 = np.array([1, 2, 3])
+arr2 = np.array([[1], [2], [3]])
+broadcasted_addition = arr1 + arr2
+print("\nブロードキャスティングによる加算:\n", broadcasted_addition)
+
+# 5. データのフィルタリング（条件指定）
+data = np.array([10, 20, 30, 40, 50])
+filtered_data = data[data > 30]
+print("\nフィルタリングされたデータ（> 30）:", filtered_data)
+
+# 6. データの変換（正規化、標準化）
+# 正規化（0～1の範囲にスケーリング）
+normalized_data = (data - np.min(data)) / (np.max(data) - np.min(data))
+print("\n正規化されたデータ:", normalized_data)
+
+# 標準化（平均0、標準偏差1にスケーリング）
+standardized_data = (data - np.mean(data)) / np.std(data)
+print("\n標準化されたデータ:", standardized_data)
+
+# 7. 行列の行列式の計算
+det_matrix = np.linalg.det(matrix_c)
+print("\n行列Cの行列式:", det_matrix)
+
+# 8. 配列の転置
+transposed_matrix = np.transpose(matrix_a)
+print("\n行列Aの転置:\n", transposed_matrix)
+
+# 9. 配列のソート
+unsorted_array = np.array([50, 20, 10, 40, 30])
+sorted_array = np.sort(unsorted_array)
+print("\nソートされた配列:", sorted_array)
+
+# 10. 配列の集約（最小値、最大値）
+min_value = np.min(data)
+max_value = np.max(data)
+print("\n配列の最小値:", min_value)
+print("配列の最大値:", max_value)
