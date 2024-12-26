@@ -1,0 +1,39 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+# Email configuration
+smtp_server = "smtp.gmail.com"  # SMTP server of your email provider (e.g., Gmail, Yahoo, Outlook)
+smtp_port = 587                 # Common SMTP port
+sender_email = "your_email@gmail.com"  # Replace with your email
+password = "your_app_password"         # Replace with your app password (not your main email password)
+recipient_email = "recipient_email@example.com"  # Replace with the recipient's email address
+
+# Email content
+subject = "Automated Email Test"
+body = """
+Hello,
+
+This is an automated email sent using Python. You can use this script to automate tasks like sending daily reports or reminders.
+
+Best regards,
+Your Python Script
+"""
+
+# Create the email
+email = MIMEMultipart()
+email["From"] = sender_email
+email["To"] = recipient_email
+email["Subject"] = subject
+email.attach(MIMEText(body, "plain"))
+
+# Send the email
+try:
+    # Connect to the SMTP server
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()  # Start a secure TLS connection
+        server.login(sender_email, password)  # Log in to the SMTP server
+        server.sendmail(sender_email, recipient_email, email.as_string())  # Send the email
+    print("Email sent successfully!")
+except Exception as e:
+    print(f"Failed to send email: {e}")
