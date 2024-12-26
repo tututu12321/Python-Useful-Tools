@@ -1,0 +1,71 @@
+from datetime import datetime, timedelta
+
+# **1. 現在日時の取得**
+def get_current_datetime():
+    now = datetime.now()
+    formatted_date = now.strftime('%Y-%m-%d %H:%M:%S')
+    print(f"Current Date and Time: {formatted_date}")
+    return now
+
+# **2. 日付をフォーマット**
+def format_date(date_obj, format_string='%Y-%m-%d %H:%M:%S'):
+    return date_obj.strftime(format_string)
+
+# **3. N日後/前の日付を取得**
+def get_future_date(days):
+    return datetime.now() + timedelta(days=days)
+
+def get_past_date(days):
+    return datetime.now() - timedelta(days=days)
+
+# **4. 特定日からの日数差を計算**
+def days_between(date1, date2):
+    delta = date2 - date1
+    return delta.days
+
+# **5. 時間差を計算**
+def time_difference(date1, date2):
+    delta = date2 - date1
+    return delta
+
+# **6. 特定の日付文字列を日時オブジェクトに変換**
+def string_to_datetime(date_string, format_string='%Y-%m-%d %H:%M:%S'):
+    return datetime.strptime(date_string, format_string)
+
+# **7. タイマーのような機能**
+def countdown_timer(seconds):
+    print(f"Countdown: {seconds} seconds")
+    while seconds:
+        print(seconds)
+        seconds -= 1
+        time.sleep(1)
+    print("Time's up!")
+
+# 使用例
+if __name__ == "__main__":
+    # 現在の日時
+    now = get_current_datetime()
+
+    # 日付をフォーマット
+    formatted_now = format_date(now)
+    print(f"Formatted Current Date: {formatted_now}")
+
+    # N日後/前の日付を取得
+    future_date = get_future_date(10)
+    past_date = get_past_date(10)
+    print(f"Date 10 Days Later: {format_date(future_date)}")
+    print(f"Date 10 Days Ago: {format_date(past_date)}")
+
+    # 特定日からの日数差
+    date1 = datetime(2024, 1, 1)
+    date2 = datetime(2024, 12, 31)
+    print(f"Days between {date1} and {date2}: {days_between(date1, date2)} days")
+
+    # 時間差の計算
+    time_diff = time_difference(date1, date2)
+    print(f"Time Difference: {time_diff}")
+
+    # 文字列を日時オブジェクトに変換
+    date_string = "2024-12-31 23:59:59"
+    converted_date = string_to_datetime(date_string)
+    print(f"Converted Date: {converted_date}")
