@@ -1,0 +1,107 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import minimize
+from scipy.integrate import quad
+from scipy.stats import norm
+
+# Chapter 1: 微分の基礎
+def derivative_example():
+    # 関数の定義
+    f = lambda x: x**3 - 3*x**2 + 2*x
+    df = lambda x: 3*x**2 - 6*x + 2  # 導関数
+    
+    # プロット
+    x = np.linspace(-1, 3, 100)
+    plt.figure()
+    plt.plot(x, f(x), label="f(x)")
+    plt.plot(x, df(x), label="f'(x)", linestyle="--")
+    plt.legend()
+    plt.title("Function and Its Derivative")
+    plt.show()
+
+# Chapter 2: 微分の応用
+def gradient_descent_example():
+    f = lambda x: x**2 - 4*x + 4  # 二次関数
+    df = lambda x: 2*x - 4  # 勾配
+
+    x = 10  # 初期値
+    learning_rate = 0.1
+    for _ in range(10):  # 繰り返し回数
+        x = x - learning_rate * df(x)  # 勾配降下法
+        print(f"x: {x}, f(x): {f(x)}")
+
+# Chapter 3: 積分の基礎
+def integral_example():
+    f = lambda x: x**2
+    result, _ = quad(f, 0, 2)  # 積分 [0, 2]
+    print(f"Integral of x^2 from 0 to 2: {result}")
+
+# Chapter 4: 積分の応用
+def monte_carlo_integration():
+    f = lambda x: np.exp(-x**2)
+    samples = np.random.uniform(0, 1, 1000)
+    estimate = np.mean(f(samples))
+    print(f"Monte Carlo Integration Estimate: {estimate}")
+
+# Chapter 5: 特殊関数とその応用
+def softmax_example(x):
+    exp_x = np.exp(x)
+    return exp_x / np.sum(exp_x)
+
+# Chapter 6: ベクトル微分積分
+def gradient_and_hessian():
+    f = lambda x: x[0]**2 + x[1]**2  # 二変数関数
+    grad = lambda x: np.array([2*x[0], 2*x[1]])
+    hess = lambda x: np.array([[2, 0], [0, 2]])  # ヘッセ行列
+    print(f"Gradient: {grad([1, 1])}")
+    print(f"Hessian: \n{hess([1, 1])}")
+
+# Chapter 7: 最適化と微分積分
+def lagrange_multiplier():
+    f = lambda x: x[0]**2 + x[1]**2  # 最適化対象
+    constraint = lambda x: x[0] + x[1] - 1  # 制約条件
+    cons = {'type': 'eq', 'fun': constraint}
+    result = minimize(f, [0, 0], constraints=cons)
+    print(f"Optimal Solution: {result.x}")
+
+# Chapter 8: 数値計算と実装
+def finite_difference():
+    f = lambda x: np.sin(x)
+    x = np.linspace(0, np.pi, 100)
+    dx = x[1] - x[0]
+    numerical_derivative = np.gradient(f(x), dx)
+    plt.plot(x, f(x), label="f(x)")
+    plt.plot(x, numerical_derivative, label="f'(x)")
+    plt.legend()
+    plt.show()
+
+# Chapter 9: 微分積分と機械学習モデル
+def linear_regression_gradient_descent():
+    X = np.array([[1], [2], [3]])
+    y = np.array([2, 4, 6])
+    theta = np.random.rand(1)  # 初期パラメータ
+    lr = 0.01  # 学習率
+
+    for _ in range(100):
+        grad = -2 * np.dot(X.T, (y - np.dot(X, theta))) / len(y)
+        theta -= lr * grad
+    print(f"Learned Parameter: {theta}")
+
+# Chapter 10: 微分積分と深層学習
+def relu_derivative(x):
+    return np.where(x > 0, 1, 0)
+
+def sigmoid_derivative(x):
+    sig = 1 / (1 + np.exp(-x))
+    return sig * (1 - sig)
+
+# 実行
+if __name__ == "__main__":
+    derivative_example()
+    gradient_descent_example()
+    integral_example()
+    monte_carlo_integration()
+    gradient_and_hessian()
+    lagrange_multiplier()
+    finite_difference()
+    linear_regression_gradient_descent()
