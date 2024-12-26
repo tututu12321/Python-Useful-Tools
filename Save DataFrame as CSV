@@ -1,0 +1,18 @@
+import numpy as np
+import pandas as pd
+from google.colab import files
+
+# 数値行列（例：3行4列のランダムな数値行列）
+matrix = np.random.rand(3, 4)
+
+# NumPy行列をPandas DataFrameに変換
+df = pd.DataFrame(matrix, columns=["Column1", "Column2", "Column3", "Column4"])
+
+# DataFrameをCSVとして保存
+csv_filename = "/content/output_matrix.csv"
+df.to_csv(csv_filename, index=False)
+
+# ファイルをダウンロードできるようにする
+files.download(csv_filename)
+
+print(f"CSVファイル '{csv_filename}' が作成され、ダウンロード準備が整いました。")
