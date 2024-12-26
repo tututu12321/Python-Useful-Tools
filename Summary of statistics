@@ -1,0 +1,117 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import norm, ttest_ind, chi2_contingency
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+from sklearn.linear_model import LinearRegression
+from statsmodels.stats.anova import anova_lm
+from statsmodels.formula.api import ols
+
+# Chapter 1: 統計の基礎 - データ可視化
+def plot_data_visualizations():
+    data = np.random.randn(1000)
+    plt.figure(figsize=(15, 5))
+
+    # ヒストグラム
+    plt.subplot(1, 3, 1)
+    plt.hist(data, bins=30, color='skyblue', alpha=0.7)
+    plt.title('Histogram')
+
+    # 箱ひげ図
+    plt.subplot(1, 3, 2)
+    plt.boxplot(data)
+    plt.title('Boxplot')
+
+    # 散布図
+    x = np.random.rand(100)
+    y = 2 * x + np.random.randn(100) * 0.1
+    plt.subplot(1, 3, 3)
+    plt.scatter(x, y, color='purple', alpha=0.7)
+    plt.title('Scatter Plot')
+
+    plt.tight_layout()
+    plt.show()
+
+# Chapter 2: 確率の基礎 - 分布
+def demonstrate_distributions():
+    x = np.linspace(-4, 4, 100)
+    plt.figure(figsize=(10, 5))
+    plt.plot(x, norm.pdf(x), label="Normal Distribution")
+    plt.fill_between(x, norm.pdf(x), alpha=0.2)
+    plt.title("Probability Distribution")
+    plt.legend()
+    plt.show()
+
+# Chapter 3: 推測統計 - 仮説検定
+def perform_hypothesis_testing():
+    data1 = np.random.randn(100)
+    data2 = np.random.randn(100) + 0.5  # 平均値のシフト
+    _, p_value = ttest_ind(data1, data2)
+    print(f"T-test P-value: {p_value}")
+
+# Chapter 4: 回帰分析
+def perform_regression_analysis():
+    np.random.seed(0)
+    x = np.random.rand(100, 1)
+    y = 3 * x + np.random.randn(100, 1) * 0.1
+    model = LinearRegression()
+    model.fit(x, y)
+    print(f"Regression Coefficients: {model.coef_}")
+    print(f"Regression Intercept: {model.intercept_}")
+
+    # プロット
+    plt.scatter(x, y, color='blue')
+    plt.plot(x, model.predict(x), color='red')
+    plt.title('Linear Regression')
+    plt.show()
+
+# Chapter 5: 分散分析 (ANOVA)
+def perform_anova():
+    df = pd.DataFrame({
+        'group': np.repeat(['A', 'B', 'C'], 10),
+        'value': np.concatenate([np.random.randn(10) + i for i in range(3)])
+    })
+    model = ols('value ~ group', data=df).fit()
+    anova_results = anova_lm(model)
+    print(anova_results)
+
+# Chapter 6: 多変量解析 (PCA & クラスタリング)
+def perform_pca_and_clustering():
+    data = np.random.rand(100, 4)
+    pca = PCA(n_components=2)
+    reduced_data = pca.fit_transform(data)
+
+    kmeans = KMeans(n_clusters=3)
+    kmeans.fit(reduced_data)
+    labels = kmeans.labels_
+
+    plt.scatter(reduced_data[:, 0], reduced_data[:, 1], c=labels, cmap='viridis')
+    plt.title('PCA and Clustering')
+    plt.show()
+
+# Chapter 7: 確率過程 - マルコフ連鎖
+def demonstrate_markov_chain():
+    transition_matrix = np.array([[0.7, 0.3], [0.4, 0.6]])
+    state = np.array([1, 0])
+    states = [state]
+
+    for _ in range(20):
+        state = np.dot(state, transition_matrix)
+        states.append(state)
+
+    states = np.array(states)
+    plt.plot(states[:, 0], label="State 1")
+    plt.plot(states[:, 1], label="State 2")
+    plt.title("Markov Chain")
+    plt.legend()
+    plt.show()
+
+# 実行部分
+plot_data_visualizations()
+demonstrate_distributions()
+perform_hypothesis_testing()
+perform_regression_analysis()
+perform_anova()
+perform_pca_and_clustering()
+demonstrate_markov_chain()
