@@ -1,0 +1,29 @@
+from pynput.mouse import Button, Controller as MouseController
+from pynput.keyboard import Key, Controller as KeyboardController
+import time
+
+# マウス操作
+def mouse_operations_pynput():
+    mouse = MouseController()
+    print(f"Initial position: {mouse.position}")  # 現在のマウス位置
+    mouse.position = (200, 200)  # マウス位置を指定
+    time.sleep(1)
+    mouse.click(Button.left, 1)  # 左クリック1回
+    mouse.move(50, 50)  # 現在の位置から(50, 50)移動
+
+# キーボード操作
+def keyboard_operations_pynput():
+    keyboard = KeyboardController()
+    keyboard.type("Automating keyboard inputs with pynput.")  # テキスト入力
+    time.sleep(1)
+    keyboard.press(Key.enter)  # Enterキーを押す
+    keyboard.release(Key.enter)  # Enterキーを離す
+    keyboard.press(Key.ctrl)  # Ctrlキーを押したまま
+    keyboard.press("s")  # 'S'を押す
+    keyboard.release("s")
+    keyboard.release(Key.ctrl)
+
+# 実行
+mouse_operations_pynput()
+time.sleep(1)
+keyboard_operations_pynput()
