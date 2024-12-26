@@ -1,0 +1,47 @@
+import numpy as np
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+# サンプルデータ（ジャンル分類、著者特定、文体解析に共通）
+data = {
+    "text": [
+        "It was the best of times, it was the worst of times.",
+        "In a hole in the ground there lived a hobbit.",
+        "Call me Ishmael. Some years ago...",
+        "It is a truth universally acknowledged...",
+        "The sky above the port was the color of television, tuned to a dead channel."
+    ],
+    "genre": ["Classic", "Fantasy", "Classic", "Romance", "Sci-Fi"],  # ジャンル分類用
+    "author": ["Charles Dickens", "J.R.R. Tolkien", "Herman Melville", "Jane Austen", "William Gibson"],  # 著者特定用
+}
+
+df = pd.DataFrame(data)
+
+# 特徴量抽出（TF-IDF）
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(df["text"])
+
+# 1. テキスト分類 (ジャンル分類)
+X_train, X_test, y_train, y_test = train_test_split(X, df["genre"], test_size=0.3, random_state=42)
+genre_model = MultinomialNB().fit(X_train, y_train)
+genre_predictions = genre_model.predict(X_test)
+print(f"Genre Classification Accuracy: {accuracy_score(y_test, genre_predictions):.2f}")
+
+# 2. 著者特定
+X_train, X_test, y_train, y_test = train_test_split(X, df["author"], test_size=0.3, random_state=42)
+author_model = RandomForestClassifier(random_state=42).fit(X_train, y_train)
+author_predictions = author_model.predict(X_test)
+print(f"Author Identification Accuracy: {accuracy_score(y_test, author_predictions):.2f}")
+
+# 3. 文体解析 (TF-IDFで重要語を抽出)
+tfidf_array = X.toarray()
+tfidf_feature_names = vectorizer.get_feature_names_out()
+for i, text in enumerate(df["text"]):
+    print(f"\nText: {text}")
+    top_words = np.argsort(tfidf_array[i])[::-1][:3]  # 上位3語
+    print("Top TF-IDF words:", [tfidf_feature_names[j] for j in top_words])
