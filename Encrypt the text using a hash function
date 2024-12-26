@@ -1,0 +1,10 @@
+import hashlib
+
+# Input text to be hashed
+text = "password123"
+
+# Generate SHA-256 hash of the input text
+hashed_text = hashlib.sha256(text.encode()).hexdigest()
+
+# Print the hashed result
+print("Hashed text:", hashed_text)
