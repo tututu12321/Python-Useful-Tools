@@ -1,0 +1,93 @@
+import numpy as np
+from sklearn.linear_model import LinearRegression, LogisticRegression, Lasso, Ridge, ElasticNet
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.svm import SVC
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+from xgboost import XGBClassifier
+from lightgbm import LGBMClassifier
+from catboost import CatBoostClassifier
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# データ生成（分類タスク用）
+X, y = make_classification(n_samples=200, n_features=10, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# 線形回帰（回帰問題として例示）
+linear_model = LinearRegression().fit(X_train, y_train)
+linear_predictions = linear_model.predict(X_test)
+
+# ロジスティック回帰
+logistic_model = LogisticRegression().fit(X_train, y_train)
+logistic_predictions = logistic_model.predict(X_test)
+
+# 決定木
+tree_model = DecisionTreeClassifier().fit(X_train, y_train)
+tree_predictions = tree_model.predict(X_test)
+
+# ランダムフォレスト
+forest_model = RandomForestClassifier().fit(X_train, y_train)
+forest_predictions = forest_model.predict(X_test)
+
+# サポートベクターマシン
+svm_model = SVC(probability=True).fit(X_train, y_train)
+svm_predictions = svm_model.predict(X_test)
+
+# 主成分分析（PCA）
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X)
+
+# k平均法
+kmeans = KMeans(n_clusters=3, random_state=42).fit(X)
+kmeans_labels = kmeans.labels_
+
+# XGBoost
+xgb_model = XGBClassifier(use_label_encoder=False, eval_metric='logloss').fit(X_train, y_train)
+xgb_predictions = xgb_model.predict(X_test)
+
+# LASSO回帰
+lasso_model = Lasso().fit(X_train, y_train)
+lasso_predictions = lasso_model.predict(X_test)
+
+# リッジ回帰
+ridge_model = Ridge().fit(X_train, y_train)
+ridge_predictions = ridge_model.predict(X_test)
+
+# Elastic Net
+elastic_net_model = ElasticNet().fit(X_train, y_train)
+elastic_net_predictions = elastic_net_model.predict(X_test)
+
+# AdaBoost
+adaboost_model = AdaBoostClassifier().fit(X_train, y_train)
+adaboost_predictions = adaboost_model.predict(X_test)
+
+# グラディエントブースティング
+gb_model = GradientBoostingClassifier().fit(X_train, y_train)
+gb_predictions = gb_model.predict(X_test)
+
+# LightGBM
+lgbm_model = LGBMClassifier().fit(X_train, y_train)
+lgbm_predictions = lgbm_model.predict(X_test)
+
+# CatBoost
+catboost_model = CatBoostClassifier(verbose=0).fit(X_train, y_train)
+catboost_predictions = catboost_model.predict(X_test)
+
+# 精度の出力
+models = {
+    "Logistic Regression": logistic_predictions,
+    "Decision Tree": tree_predictions,
+    "Random Forest": forest_predictions,
+    "SVM": svm_predictions,
+    "XGBoost": xgb_predictions,
+    "AdaBoost": adaboost_predictions,
+    "Gradient Boosting": gb_predictions,
+    "LightGBM": lgbm_predictions,
+    "CatBoost": catboost_predictions
+}
+
+for model_name, predictions in models.items():
+    print(f"{model_name} Accuracy: {accuracy_score(y_test, predictions):.2f}")
