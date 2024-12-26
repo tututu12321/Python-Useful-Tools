@@ -1,0 +1,61 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import essentia.standard as es
+
+# ダミーデータ（サイン波を生成）
+def generate_dummy_audio(frequency=440, duration=2.0, sample_rate=44100):
+    """
+    サイン波音声データを生成する関数
+    frequency: 周波数 (Hz)
+    duration: 長さ (秒)
+    sample_rate: サンプリングレート (Hz)
+    """
+    t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
+    audio = 0.5 * np.sin(2 * np.pi * frequency * t)  # 振幅0.5のサイン波
+    return audio, sample_rate
+
+# サイン波を生成
+audio, sample_rate = generate_dummy_audio()
+
+# BPM解析
+def analyze_bpm(audio, sample_rate):
+    rhythm_extractor = es.RhythmExtractor2013(method="multifeature")
+    bpm, _, _, _, _ = rhythm_extractor(audio)
+    return bpm
+
+# ピッチ解析
+def analyze_pitch(audio, sample_rate):
+    pitch_extractor = es.PitchYin()
+    pitch, _ = pitch_extractor(audio)
+    return pitch
+
+# スペクトル特徴量解析
+def analyze_spectral_features(audio, sample_rate):
+    window = es.Windowing(type="hann")
+    spectrum = es.Spectrum()
+    spectral_centroid = es.Centroid(range=sample_rate // 2)
+
+    frame_features = []
+    for frame in es.FrameGenerator(audio, frameSize=1024, hopSize=512, startFromZero=True):
+        frame_spectrum = spectrum(window(frame))
+        centroid = spectral_centroid(frame_spectrum)
+        frame_features.append(centroid)
+    return frame_features
+
+# 解析結果を取得
+bpm = analyze_bpm(audio, sample_rate)
+pitch = analyze_pitch(audio, sample_rate)
+spectral_features = analyze_spectral_features(audio, sample_rate)
+
+# 結果を出力
+print(f"Estimated BPM: {bpm:.2f}")
+print(f"Estimated Pitch (Hz): {pitch:.2f}")
+
+# スペクトル特徴量をプロット
+plt.figure(figsize=(12, 6))
+plt.plot(spectral_features, label="Spectral Centroid")
+plt.title("Spectral Features (Centroid)")
+plt.xlabel("Frame Index")
+plt.ylabel("Spectral Centroid")
+plt.legend()
+plt.show()
