@@ -1,0 +1,93 @@
+import numpy as np
+from numpy.linalg import det, inv, eig, svd, qr, solve
+from scipy.linalg import lu
+
+# Chapter 1: ベクトルと行列の基礎
+# 1.1 ベクトルの演算
+def vector_operations():
+    v1 = np.array([1, 2, 3])
+    v2 = np.array([4, 5, 6])
+    print("ベクトルの和:", v1 + v2)
+    print("ベクトルの差:", v1 - v2)
+    print("内積:", np.dot(v1, v2))
+
+# 1.2 行列の基本演算
+def matrix_operations():
+    A = np.array([[1, 2], [3, 4]])
+    B = np.array([[5, 6], [7, 8]])
+    print("行列の和:", A + B)
+    print("行列の積:", np.dot(A, B))
+    print("転置:", A.T)
+
+# 1.4 転置、逆行列、行列式
+def matrix_properties():
+    A = np.array([[1, 2], [3, 4]])
+    print("逆行列:", inv(A))
+    print("行列式:", det(A))
+
+# Chapter 2: 行列の応用
+# 2.1 連立方程式の行列表現
+def solve_linear_equations():
+    A = np.array([[2, 1], [1, -1]])
+    b = np.array([3, 0])
+    x = solve(A, b)
+    print("解:", x)
+
+# 2.2 ガウス消去法 (LU分解を使用)
+def gaussian_elimination():
+    A = np.array([[3, 1, 6], [2, 1, 5], [1, 1, 4]])
+    P, L, U = lu(A)
+    print("P行列:", P)
+    print("L行列:", L)
+    print("U行列:", U)
+
+# Chapter 4: 固有値と固有ベクトル
+# 4.1 固有値と固有ベクトル
+def eigen_properties():
+    A = np.array([[2, -1], [-1, 2]])
+    values, vectors = eig(A)
+    print("固有値:", values)
+    print("固有ベクトル:", vectors)
+
+# Chapter 7: 特異値分解 (SVD)
+def singular_value_decomposition():
+    A = np.array([[1, 2], [3, 4], [5, 6]])
+    U, S, VT = svd(A)
+    print("U:", U)
+    print("特異値:", S)
+    print("V^T:", VT)
+
+# Chapter 8: 行列の数値計算
+# 8.1 LU分解
+def lu_decomposition():
+    A = np.array([[4, 3], [6, 3]])
+    P, L, U = lu(A)
+    print("L:", L)
+    print("U:", U)
+
+# 8.2 QR分解
+def qr_decomposition():
+    A = np.array([[6, 5], [5, 1]])
+    Q, R = qr(A)
+    print("Q:", Q)
+    print("R:", R)
+
+if __name__ == "__main__":
+    print("### ベクトルと行列の演算 ###")
+    vector_operations()
+    matrix_operations()
+    matrix_properties()
+    
+    print("\n### 行列の応用 ###")
+    solve_linear_equations()
+    gaussian_elimination()
+    
+    print("\n### 固有値と固有ベクトル ###")
+    eigen_properties()
+
+    print("\n### 特異値分解 ###")
+    singular_value_decomposition()
+
+    print("\n### 数値計算 ###")
+    lu_decomposition()
+    qr_decomposition()
