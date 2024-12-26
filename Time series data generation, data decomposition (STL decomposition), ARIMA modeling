@@ -1,0 +1,51 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.tsa.arima.model import ARIMA
+from sklearn.metrics import mean_squared_error
+from datetime import timedelta
+
+# **1. サンプルデータ生成**
+np.random.seed(42)  # 再現性のためのシード
+date_range = pd.date_range(start="2023-01-01", periods=730, freq='D')  # 2年分のデータ
+data = 50 + np.sin(np.linspace(0, 4 * np.pi, 730)) * 10 + np.random.normal(0, 2, 730)
+df = pd.DataFrame({'Date': date_range, 'Value': data})
+df.set_index('Date', inplace=True)
+
+# **2. データ分解 (STL分解)**
+result = seasonal_decompose(df['Value'], model='additive', period=365)  # 1年周期
+
+# STL分解のプロット
+plt.figure(figsize=(10, 8))
+result.plot()
+plt.suptitle("STL Decomposition", fontsize=16)
+plt.tight_layout()
+plt.show()
+
+# **3. ARIMA モデリング**
+# データを訓練セットとテストセットに分割
+train, test = df['Value'][:600], df['Value'][600:]
+
+# ARIMAモデルの適用
+model = ARIMA(train, order=(5, 1, 2))  # パラメータは適宜調整
+model_fit = model.fit()
+
+# テストデータに対する予測
+forecast = model_fit.forecast(steps=len(test))
+forecast_index = test.index
+
+# **4. 結果のプロット**
+plt.figure(figsize=(10, 6))
+plt.plot(train, label='Train Data')
+plt.plot(test, label='Test Data')
+plt.plot(forecast_index, forecast, label='Forecast', color='red')
+plt.title("ARIMA Forecast")
+plt.xlabel("Date")
+plt.ylabel("Value")
+plt.legend()
+plt.show()
+
+# **5. モデルの評価**
+mse = mean_squared_error(test, forecast)
+print(f"Mean Squared Error (MSE): {mse:.2f}")
