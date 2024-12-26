@@ -1,0 +1,115 @@
+# 数値と演算
+x = 10
+y = 3
+print("加算:", x + y)
+print("減算:", x - y)
+print("乗算:", x * y)
+print("除算:", x / y)
+print("整数除算:", x // y)
+print("剰余:", x % y)
+print("べき乗:", x ** y)
+
+# 変数と出力
+name = "Alice"
+age = 25
+print(f"名前: {name}, 年齢: {age}")
+
+# 文字列
+greeting = "Hello, Python!"
+print(greeting)
+print("文字列の長さ:", len(greeting))
+print("インデックス:", greeting[0], greeting[-1])
+print("スライス:", greeting[0:5])
+
+# 文字列のメソッド
+print("大文字:", greeting.upper())
+print("小文字:", greeting.lower())
+print("置換:", greeting.replace("Python", "World"))
+
+# bool値と比較演算子
+a, b = 5, 10
+print("a > b:", a > b)
+print("a < b:", a < b)
+print("a == b:", a == b)
+
+# データ型とキャスト
+num_str = "123"
+num = int(num_str)
+print("型変換:", num, type(num))
+
+# None
+empty = None
+print("None:", empty)
+
+# 条件分岐
+value = 7
+if value > 5:
+    print("5より大きい")
+elif value == 5:
+    print("ちょうど5")
+else:
+    print("5より小さい")
+
+# ループ処理
+for i in range(5):
+    print("forループ:", i)
+
+count = 0
+while count < 3:
+    print("whileループ:", count)
+    count += 1
+
+# データ構造（リスト、タプル、辞書）
+my_list = [1, 2, 3, 4, 5]
+print("リスト:", my_list)
+print("リスト内包表記:", [x**2 for x in my_list])
+
+my_tuple = (10, 20, 30)
+print("タプル:", my_tuple)
+
+my_dict = {"name": "Bob", "age": 30}
+print("辞書:", my_dict)
+print("辞書の値:", my_dict["name"])
+
+# 関数
+def greet(name):
+    return f"Hello, {name}!"
+
+print(greet("Alice"))
+
+# 無名関数（lambda）
+square = lambda x: x**2
+print("無名関数:", square(4))
+
+# 例外処理
+try:
+    result = 10 / 0
+except ZeroDivisionError:
+    print("ゼロで割ることはできません")
+
+# クラス
+class Animal:
+    def __init__(self, name):
+        self.name = name
+
+    def speak(self):
+        return f"{self.name}が鳴く"
+
+class Dog(Animal):
+    def speak(self):
+        return f"{self.name}がワンワンと鳴く"
+
+dog = Dog("ポチ")
+print(dog.speak())
+
+# ライブラリの使用
+import math
+print("円周率:", math.pi)
+print("平方根:", math.sqrt(16))
+
+# ライブラリのインストールが必要な例
+# 以下をインストール: pip install numpy
+import numpy as np
+array = np.array([1, 2, 3, 4, 5])
+print("NumPy配列:", array)
+print("配列の平均:", np.mean(array))
