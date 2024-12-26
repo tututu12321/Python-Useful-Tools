@@ -1,0 +1,60 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+from surprise import SVD, Dataset, Reader
+from surprise.model_selection import train_test_split as surprise_train_test_split
+from surprise.accuracy import rmse
+
+# サンプルデータ: 評価データ (読者評価予測用)
+ratings_data = {
+    "user_id": [1, 1, 1, 2, 2, 3, 3, 3],
+    "book_id": [101, 102, 103, 101, 103, 101, 102, 103],
+    "rating": [5, 4, 3, 5, 4, 4, 3, 5]
+}
+ratings_df = pd.DataFrame(ratings_data)
+
+# サンプルデータ: 作品特徴量と文学的価値スコア (文学的価値の評価用)
+book_features_data = {
+    "book_id": [101, 102, 103],
+    "num_pages": [300, 250, 400],
+    "avg_sentence_length": [15.2, 13.5, 16.8],
+    "vocabulary_richness": [0.85, 0.8, 0.9],
+    "literary_value_score": [8.5, 7.0, 9.0]  # 目的変数
+}
+book_features_df = pd.DataFrame(book_features_data)
+
+# --- 読者評価予測 (協調フィルタリング) ---
+# Surprise用データ準備
+reader = Reader(rating_scale=(1, 5))
+data = Dataset.load_from_df(ratings_df[["user_id", "book_id", "rating"]], reader)
+trainset, testset = surprise_train_test_split(data, test_size=0.25, random_state=42)
+
+# SVDモデルで予測
+svd_model = SVD()
+svd_model.fit(trainset)
+predictions = svd_model.test(testset)
+
+# RMSEでモデル精度を評価
+print(f"Collaborative Filtering (SVD) RMSE: {rmse(predictions):.2f}")
+
+# --- 文学的価値の評価 (回帰モデル) ---
+# 特徴量と目的変数の分割
+X = book_features_df[["num_pages", "avg_sentence_length", "vocabulary_richness"]]
+y = book_features_df["literary_value_score"]
+
+# データ分割
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# 線形回帰モデルの訓練
+reg_model = LinearRegression().fit(X_train, y_train)
+
+# 予測と評価
+y_pred = reg_model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+print(f"Literary Value Regression MSE: {mse:.2f}")
+
+# 予測結果表示
+for i, pred in enumerate(y_pred):
+    print(f"Predicted Literary Value for Book {X_test.index[i]}: {pred:.2f}")
