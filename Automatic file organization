@@ -1,0 +1,41 @@
+
+import os
+import shutil
+
+def organize_files_by_extension(source_folder):
+    """
+    Organize files in the source folder into subfolders based on their extensions.
+    
+    Parameters:
+        source_folder (str): Path to the folder containing files to organize.
+    """
+    if not os.path.exists(source_folder):
+        print(f"The folder '{source_folder}' does not exist.")
+        return
+
+    # Iterate over files in the source folder
+    for file in os.listdir(source_folder):
+        file_path = os.path.join(source_folder, file)
+        
+        # Skip directories
+        if os.path.isdir(file_path):
+            continue
+
+        # Get file extension (e.g., .txt, .jpg)
+        file_extension = os.path.splitext(file)[1][1:]  # Remove the dot (.)
+        if not file_extension:
+            file_extension = "No_Extension"  # For files without extensions
+        
+        # Create a folder for the extension if it doesn't exist
+        extension_folder = os.path.join(source_folder, file_extension)
+        if not os.path.exists(extension_folder):
+            os.makedirs(extension_folder)
+
+        # Move the file into the corresponding folder
+        shutil.move(file_path, os.path.join(extension_folder, file))
+
+    print("Files organized successfully!")
+
+# Example usage
+source_folder = "C:/path/to/your/folder"  # Replace with your folder path
+organize_files_by_extension(source_folder)
