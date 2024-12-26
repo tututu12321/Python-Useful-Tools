@@ -1,0 +1,89 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.cluster import KMeans
+
+# **5.1 PCA and SVD**
+def perform_pca(data, n_components):
+    pca = PCA(n_components=n_components)
+    transformed_data = pca.fit_transform(data)
+    print("Explained Variance Ratio:", pca.explained_variance_ratio_)
+    return transformed_data
+
+# **5.2 Normal Equation for Linear Regression**
+def linear_regression_normal_equation(X, y):
+    X = np.c_[np.ones(X.shape[0]), X]  # Add bias term
+    theta = np.linalg.inv(X.T @ X) @ X.T @ y
+    return theta
+
+# **5.3 High-Dimensional Distance Calculation**
+def calculate_distances(data):
+    distances = np.linalg.norm(data[:, np.newaxis] - data, axis=2)
+    return distances
+
+# **5.4 Cosine Similarity and Clustering**
+def cosine_similarity_and_clustering(data, n_clusters):
+    similarity = cosine_similarity(data)
+    print("Cosine Similarity Matrix:\n", similarity)
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+    labels = kmeans.fit_predict(data)
+    return labels
+
+# **6.1 Vector Field Visualization**
+def plot_vector_field(X, Y, U, V):
+    plt.figure(figsize=(8, 6))
+    plt.quiver(X, Y, U, V, angles='xy', scale_units='xy', scale=1)
+    plt.title("Vector Field")
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    plt.grid()
+    plt.show()
+
+# **6.2 Gradient Field Visualization**
+def plot_gradient_field():
+    x = np.linspace(-10, 10, 20)
+    y = np.linspace(-10, 10, 20)
+    X, Y = np.meshgrid(x, y)
+    Z = X**2 + Y**2
+    U, V = np.gradient(Z)
+    plot_vector_field(X, Y, -U, -V)
+
+# **6.3 Flow Field Simulation**
+def plot_flow_field():
+    x = np.linspace(-2, 2, 10)
+    y = np.linspace(-2, 2, 10)
+    X, Y = np.meshgrid(x, y)
+    U = -Y  # Example flow
+    V = X
+    plot_vector_field(X, Y, U, V)
+
+# **Example Data for Demonstration**
+data = np.random.rand(100, 3)  # Random data for PCA, clustering
+
+# 5.1 PCA
+transformed_data = perform_pca(data, n_components=2)
+
+# 5.2 Linear Regression using Normal Equation
+X = np.random.rand(100, 2)
+y = 3 * X[:, 0] + 5 * X[:, 1] + np.random.randn(100)
+theta = linear_regression_normal_equation(X, y)
+print("Theta (Regression Coefficients):", theta)
+
+# 5.3 Distance Calculation
+distances = calculate_distances(data)
+print("Distance Matrix:\n", distances)
+
+# 5.4 Cosine Similarity and Clustering
+labels = cosine_similarity_and_clustering(data, n_clusters=3)
+print("Cluster Labels:", labels)
+
+# 6.1 Vector Field Visualization
+plot_vector_field(np.array([0, 1]), np.array([0, 1]), np.array([1, 0]), np.array([0, 1]))
+
+# 6.2 Gradient Field Visualization
+plot_gradient_field()
+
+# 6.3 Flow Field Simulation
+plot_flow_field()
