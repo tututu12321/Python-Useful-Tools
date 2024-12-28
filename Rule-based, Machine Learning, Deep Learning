@@ -1,0 +1,67 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+# 1. ルールベースシステム（エキスパートシステム）
+def disease_diagnosis(symptoms):
+    rules = {
+        "fever and cough": "Cold",
+        "fever and rash": "Measles",
+        "headache and fatigue": "Migraine",
+        "cough and shortness of breath": "Pneumonia"
+    }
+    
+    for condition, disease in rules.items():
+        if all(symptom in symptoms for symptom in condition.split(" and ")):
+            return f"The diagnosis is: {disease}"
+    
+    return "Diagnosis unclear, further tests required."
+
+# 症状のリスト
+symptoms = ["fever", "cough"]
+print("Rule-based System Result:", disease_diagnosis(symptoms))
+
+# 2. 機械学習（線形回帰）
+# 線形回帰モデルの訓練（簡単な例：気温とアイスクリームの売り上げ）
+X = np.array([[30], [40], [50], [60], [70]])  # 気温（度）
+y = np.array([15, 20, 25, 30, 35])  # アイスクリームの売上
+
+# モデルの作成
+model = LinearRegression()
+model.fit(X, y)
+
+# 新しいデータに対する予測
+new_temperature = np.array([[80]])
+predicted_sales = model.predict(new_temperature)
+print(f"Predicted ice cream sales at 80°C: {predicted_sales[0]}")
+
+# 3. 深層学習（ニューラルネットワーク）
+# データセットの読み込み（手書き数字データセット）
+digits = load_digits()
+X = digits.data
+y = digits.target
+
+# データの分割（訓練データとテストデータ）
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# モデルの構築（シンプルなニューラルネットワーク）
+model = Sequential([
+    Dense(64, activation='relu', input_shape=(64,)),
+    Dense(32, activation='relu'),
+    Dense(10, activation='softmax')  # 10クラス（数字0-9）
+])
+
+# モデルのコンパイル
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+# モデルの訓練
+model.fit(X_train, y_train, epochs=5, batch_size=32)
+
+# テストデータで評価
+test_loss, test_acc = model.evaluate(X_test, y_test)
+print(f"Test accuracy: {test_acc}")
