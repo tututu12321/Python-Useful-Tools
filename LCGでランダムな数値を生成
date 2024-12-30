@@ -1,0 +1,33 @@
+import random
+
+# LCGのパラメータ設定
+a = 1664525  # 乗数
+c = 1013904223  # 加算定数
+m = 2**32  # モジュロ
+
+# 初期シード
+seed = random.randint(0, m-1)
+
+# LCGを用いた擬似乱数生成器
+def lcg(seed, a, c, m, n):
+    numbers = []
+    current = seed
+    for _ in range(n):
+        current = (a * current + c) % m
+        numbers.append(current)
+    return numbers
+
+# ポケモンのデータ
+pokemon_names = ['Pikachu', 'Bulbasaur', 'Charmander', 'Squirtle', 'Jigglypuff']
+types = ['Electric', 'Grass', 'Fire', 'Water', 'Fairy']
+
+# LCGでランダムな数値を生成
+random_numbers = lcg(seed, a, c, m, 10)  # 10個の乱数を生成
+
+# ポケモンをランダムに生成
+for i in range(5):  # 5匹のポケモンを生成
+    name_index = random_numbers[i] % len(pokemon_names)
+    type_index = random_numbers[i+5] % len(types)
+    level = (random_numbers[i] % 100) + 1  # レベルは1〜100
+
+    print(f"Pokemon #{i+1}: {pokemon_names[name_index]} ({types[type_index]}) - Level {level}")
