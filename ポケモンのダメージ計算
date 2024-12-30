@@ -1,0 +1,42 @@
+# 直線の傾きと「じしん」の点（威力100）の計算とプロットを追加
+
+# ダメージ計算の関数
+def calculate_damage(power, level, A, D, STAB, type_effectiveness, random_factor):
+    damage = ((level * 2 / 5 + 2) * power * A / D) / 50 + 2
+    final_damage = damage * STAB * type_effectiveness * random_factor
+    return final_damage
+
+# ダメージの計算
+damages = [calculate_damage(power, level, A, D, STAB, type_effectiveness, random_factor) for power in power_range]
+
+# 直線の傾きを手動で計算
+slope = (calculate_damage(power_range[1], level, A, D, STAB, type_effectiveness, random_factor) - 
+         calculate_damage(power_range[0], level, A, D, STAB, type_effectiveness, random_factor)) / (power_range[1] - power_range[0])
+
+# 「じしん」(威力100)のダメージを追加
+damage_at_100 = calculate_damage(100, level, A, D, STAB, type_effectiveness, random_factor)
+
+# プロット
+fig, ax1 = plt.subplots()
+
+# ダメージをプロット
+ax1.plot(power_range, damages, label="Final Damage", color='blue')
+ax1.set_xlabel("Power of Earthquake")
+ax1.set_ylabel("Final Damage", color='blue')
+ax1.tick_params(axis='y', labelcolor='blue')
+
+# 傾きをプロット（一定値）
+ax2 = ax1.twinx()
+ax2.plot(power_range, [slope] * len(power_range), label="Slope of Damage", color='red', linestyle='--')
+ax2.set_ylabel("Slope of Damage", color='red')
+ax2.tick_params(axis='y', labelcolor='red')
+
+# 「じしん」の点を追加（威力100のとき）
+ax1.plot(100, damage_at_100, 'go', label="Damage at Power 100")
+
+# グラフのタイトルと表示
+plt.title("Garchomp vs Garchomp Damage and Constant Slope with Earthquake at Power 100")
+fig.tight_layout()
+plt.grid(True)
+plt.legend(loc='upper left')
+plt.show()
