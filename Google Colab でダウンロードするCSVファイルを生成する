@@ -1,0 +1,40 @@
+import numpy as np
+import csv
+from google.colab import files
+import matplotlib.pyplot as plt
+
+# サイン波を生成する関数
+def generate_sine_wave(frequency, duration, sample_rate):
+    t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)  # 時間軸
+    wave = np.sin(2 * np.pi * frequency * t)  # サイン波生成
+    return t, wave
+
+# サイン波のパラメータ
+frequency = 440  # 周波数（Hz）
+duration = 2     # 波形の長さ（秒）
+sample_rate = 44100  # サンプルレート（Hz）
+
+# サイン波の生成
+t, wave = generate_sine_wave(frequency, duration, sample_rate)
+
+# CSVファイルに保存
+filename = "/content/sine_wave.csv"
+with open(filename, mode='w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(["Time (s)", "Amplitude"])  # ヘッダー行
+    for time, amplitude in zip(t, wave):
+        writer.writerow([time, amplitude])
+
+print(f"サイン波のデータを'{filename}'として保存しました。")
+
+# Google Colab でファイルをダウンロード
+files.download(filename)
+
+# サイン波をプロット
+plt.figure(figsize=(10, 4))
+plt.plot(t, wave)
+plt.title("Sine Wave (440 Hz)")
+plt.xlabel("Time (s)")
+plt.ylabel("Amplitude")
+plt.grid(True)
+plt.show()
