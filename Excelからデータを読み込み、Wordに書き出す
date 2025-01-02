@@ -1,0 +1,26 @@
+import openpyxl
+from docx import Document
+
+# Excelファイルの読み込み
+excel_file = "example.xlsx"
+wb = openpyxl.load_workbook(excel_file)
+
+# 1つ目のシートを選択
+sheet = wb.active
+
+# Wordドキュメントを作成
+doc = Document()
+doc.add_heading('ExcelデータをWordに書き出す', 0)
+
+# Excelシートからデータを取得し、Wordに書き出す
+for row in sheet.iter_rows(min_row=1, max_col=2, values_only=True):
+    # 行ごとのデータをWordに追加
+    name, age = row
+    doc.add_paragraph(f"名前: {name}, 年齢: {age}")
+
+# Wordファイルを保存
+word_file = "output.docx"
+doc.save(word_file)
+
+# 終了メッセージ
+print(f"ExcelデータがWordファイル {word_file} に書き出されました。")
