@@ -1,0 +1,38 @@
+# Integer (整数)
+integer_value = 42
+print(f"Integer: {integer_value}, Type: {type(integer_value)}")
+
+# String (文字列)
+string_value = "Hello, Python!"
+print(f"String: '{string_value}', Type: {type(string_value)}")
+
+# Boolean (真偽)
+true_value = True
+false_value = False
+print(f"Boolean True: {true_value}, Type: {type(true_value)}")
+print(f"Boolean False: {false_value}, Type: {type(false_value)}")
+
+# Floating-point (浮動小数点)
+float_value = 3.14159
+print(f"Floating-point: {float_value}, Type: {type(float_value)}")
+
+# Conversion between types
+# Integer to String
+integer_to_string = str(integer_value)
+print(f"Integer to String: {integer_to_string}, Type: {type(integer_to_string)}")
+
+# String to Integer (with valid string that represents a number)
+string_to_integer = int("123")
+print(f"String to Integer: {string_to_integer}, Type: {type(string_to_integer)}")
+
+# Floating-point to Integer (using int(), which truncates the decimal part)
+float_to_integer = int(float_value)
+print(f"Floating-point to Integer: {float_to_integer}, Type: {type(float_to_integer)}")
+
+# String to Boolean (it will return False if the string is empty, otherwise True)
+string_to_boolean = bool("Non-empty string")
+print(f"String to Boolean: {string_to_boolean}, Type: {type(string_to_boolean)}")
+
+# Integer to Boolean (0 is False, anything else is True)
+integer_to_boolean = bool(integer_value)
+print(f"Integer to Boolean: {integer_to_boolean}, Type: {type(integer_to_boolean)}")
