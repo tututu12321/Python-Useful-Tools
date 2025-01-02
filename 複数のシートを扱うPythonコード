@@ -1,0 +1,43 @@
+import openpyxl
+
+# 新しいExcelワークブックを作成
+wb = openpyxl.Workbook()
+
+# 1つ目のシートにデータを追加
+sheet1 = wb.active
+sheet1.title = "Sheet1"
+sheet1["A1"] = "名前"
+sheet1["B1"] = "年齢"
+sheet1["A2"] = "Tetsurou"
+sheet1["B2"] = 30
+
+# 2つ目のシートを作成
+sheet2 = wb.create_sheet("Sheet2")
+sheet2["A1"] = "名前"
+sheet2["B1"] = "年齢"
+sheet2["A2"] = "Leia"
+sheet2["B2"] = 25
+
+# 3つ目のシートを作成
+sheet3 = wb.create_sheet("Sheet3")
+sheet3["A1"] = "名前"
+sheet3["B1"] = "年齢"
+sheet3["A2"] = "Kani"
+sheet3["B2"] = 35
+
+# Excelファイルを保存
+wb.save("multiple_sheets.xlsx")
+
+# 既存のExcelファイルを読み込む
+wb = openpyxl.load_workbook("multiple_sheets.xlsx")
+
+# 各シートを順番に読み取り、表示
+for sheet in wb.sheetnames:
+    print(f"シート名: {sheet}")
+    current_sheet = wb[sheet]
+    for row in current_sheet.iter_rows(values_only=True):
+        print(row)
+    print("-" * 20)
+
+# Excelファイルを閉じる
+wb.close()
