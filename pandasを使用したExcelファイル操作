@@ -1,0 +1,20 @@
+import pandas as pd
+
+# データフレームを作成
+data = {
+    "名前": ["Tetsurou", "Leia", "Kani"],
+    "年齢": [30, 25, 35]
+}
+df = pd.DataFrame(data)
+
+# Excelファイルに保存
+df.to_excel("example_pandas.xlsx", index=False)
+
+# Excelファイルを読み込む
+df_loaded = pd.read_excel("example_pandas.xlsx")
+
+# 読み込んだデータを表示
+print(df_loaded)
+
+# 特定の列を取り出して表示
+print(df_loaded["名前"])
