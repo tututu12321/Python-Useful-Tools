@@ -1,0 +1,47 @@
+# Pythonコードでメールのテンプレートを出力
+
+# メール内容の構成
+email_subject = "【資料送付のご案内】マーケティング戦略について"
+email_recipient = "株式会社〇〇\n営業部　山田 太郎 様"
+email_body = """
+山田様
+
+お世話になっております。
+株式会社XYZ マーケティング部の田中 一郎と申します。
+
+先日のオンラインミーティングにてご相談いただきました、〇〇プロジェクトのマーケティング戦略に関する資料をご準備いたしましたので、添付にてお送りいたします。
+
+以下に資料の内容について簡単にご説明いたします。
+
+【資料概要】
+
+市場動向の最新データ
+競合他社の分析結果
+提案するマーケティング戦略の詳細
+
+【添付ファイル】
+
+市場動向レポート.pdf
+戦略提案書.pdf
+
+資料をご確認いただき、ご不明点や追加のご要望がございましたら、どうぞお気軽にお知らせください。
+次回の打ち合わせは1月10日（木）10:00を予定しておりますが、調整が必要な場合はご連絡いただけますと幸いです。
+
+今後とも何卒よろしくお願い申し上げます。
+"""
+
+email_signature = """
+田中 一郎
+株式会社XYZ マーケティング部
+電話: 03-1234-5678
+メール: ichiro.tanaka@xyz.co.jp
+"""
+
+# メールのフォーマット
+def format_email(subject, recipient, body, signature):
+    email = f"件名:\n{subject}\n\n宛先:\n{recipient}\n\n本文:\n{body}\n\n署名:\n{signature}"
+    return email
+
+# フォーマットされたメールを表示
+formatted_email = format_email(email_subject, email_recipient, email_body, email_signature)
+print(formatted_email)
