@@ -1,0 +1,73 @@
+import time
+import random
+
+# ルール説明
+def display_rules():
+    print("【ルール】")
+    print("1. 以下の文章をランダムに順番に表示します。")
+    print("2. 表示された文章ごとに、1 または 0 を入力してください。")
+    print("   - 1: 再度表示したい場合")
+    print("   - 0: 再表示しない場合")
+    print("   - 入力がない場合、自動的に 0 が設定されます。")
+    print("3. 全ての文章が表示された後、1 を入力した文章だけが再表示されます。")
+    print("4. 各文章の表示間隔は X=0.5 秒です。\n")
+
+# 文章リスト
+sentences = [
+    "地球温暖化を専門に研究している",
+    "野球大会で実力を発揮する",
+    "複雑な問題に取り組む",
+    "今期の学級委員を務める",
+    "国民には税金を納める義務がある",
+    "釣り人は水面にゆっくりと糸を垂らす",
+    "朝の日差しを浴びて学校に行く",
+    "友人宅の留守を預かる"
+]
+
+# 表示間隔（秒）
+X = 0.5
+
+# メイン処理
+def main():
+    display_rules()  # ルール表示
+
+    # ユーザー入力の記録
+    selected = []
+
+    # リストをランダムにシャッフル
+    random.shuffle(sentences)
+
+    # 文章を順番に表示し、入力を受け付ける
+    for sentence in sentences:
+        print(sentence)  # 文章を表示
+        start_time = time.time()
+        user_input = None
+
+        # 入力待機ループ（X秒間）
+        while time.time() - start_time < X:
+            user_input = input("1 または 0 を入力してください（デフォルトは 0）: ")
+            if user_input in ["1", "0"]:
+                break
+
+        # デフォルトは 0
+        if user_input is None or user_input == "":
+            user_input = "0"
+
+        # 入力が 1 の場合、文章を記録
+        if user_input == "1":
+            selected.append(sentence)
+
+        # 残りの待機時間を調整して X 秒間隔を維持
+        elapsed_time = time.time() - start_time
+        if elapsed_time < X:
+            time.sleep(X - elapsed_time)
+
+    # 全文章の表示終了後、再度1が入力された文章を表示
+    print("\n再度表示する文章:")
+    for sentence in selected:
+        print(sentence)
+
+# 実行
+if __name__ == "__main__":
+    main()
+1
