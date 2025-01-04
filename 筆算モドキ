@@ -1,0 +1,21 @@
+def multiplication_penmanship_3digit(a, b):
+    # 3桁×3桁掛け算の筆算表示
+    str_a = str(a)
+    str_b = str(b)
+    result = a * b
+    
+    print(f"Multiplication Penmanship of {a} × {b}:")
+    print(f"  {str_a}")
+    print(f"× {str_b}")
+    print("-" * (len(str_a) + len(str_b)))
+    
+    for i in range(len(str_b)-1, -1, -1):
+        partial = int(str_a) * int(str_b[i])
+        print(f"  {str_a} × {str_b[i]} = {partial}")
+    
+    print("-" * (len(str_a) + len(str_b)))
+    print(f"  {result}")
+    print(f"Result: {a} × {b} = {result}")
+    
+# 例: 123×456の掛け算筆算
+multiplication_penmanship_3digit(123, 456)
