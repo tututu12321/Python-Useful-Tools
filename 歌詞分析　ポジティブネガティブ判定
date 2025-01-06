@@ -1,0 +1,26 @@
+from transformers import pipeline
+
+# 日本語テキスト
+text = [
+    "きっと世界の終わりもこんな風に 味気ない感じなんだろうな あのバンドの新譜と牛乳を買いに 部屋をでたけれど",
+    "5分前に出会ったふたりも 今じゃベッドでささやきあって くだらないTV消してはじまりのおわりの はじまりのおわりの話をする",
+    "すごい速さで夏は過ぎたが baby ラララララララ熱が胸に騒ぐ",
+    "そのセンチメンタルはいつか お前の身を滅ぼすのかもしれないよ 感傷中毒の患者禁断症状 映画館へ走る",
+    "でもなんかやれそうな気がする なんかやらなきゃって思う だってなんかやらなきゃできるさ どうしようもないこのからだ何処へ行くのか"
+]
+
+# 感情分析用のpipelineを準備（日本語対応のモデルを利用）
+sentiment_analyzer = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
+
+# 各文について感情分析を実行
+results = []
+for sentence in text:
+    result = sentiment_analyzer(sentence)
+    # "1 star" -> "negative", "5 stars" -> "positive"
+    sentiment = "positive" if result[0]['label'] in ['5 stars', '4 stars'] else "negative"
+    results.append((sentence, sentiment, result[0]['score']))
+
+# 結果の表示
+for sentence, sentiment, score in results:
+    print(f"Sentence: {sentence}")
+    print(f"Sentiment: {sentiment}, Score: {score}\n")
