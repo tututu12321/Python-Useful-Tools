@@ -1,0 +1,16 @@
+
+# トピックのリストを定義
+topics = [
+    "自然言語処理のための機械学習",
+    "テキスト分類 (Text Classification)",
+    "コーパス分析 (Corpus Analysis)",
+    "固有表現抽出 (Named Entity Recognition, NER)",
+    "単語埋め込み（word embedding）",
+    "感情分類 (Emotion Classification)",
+    "音声認識 (Speech Recognition)",
+    "マルチモーダルなChatGPTとTransformerアーキテクチャ (Multimodal ChatGPT and Transformer Architecture)"
+]
+
+# 各トピックを出力
+for topic in topics:
+    print(topic)
