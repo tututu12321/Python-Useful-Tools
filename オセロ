@@ -1,0 +1,147 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.patches import Circle
+
+# 初期盤面の設定
+def initialize_board():
+    board = np.zeros((8, 8), dtype=int)  # 0: 空白, 1: 黒, 2: 白
+    board[3, 3] = board[4, 4] = 2  # 白
+    board[3, 4] = board[4, 3] = 1  # 黒
+    return board
+
+# 盤面を描画する関数
+def draw_board(board, valid_moves):
+    fig, ax = plt.subplots(figsize=(6, 6))
+    ax.set_xlim(-0.5, 7.5)
+    ax.set_ylim(-0.5, 7.5)
+    ax.set_xticks(np.arange(0, 8, 1))  # 主な目盛りを設定
+    ax.set_yticks(np.arange(0, 8, 1))
+    ax.set_xticks(np.arange(-0.5, 8.5, 1), minor=True)  # 小目盛りを追加
+    ax.set_yticks(np.arange(-0.5, 8.5, 1), minor=True)
+    ax.grid(which='minor', color='black', linestyle='-', linewidth=1)
+    ax.tick_params(which='both', left=False, bottom=False, labelleft=True, labelbottom=True)
+    
+    # 軸ラベルを追加
+    ax.set_xlabel("Column ", fontsize=12)
+    ax.set_ylabel("Row ", fontsize=12)
+    
+    # 行と列の番号を表示
+    for i in range(8):
+        ax.text(-0.8, 7 - i, str(i), va='center', ha='center', fontsize=10)  # 行番号
+        ax.text(i, 8, str(i), va='center', ha='center', fontsize=10)  # 列番号
+    
+    # 石を配置
+    for i in range(8):
+        for j in range(8):
+            if board[i, j] == 1:  # 黒
+                ax.add_patch(Circle((j, 7 - i), 0.4, color='black'))
+            elif board[i, j] == 2:  # 白
+                ax.add_patch(Circle((j, 7 - i), 0.4, color='white', ec='black'))
+    
+    # 有効な手を表示
+    for move in valid_moves:
+        x, y = move
+        ax.text(y, 7 - x, '*', color='red', ha='center', va='center', fontsize=20)
+    
+    plt.show()
+
+# 挟んだ石を裏返す関数
+def flip_stones(board, x, y, player):
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+    opponent = 3 - player  # 相手の色
+    flipped = []
+
+    for dx, dy in directions:
+        temp = []
+        nx, ny = x + dx, y + dy
+        while 0 <= nx < 8 and 0 <= ny < 8 and board[nx, ny] == opponent:
+            temp.append((nx, ny))
+            nx += dx
+            ny += dy
+        if 0 <= nx < 8 and 0 <= ny < 8 and board[nx, ny] == player:
+            flipped.extend(temp)
+
+    for fx, fy in flipped:
+        board[fx, fy] = player
+    return flipped
+
+# 有効な手を取得
+def get_valid_moves(board, player):
+    valid_moves = []
+    for x in range(8):
+        for y in range(8):
+            if board[x, y] == 0 and len(flip_stones(np.copy(board), x, y, player)) > 0:
+                valid_moves.append((x, y))
+    return valid_moves
+
+# 有効な手かどうかをチェック
+def is_valid_move(board, x, y, player):
+    return (x, y) in get_valid_moves(board, player)
+
+# プレイヤーの手を実行
+def make_move(board, x, y, player):
+    if not is_valid_move(board, x, y, player):
+        print("Invalid move!")
+        return False
+    board[x, y] = player
+    flip_stones(board, x, y, player)
+    return True
+
+# ゲームルールを表示
+def print_rules():
+    print("=== オセロのルール ===")
+    print("1. プレイヤーは交互に石を置きます。")
+    print("2. 石を置くとき、相手の石を自分の石で挟む必要があります。")
+    print("3. 挟んだ石はすべて自分の色に変わります。")
+    print("4. 置ける場所がない場合はパスになります。")
+    print("5. 全てのマスが埋まるか、両プレイヤーがパスした時点で終了です。")
+    print("=====================")
+
+# メインゲームループ
+def main():
+    board = initialize_board()
+    current_player = 1  # 黒が先手
+    print_rules()
+    
+    while True:
+        valid_moves = get_valid_moves(board, current_player)
+        if not valid_moves:
+            print(f"Player {current_player} has no valid moves. Passing turn.")
+            current_player = 3 - current_player
+            if not get_valid_moves(board, current_player):  # 両プレイヤーがパス
+                break
+            continue
+
+        draw_board(board, valid_moves)
+        print(f"Player {current_player}'s turn. Valid moves: {valid_moves}")
+        
+        # 行番号と列番号を個別に入力
+        try:
+            x = int(input("Enter row number (0-7): "))  # 行番号入力
+            y = int(input("Enter column number (0-7): "))  # 列番号入力
+            if not (0 <= x < 8 and 0 <= y < 8):
+                raise ValueError
+        except ValueError:
+            print("Invalid input. Please enter numbers between 0 and 7.")
+            continue
+
+        if make_move(board, x, y, current_player):
+            current_player = 3 - current_player  # プレイヤー交代
+        else:
+            print("Invalid move. Try again.")
+    
+    # ゲーム終了
+    draw_board(board, [])
+    black_count = np.sum(board == 1)
+    white_count = np.sum(board == 2)
+    print(f"Game Over! Black: {black_count}, White: {white_count}")
+    if black_count > white_count:
+        print("Black wins!")
+    elif white_count > black_count:
+        print("White wins!")
+    else:
+        print("It's a draw!")
+
+# ゲームを開始
+if __name__ == "__main__":
+    main()
