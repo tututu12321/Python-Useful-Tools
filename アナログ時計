@@ -1,0 +1,94 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+
+# グローバル変数で時刻を保持
+hour = 0
+minute = 0
+second = 0
+
+# 時刻を設定する関数
+def set_time(h, m, s):
+    """
+    時刻を設定する関数。
+    h: 時間 (0〜23の整数)
+    m: 分 (0〜59の整数)
+    s: 秒 (0〜59の整数)
+    """
+    global hour, minute, second
+    hour = h % 12  # 時間は0〜11に変換
+    minute = m % 60  # 分は0〜59に変換
+    second = s % 60  # 秒は0〜59に変換
+
+# 時刻から角度を計算する関数（極座標）
+def calculate_angle(unit, value):
+    """
+    単位円での角度を計算。
+    unit: 周期（例: 60秒なら60, 12時間なら12）
+    value: 現在の値
+    """
+    return np.radians(90 - (360 / unit) * value)
+
+# アニメーション更新関数
+def update(frame):
+    """
+    時計の針を滑らかに更新する関数。
+    """
+    global hour, minute, second
+
+    # 秒の進行（フレーム間隔で滑らかに更新）
+    second += 1 / 100  # フレーム間隔100msで進行
+    if second >= 60:
+        second -= 60
+        minute += 1
+        if minute >= 60:
+            minute -= 60
+            hour = (hour + 1) % 12
+
+    # 各針の角度を計算
+    second_angle = calculate_angle(60, second)
+    minute_angle = calculate_angle(60, minute + second / 60)  # 秒の影響を考慮
+    hour_angle = calculate_angle(12, hour + minute / 60)  # 分の影響を考慮
+
+    # 秒針の座標
+    second_hand.set_data([0, np.cos(second_angle)], [0, np.sin(second_angle)])
+    # 分針の座標
+    minute_hand.set_data([0, 0.8 * np.cos(minute_angle)], [0, 0.8 * np.sin(minute_angle)])
+    # 時針の座標
+    hour_hand.set_data([0, 0.5 * np.cos(hour_angle)], [0, 0.5 * np.sin(hour_angle)])
+
+    # タイトルに現在の時刻を表示
+    ax.set_title(f"Set Time: {int(hour):02}:{int(minute):02}:{int(second):02}", fontsize=14)
+
+    return second_hand, minute_hand, hour_hand
+
+# プロット設定
+fig, ax = plt.subplots(figsize=(6, 6))
+ax.set_xlim(-1.2, 1.2)
+ax.set_ylim(-1.2, 1.2)
+ax.set_aspect('equal', adjustable='box')
+ax.axis("off")
+
+# 時計の枠と目盛り
+circle = plt.Circle((0, 0), 1, color="black", fill=False)
+ax.add_artist(circle)
+for i in range(12):
+    angle = calculate_angle(12, i)
+    x = 0.9 * np.cos(angle)
+    y = 0.9 * np.sin(angle)
+    ax.text(x, y, str(i if i != 0 else 12), ha='center', va='center', fontsize=12)
+
+# 針の初期化
+second_hand, = ax.plot([], [], color="red", linewidth=1, label="Second hand")
+minute_hand, = ax.plot([], [], color="blue", linewidth=3, label="Minute hand")
+hour_hand, = ax.plot([], [], color="black", linewidth=5, label="Hour hand")
+
+# ユーザーが時刻を設定
+set_time(1, 11, 21)  # 時刻を1:11:21に設定
+
+# アニメーション設定
+ani = FuncAnimation(fig, update, frames=np.arange(0, 600), interval=10, blit=True)
+
+# プロット表示
+plt.legend()
+plt.show()
