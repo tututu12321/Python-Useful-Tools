@@ -1,0 +1,57 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+def draw_shogi_board():
+    # Board size for shogi (9x9)
+    board_size = 9
+
+    # Create the figure and axes
+    fig, ax = plt.subplots(figsize=(6, 6))
+    ax.set_xlim(-0.5, board_size - 0.5)
+    ax.set_ylim(-0.5, board_size - 0.5)
+
+    # Draw grid lines
+    for i in range(board_size + 1):
+        ax.axhline(i - 0.5, color="black", linewidth=1)
+        ax.axvline(i - 0.5, color="black", linewidth=1)
+
+    # Add row and column labels
+    for i in range(board_size):
+        ax.text(-1, board_size - i - 1, str(i + 1), ha='center', va='center', fontsize=10)  # Row numbers (1-9)
+        ax.text(i, board_size, chr(97 + i).upper(), ha='center', va='center', fontsize=10)  # Column letters (A-I)
+
+    # Initial placement of pieces (English notation)
+    pieces = [
+        ('K', 0, 4),  # King
+        ('G', 0, 3), ('G', 0, 5),  # Gold Generals
+        ('S', 0, 2), ('S', 0, 6),  # Silver Generals
+        ('N', 0, 1), ('N', 0, 7),  # Knights
+        ('L', 0, 0), ('L', 0, 8),  # Lances
+        ('R', 1, 1),  # Rook
+        ('B', 1, 7),  # Bishop
+        ('P', 2, 0), ('P', 2, 1), ('P', 2, 2), ('P', 2, 3), ('P', 2, 4), ('P', 2, 5), ('P', 2, 6), ('P', 2, 7), ('P', 2, 8),  # Pawns
+        ('k', 8, 4),  # Opponent King
+        ('g', 8, 3), ('g', 8, 5),  # Opponent Gold Generals
+        ('s', 8, 2), ('s', 8, 6),  # Opponent Silver Generals
+        ('n', 8, 1), ('n', 8, 7),  # Opponent Knights
+        ('l', 8, 0), ('l', 8, 8),  # Opponent Lances
+        ('r', 7, 7),  # Opponent Rook
+        ('b', 7, 1),  # Opponent Bishop
+        ('p', 6, 0), ('p', 6, 1), ('p', 6, 2), ('p', 6, 3), ('p', 6, 4), ('p', 6, 5), ('p', 6, 6), ('p', 6, 7), ('p', 6, 8),  # Opponent Pawns
+    ]
+
+    # Draw the pieces
+    for piece, row, col in pieces:
+        ax.text(col, board_size - row - 1, piece, ha='center', va='center', fontsize=12, color="black")
+
+    # Add axis labels
+    ax.set_xlabel("Columns (A-I)", fontsize=12)
+    ax.set_ylabel("Rows (1-9)", fontsize=12)
+
+    # Hide axes
+    ax.axis("off")
+    plt.title("Shogi Board with Initial Setup", fontsize=14)
+    plt.show()
+
+# Draw the shogi board
+draw_shogi_board()
