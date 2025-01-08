@@ -1,0 +1,81 @@
+# Install necessary libraries
+!pip install pandas scikit-learn matplotlib seaborn
+
+# Import required libraries
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the Titanic dataset
+url = 'https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv'
+df = pd.read_csv(url)
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Data Preprocessing
+# Fill missing values
+df['Age'].fillna(df['Age'].mean(), inplace=True)  # Fill missing Age with mean
+df['Embarked'].fillna(df['Embarked'].mode()[0], inplace=True)  # Fill missing Embarked with the most frequent value
+df['Fare'].fillna(df['Fare'].median(), inplace=True)  # Fill missing Fare with median
+
+# Drop unnecessary columns
+df.drop(['Name', 'Ticket', 'Cabin'], axis=1, inplace=True)
+
+# Convert 'Sex' column to numerical values (0 for male, 1 for female)
+df['Sex'] = df['Sex'].map({'male': 0, 'female': 1})
+
+# Convert 'Embarked' column to dummy variables
+df = pd.get_dummies(df, columns=['Embarked'], drop_first=True)
+
+# Separate features and target variable
+X = df.drop('Survived', axis=1)  # Drop 'Survived' column to get features
+y = df['Survived']  # Target variable is 'Survived'
+
+# Split data into training and test sets (80% train, 20% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Standardize the features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Logistic Regression Model
+log_reg_model = LogisticRegression()
+log_reg_model.fit(X_train_scaled, y_train)
+y_pred_log_reg = log_reg_model.predict(X_test_scaled)
+
+# Random Forest Model
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train_scaled, y_train)
+y_pred_rf = rf_model.predict(X_test_scaled)
+
+# Support Vector Machine Model
+svm_model = SVC(kernel='linear', random_state=42)
+svm_model.fit(X_train_scaled, y_train)
+y_pred_svm = svm_model.predict(X_test_scaled)
+
+# Evaluate Models
+def evaluate_model(y_test, y_pred, model_name):
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"{model_name} Accuracy: {accuracy*100:.2f}%")
+    cm = confusion_matrix(y_test, y_pred)
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['Died', 'Survived'], yticklabels=['Died', 'Survived'])
+    plt.title(f"{model_name} - Confusion Matrix")
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.show()
+    print(f"{model_name} Classification Report:")
+    print(classification_report(y_test, y_pred))
+
+# Evaluate all models
+evaluate_model(y_test, y_pred_log_reg, "Logistic Regression")
+evaluate_model(y_test, y_pred_rf, "Random Forest")
+evaluate_model(y_test, y_pred_svm, "Support Vector Machine")
