@@ -1,0 +1,22 @@
+# パラメータを設定
+number = 5  # 例として5の階乗を計算
+
+# 階乗を計算する関数
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        result = 1
+        # 計算過程を表示
+        print(f"{n}! の計算過程:")
+        for i in range(1, n + 1):
+            result *= i
+            if i == 1:
+                print(f"{i}", end="")
+            else:
+                print(f" × {i}", end="")
+        return result
+
+# 階乗を計算
+result = factorial(number)
+print(f" = {result}")
