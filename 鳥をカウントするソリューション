@@ -72,10 +72,44 @@ if bird_count > 0:
         img_cv = cv2.rectangle(img_cv, start_point, end_point, color, thickness)
         # 各四角の上にラベルを表示
         font = cv2.FONT_HERSHEY_SIMPLEX
-        img_cv = cv2.putText(img_cv, label, (start_point[0], start_point[1] - 10), font, 0.9, color, 2, cv2.LINE_AA)
+        img_cv = cv2.putText(img_cv, "Bird", (start_point[0], start_point[1] - 10), font, 0.9, color, 2, cv2.LINE_AA)
+
+# 画像をNumPy配列に変換し、RGB形式に変換
+img_rgb = cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB)
+
+# (0,0) (a,0) (0,b) (a,b) の四角形をプロット
+a = bird_count  # 鳥の数
+b = feet_per_bird  # 各鳥の足の数
+
+# 新しいグラフを作成して四角形を描画
+plt.figure(figsize=(6, 6))
+
+# 横軸の色を赤
+plt.plot([0, a], [0, 0], color='red')  # (0, 0) to (a, 0)
+# 縦軸の色を緑
+plt.plot([0, 0], [0, b], color='green')  # (0, 0) to (0, b)
+plt.plot([a, a], [0, b], color='green')  # (a, 0) to (a, b)
+plt.plot([0, a], [b, b], color='red')  # (0, b) to (a, b)
+
+# Fill the area of the rectangle with color (light blue)
+plt.fill([0, a, a, 0], [0, 0, b, b], color='lightblue', alpha=0.5)
+
+# 四角形の面積を計算
+area = a * b
+print(f"Area of the rectangle: {area} square units")
+
+# 軸の設定
+plt.xlim(-1, a + 1)
+plt.ylim(-1, b + 1)
+plt.xlabel("Birds (number)")  # 横軸ラベル（単位：鳥）
+plt.ylabel("Feet per bird (count)")  # 縦軸ラベル（単位：足）
+plt.title(f"Bird feet counting interview solution\nArea: {area} square units")
+plt.gca().set_aspect('equal', adjustable='box')  # アスペクト比を固定
+
+# グラフを表示
+plt.show()
 
 # 画像を表示
-img_rgb = cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB)
 plt.imshow(img_rgb)
-plt.title(f"Predicted: {decoded_predictions[0][1]} - Birds detected: {bird_count}")
+plt.title(f"Bird detection result - Detected birds: {bird_count}")
 plt.show()
