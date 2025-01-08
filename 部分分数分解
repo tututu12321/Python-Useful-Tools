@@ -1,0 +1,30 @@
+import sympy as sp
+
+# 部分分数分解を実行する関数
+def partial_fraction(expr, var):
+    """
+    部分分数分解を行う関数。
+    
+    Args:
+    expr: sympyの式
+    var: 分解の対象となる変数
+    
+    Returns:
+    部分分数分解された結果
+    """
+    return sp.apart(expr, var)
+
+# 使用例
+if __name__ == "__main__":
+    # 変数を定義
+    x = sp.symbols('x')
+    
+    # 分数式を定義
+    expr = (2 * x + 3) / ((x + 1) * (x - 2))
+    
+    # 部分分数分解
+    result = partial_fraction(expr, x)
+    
+    # 結果を表示
+    print(f"Original Expression: {expr}")
+    print(f"Partial Fraction Decomposition: {result}")
