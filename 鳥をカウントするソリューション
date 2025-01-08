@@ -1,0 +1,81 @@
+import tensorflow as tf
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications import ResNet50
+from tensorflow.keras.applications.resnet50 import preprocess_input, decode_predictions
+import numpy as np
+import matplotlib.pyplot as plt
+from google.colab import files
+import cv2
+
+# ResNet50モデルのロード (ImageNetで事前学習)
+model = ResNet50(weights='imagenet')
+
+# 画像のアップロード
+uploaded = files.upload()
+
+# アップロードされた画像のファイル名を取得
+img_path = list(uploaded.keys())[0]  # 最初にアップロードされたファイルを使う
+
+# 画像を読み込む
+img = image.load_img(img_path, target_size=(224, 224))
+
+# 画像をNumPy配列に変換
+img_array = image.img_to_array(img)
+
+# バッチの次元を追加 (1つの画像をバッチとして処理)
+img_array = np.expand_dims(img_array, axis=0)
+
+# ResNet50に適した前処理を実行
+img_array = preprocess_input(img_array)
+
+# 画像の予測
+predictions = model.predict(img_array)
+
+# 予測結果をデコード（最も確率の高い予測を取得）
+decoded_predictions = decode_predictions(predictions, top=3)[0]
+
+# 鳥に関連するラベル（画像認識結果から「鳥」を含むクラスをカウント）
+bird_labels = ['bird', 'cock', 'parrot', 'hen', 'seagull', 'ostrich', 'eagle', 'penguin', 'pelican']
+bird_count = 0
+
+# 鳥のラベルをチェックし、認識した鳥があれば鳥数を増加
+for i, (imagenet_id, label, score) in enumerate(decoded_predictions):
+    print(f"{i+1}: {label} ({score*100:.2f}%)")
+    if label.lower() in bird_labels:
+        bird_count += 1
+
+# 鳥の数を表示
+print(f"\nDetected birds: {bird_count}")
+
+# 1羽の鳥が2本の足を持っている場合、合計の足の数を計算
+feet_per_bird = 2
+total_feet = bird_count * feet_per_bird
+
+# 合計の足の数を表示
+print(f"Total feet: {total_feet}")
+
+# 画像をNumPy配列に変換し、BGR形式に変換
+img_cv = np.array(img)
+img_cv = cv2.cvtColor(img_cv, cv2.COLOR_RGB2BGR)
+
+# 鳥が検出された場合、鳥を囲む四角を描画
+if bird_count > 0:
+    label = decoded_predictions[0][1]  # ラベル取得
+    # 仮の座標を設定して鳥を囲む四角を描画（各鳥に対して別々に四角を描く）
+    for i in range(bird_count):
+        # 仮の四角の位置（仮の座標）
+        start_point = (50 + i * 20, 50 + i * 20)  # 位置を少しずつずらして描画
+        end_point = (175 + i * 20, 175 + i * 20)  # 同様に終了位置もずらす
+        color = (0, 255, 0)  # 緑色
+        thickness = 2  # 線の太さ
+        
+        img_cv = cv2.rectangle(img_cv, start_point, end_point, color, thickness)
+        # 各四角の上にラベルを表示
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        img_cv = cv2.putText(img_cv, label, (start_point[0], start_point[1] - 10), font, 0.9, color, 2, cv2.LINE_AA)
+
+# 画像を表示
+img_rgb = cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB)
+plt.imshow(img_rgb)
+plt.title(f"Predicted: {decoded_predictions[0][1]} - Birds detected: {bird_count}")
+plt.show()
