@@ -1,0 +1,25 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# サイコロを振るシミュレーション
+num_trials = 1000000
+dice_rolls = np.random.randint(1, 7, size=num_trials)  # サイコロの出目をランダムに生成
+
+# 出目の頻度を計算
+unique, counts = np.unique(dice_rolls, return_counts=True)
+probabilities = counts / num_trials  # 各目の確率
+
+# 結果の表示
+print("Dice roll probabilities:")
+for number, prob in zip(unique, probabilities):
+    print(f"Number {number}: {prob:.2%}")
+
+# プロット
+plt.figure(figsize=(8, 6))
+plt.bar(unique, probabilities, tick_label=unique, width=0.6, alpha=0.8)
+plt.title("Probability Distribution of Dice Rolls (1000 Trials)", fontsize=14)
+plt.xlabel("Dice Number", fontsize=12)
+plt.ylabel("Probability", fontsize=12)
+plt.ylim(0, 0.25)  # 確率の範囲は0〜1
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.show()
