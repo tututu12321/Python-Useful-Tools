@@ -1,0 +1,35 @@
+import random
+
+# 指定された指示をプリント
+instructions = """
+Create short English sentences using these words. No introduction is needed.
+Numbers before the sentences are not required.
+Arrange the sentences neatly in columns.
+After creating 10 sentences, leave one column blank and generate the next set.
+Do not use tables for display.
+There is no need to display (blank column).
+"""
+print(instructions)
+
+# 単語リスト
+words = [
+    "decide", "brochures", "answer", "difficult", "owner", "closed", "actually", 
+    "peace", "New York", "works", "believes", "cut", "built", "makes", "gate", 
+    "ability", "book", "international", "discuss", "diamond", "needed", "New Zealand", 
+    "London", "told", "reports", "cannot", "forward", "players", "deal", "course", 
+    "required", "avoid", "care", "costs", "discount", "construction", "directors", 
+    "interesting", "public", "showing", "trying", "women", "bicycle", "planning", 
+    "bring", "damage", "extremely", "young", "offices", "clean", "evening", "eat", 
+    "clear", "boat", "editorial", "American", "Asia", "bill", "contracts", "anyone", 
+    "reservation", "John", "carry", "baseball", "run", "color", "advantage", "address", 
+    "matter", "immediately", "suggests", "single", "ancient", "child", "thing", "table", 
+    "variety", "America", "unless", "wife", "close", "hear", "engine", "sale", "set", 
+    "books", "jim", "mind", "attend", "legal", "feet", "personal", "drop", "schedule", 
+    "save", "gone", "hardly", "ship", "systems", "doctor"
+]
+
+# 単語をランダムにシャッフル
+random.shuffle(words)
+
+# シャッフルされた単語を横に出力
+print(" ".join(words))
