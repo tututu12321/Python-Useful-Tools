@@ -1,0 +1,78 @@
+import math
+import numpy as np
+import matplotlib.pyplot as plt
+
+def calculate_damage(level, attack, defense, power):
+    """
+    ポケモンのダメージを計算する関数。
+    Args:
+        level (int): 攻撃側のレベル
+        attack (int): 攻撃側のこうげき（またはとくこう）
+        defense (int): 防御側のぼうぎょ（またはとくぼう）
+        power (int): 技の威力
+    Returns:
+        tuple: 最小ダメージ, 最大ダメージ
+    """
+    # 基準値の計算
+    base = math.floor(level * 2 / 5 + 2)
+    
+    # ステータス補正の計算
+    damage = math.floor(base * power * attack / defense / 50 + 2)
+    
+    # 最小・最大ダメージを計算
+    min_damage = math.floor(damage * 0.85)
+    max_damage = math.floor(damage * 1.00)
+    
+    return min_damage, max_damage
+
+# レベル、攻撃、防御を指定
+level = 50
+attack = 182
+defense = 189
+
+# 威力の範囲を指定（10から150まで）
+powers = range(10, 151, 10)
+
+# ダメージ範囲を計算
+min_damages = []
+max_damages = []
+
+for power in powers:
+    min_damage, max_damage = calculate_damage(level, attack, defense, power)
+    min_damages.append(min_damage)
+    max_damages.append(max_damage)
+
+# ストーンエッジ（威力100）の計算
+stone_edge_power = 100
+stone_edge_min, stone_edge_max = calculate_damage(level, attack, defense, stone_edge_power)
+
+# プロット
+plt.figure(figsize=(10, 6))
+plt.plot(powers, min_damages, label="Minimum Damage", linestyle="--", marker="o")
+plt.plot(powers, max_damages, label="Maximum Damage", linestyle="--", marker="o")
+
+# ストーンエッジのポイントを追加
+plt.scatter(
+    [stone_edge_power],
+    [stone_edge_min],
+    color="red",
+    label=f"Stone Edge Min Damage ({stone_edge_min})",
+    zorder=5
+)
+plt.scatter(
+    [stone_edge_power],
+    [stone_edge_max],
+    color="green",
+    label=f"Stone Edge Max Damage ({stone_edge_max})",
+    zorder=5
+)
+
+# ラベルとタイトル
+plt.title("Damage Range by Power (Level 50, Attack 182, Defense 189)", fontsize=14)
+plt.xlabel("Power of Move", fontsize=12)
+plt.ylabel("Damage", fontsize=12)
+
+# グリッドと凡例
+plt.grid(True)
+plt.legend()
+plt.show()
