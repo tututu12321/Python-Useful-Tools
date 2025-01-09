@@ -1,0 +1,47 @@
+import struct
+import numpy as np
+import time
+
+def fast_inverse_sqrt(number):
+    """高速逆平方根アルゴリズム"""
+    threehalfs = 1.5
+
+    # 数値をバイナリ形式の整数に変換
+    x2 = number * 0.5
+    y = number
+    packed_y = struct.pack('f', y)  # 32ビット浮動小数点をバイナリデータに変換
+    i = struct.unpack('I', packed_y)[0]  # バイナリデータを32ビット整数に変換
+
+    # ビット演算による初期近似値
+    i = 0x5f3759df - (i >> 1)
+    packed_i = struct.pack('I', i)  # バイナリデータに戻す
+    y = struct.unpack('f', packed_i)[0]  # 浮動小数点数に戻す
+
+    # ニュートン法による1回の反復
+    y = y * (threehalfs - (x2 * y * y))
+    
+    return y
+
+# 入力値
+test_values = np.linspace(0.1, 100, 1000000)  # 0.1 から 100 までの範囲
+
+# 高速逆平方根の計算
+start_fast = time.time()
+fast_results = np.array([fast_inverse_sqrt(x) for x in test_values])
+end_fast = time.time()
+
+# 通常の逆平方根の計算
+start_exact = time.time()
+exact_results = 1 / np.sqrt(test_values)
+end_exact = time.time()
+
+# 結果の比較
+error = np.abs(fast_results - exact_results)  # 誤差を計算
+max_error = np.max(error)  # 最大誤差
+mean_error = np.mean(error)  # 平均誤差
+
+# 結果を表示
+print(f"Fast Inverse Sqrt Time: {end_fast - start_fast:.6f} seconds")
+print(f"Exact Inverse Sqrt Time: {end_exact - start_exact:.6f} seconds")
+print(f"Maximum Error: {max_error:.6e}")
+print(f"Mean Error: {mean_error:.6e}")
