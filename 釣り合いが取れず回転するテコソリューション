@@ -1,0 +1,80 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from IPython.display import HTML
+
+# テコと重りのパラメータ
+lever_length = 5  # テコの全長 (m)
+fulcrum_pos = 0.5  # 支点の位置 (中央からの割合, 0.5 = 中央)
+mass_left = 10  # 左側の重りの質量 (kg)
+mass_right = 3  # 右側の重りの質量 (kg)
+rod_mass = 2  # テコ自体の質量 (kg)
+gravity = 9.8  # 重力加速度 (m/s^2)
+
+# 初期条件
+initial_angle = 0  # 初期角度 (ラジアン)
+angular_velocity = 0  # 初期角速度 (rad/s)
+
+# 剛体の慣性モーメント (テコと重り)
+lever_moment = rod_mass * (lever_length ** 2) / 12  # 一様な棒の慣性モーメント
+left_weight_moment = mass_left * (fulcrum_pos * lever_length) ** 2  # 左の重り
+right_weight_moment = mass_right * ((1 - fulcrum_pos) * lever_length) ** 2  # 右の重り
+total_moment = lever_moment + left_weight_moment + right_weight_moment  # 総慣性モーメント
+
+# 時間ステップ
+time_step = 0.05  # 時間刻み (秒)
+duration = 10  # アニメーションの時間 (秒)
+frames = int(duration / time_step)
+
+# トルク計算関数
+def calculate_torque(angle):
+    # 重力によるトルクを計算
+    left_torque = mass_left * gravity * (fulcrum_pos * lever_length) * np.cos(angle)
+    right_torque = mass_right * gravity * ((1 - fulcrum_pos) * lever_length) * np.cos(-angle)
+    return left_torque - right_torque
+
+# アニメーションデータ生成
+angles = []
+angle = initial_angle
+for _ in range(frames):
+    torque = calculate_torque(angle)
+    angular_acceleration = torque / total_moment  # 角加速度
+    angular_velocity += angular_acceleration * time_step
+    angle += angular_velocity * time_step
+    angles.append(angle)
+
+# アニメーションプロット設定
+fig, ax = plt.subplots(figsize=(8, 6))
+ax.set_xlim(-lever_length - 1, lever_length + 1)
+ax.set_ylim(-lever_length - 1, lever_length + 1)
+ax.set_aspect('equal')
+ax.grid()
+
+# プロット要素
+line, = ax.plot([], [], 'o-', lw=2, label="Lever")
+left_weight, = ax.plot([], [], 'bo', markersize=mass_left, label="Left Weight")  # 左重り
+right_weight, = ax.plot([], [], 'go', markersize=mass_right, label="Right Weight")  # 右重り
+fulcrum, = ax.plot([0], [0], 'ro', markersize=10, label="Fulcrum")  # 支点
+
+# 初期化関数
+def init():
+    line.set_data([], [])
+    left_weight.set_data([], [])
+    right_weight.set_data([], [])
+    return line, left_weight, right_weight, fulcrum
+
+# フレーム更新関数
+def update(frame):
+    angle = angles[frame]
+    x1 = -fulcrum_pos * lever_length * np.cos(angle)
+    y1 = -fulcrum_pos * lever_length * np.sin(angle)
+    x2 = (1 - fulcrum_pos) * lever_length * np.cos(angle)
+    y2 = (1 - fulcrum_pos) * lever_length * np.sin(angle)
+    line.set_data([x1, 0, x2], [y1, 0, y2])
+    left_weight.set_data([x1], [y1])
+    right_weight.set_data([x2], [y2])
+    return line, left_weight, right_weight, fulcrum
+
+# アニメーション作成と表示
+ani = FuncAnimation(fig, update, frames=frames, init_func=init, blit=True)
+HTML(ani.to_html5_video())
