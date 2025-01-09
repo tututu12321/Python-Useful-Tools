@@ -1,0 +1,63 @@
+def sar_adc(input_voltage, n_bits, v_ref):
+    """
+    SAR ADC（逐次比較型AD変換）を再現する関数
+    Args:
+        input_voltage (float): 被測定のアナログ信号電圧
+        n_bits (int): 分解能（ビット数）
+        v_ref (float): 参照電圧
+    Returns:
+        binary_result (list): デジタル出力のビット列（2進数表現）
+        decimal_result (int): デジタル出力の10進数表現
+        quantized_output (float): 量子化出力（アナログ値に戻した結果）
+    """
+    binary_result = []  # デジタル出力（2進数）
+    dac_output = 0      # DAC出力値（比較に使用）
+    
+    print(f"\nSARアルゴリズム開始 (入力電圧: {input_voltage} V, 参照電圧: {v_ref} V, 分解能: {n_bits}ビット)")
+    print("-" * 50)
+
+    # SARアルゴリズム
+    for i in range(n_bits):
+        bit_weight = v_ref / (2 ** (i + 1))  # 現在のビットの重み
+        dac_output += bit_weight  # 仮に現在のビットを1として加算
+        
+        if input_voltage >= dac_output:
+            binary_result.append(1)  # 比較結果がYES → ビットは1
+            print(f"ビット {i + 1}: 1 (入力電圧 {input_voltage:.2f} >= DAC出力 {dac_output:.2f})")
+        else:
+            binary_result.append(0)  # 比較結果がNO → ビットは0
+            dac_output -= bit_weight  # 加算を取り消す（元に戻す）
+            print(f"ビット {i + 1}: 0 (入力電圧 {input_voltage:.2f} < DAC出力 {dac_output + bit_weight:.2f})")
+
+        print(f"現在のDAC出力: {dac_output:.2f} V")
+    
+    print("-" * 50)
+
+    # デジタル出力を10進数に変換
+    decimal_result = sum([bit * (2 ** (n_bits - idx - 1)) for idx, bit in enumerate(binary_result)])
+    
+    # 量子化出力（デジタル値をアナログに戻す）
+    quantized_output = decimal_result * (v_ref / (2 ** n_bits))
+    
+    return binary_result, decimal_result, quantized_output
+
+
+# 動作確認
+if __name__ == "__main__":
+    # 入力値と設定
+    input_voltage = 100  # アナログ信号電圧
+    n_bits = 10          # 分解能（ビット数）
+    v_ref = 120          # 参照電圧（最大値）
+
+    # SAR ADCの実行
+    binary_result, decimal_result, quantized_output = sar_adc(input_voltage, n_bits, v_ref)
+    
+    # 結果表示
+    print(f"\n結果")
+    print("-" * 50)
+    print(f"入力電圧: {input_voltage} V")
+    print(f"参照電圧: {v_ref} V")
+    print(f"分解能: {n_bits} ビット")
+    print(f"デジタル出力 (2進数): {''.join(map(str, binary_result))}")
+    print(f"デジタル出力 (10進数): {decimal_result}")
+    print(f"量子化出力: {quantized_output:.2f} V")
