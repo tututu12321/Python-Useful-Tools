@@ -1,0 +1,64 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+# Parameters (パラメータ設定)
+a = 2  # x方向の頂点位置 (in meters)
+b = 3  # y方向の頂点位置 (in meters)
+F = 5  # z方向の力 (in Newtons)
+
+# Define vertices (四角形の頂点を定義)
+vertices = np.array([
+    [a, 0, 0],     # (a, 0, 0)
+    [-a, 0, 0],    # (-a, 0, 0)
+    [0, b, 0],     # (0, b, 0)
+    [0, -b, 0]     # (0, -b, 0)
+])
+
+# Create 3D plot (3次元プロットを作成)
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot vertices (頂点をプロット)
+ax.scatter(vertices[:, 0], vertices[:, 1], vertices[:, 2], color='red', label='Vertices')
+
+# Connect all points (全ての頂点を結ぶ)
+num_points = len(vertices)
+for i in range(num_points):
+    for j in range(i + 1, num_points):  # Avoid duplicate connections (重複を避ける)
+        ax.plot(
+            [vertices[i, 0], vertices[j, 0]],  # x座標
+            [vertices[i, 1], vertices[j, 1]],  # y座標
+            [vertices[i, 2], vertices[j, 2]],  # z座標
+            color='blue', linestyle='-', linewidth=1
+        )
+
+# Add vectors (ベクトルを追加)
+# Vector 1: (a,0,0) -> (a,0,-F)
+ax.quiver(
+    a, 0, 0,          # Start point (始点)
+    0, 0, -F,         # Vector components (x, y, z)
+    color='green', label='Vector (a,0,0) to (a,0,-F)', linewidth=2
+)
+
+# Vector 2: (-a,0,0) -> (-a,0,-F)
+ax.quiver(
+    -a, 0, 0,         # Start point (始点)
+    0, 0, -F,         # Vector components (x, y, z)
+    color='orange', label='Vector (-a,0,0) to (-a,0,-F)', linewidth=2
+)
+
+# Set labels and title (ラベルとタイトルを設定)
+ax.set_xlabel('X (m)')
+ax.set_ylabel('Y (m)')
+ax.set_zlabel('Z (m)')
+ax.set_title('3D Plot with All Points Connected and Vectors')
+
+# Set axis limits (軸の範囲を設定)
+ax.set_xlim([-a * 1.5, a * 1.5])
+ax.set_ylim([-b * 1.5, b * 1.5])
+ax.set_zlim([-F * 1.5, 1])
+
+# Show legend and plot (凡例を表示し、プロットを表示)
+ax.legend()
+plt.show()
