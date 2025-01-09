@@ -1,0 +1,62 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from IPython.display import HTML
+
+# パラメータ設定
+num_points = 100  # 波を構成する点の数
+wave_length = 20  # 波長 (m)
+wave_speed_p = 5  # P波の速度 (m/s)
+wave_speed_s = 3  # S波の速度 (m/s)
+amplitude = 1.0  # 波の振幅 (m)
+frames = 200  # アニメーションのフレーム数
+time_step = 0.05  # フレームごとの時間間隔 (s)
+
+# 空間の設定
+x = np.linspace(0, 100, num_points)  # 波が伝わる空間
+
+# 時間配列
+time = np.linspace(0, frames * time_step, frames)
+
+# P波とS波の計算
+def calculate_p_wave(x, t):
+    """P波の位置計算: 波の進行方向に平行な振動"""
+    return amplitude * np.sin(2 * np.pi * (x - wave_speed_p * t) / wave_length)
+
+def calculate_s_wave(x, t):
+    """S波の位置計算: 波の進行方向に垂直な振動"""
+    return amplitude * np.sin(2 * np.pi * (x - wave_speed_s * t) / wave_length)
+
+# アニメーションの設定
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.set_xlim(0, 100)
+ax.set_ylim(-1.5 * amplitude, 1.5 * amplitude)
+ax.set_title("P-wave and S-wave Simulation")
+ax.set_xlabel("Distance (m)")
+ax.set_ylabel("Amplitude (m)")
+
+# プロットの初期化
+line_p, = ax.plot([], [], label="P-wave", color="blue")
+line_s, = ax.plot([], [], label="S-wave", color="red")
+ax.legend()
+
+def init():
+    """初期化関数"""
+    line_p.set_data([], [])
+    line_s.set_data([], [])
+    return line_p, line_s
+
+def update(frame):
+    """フレーム更新関数"""
+    t = time[frame]
+    y_p = calculate_p_wave(x, t)  # P波の振動
+    y_s = calculate_s_wave(x, t)  # S波の振動
+    line_p.set_data(x, y_p)
+    line_s.set_data(x, y_s)
+    return line_p, line_s
+
+# アニメーション作成
+ani = FuncAnimation(fig, update, frames=frames, init_func=init, blit=True)
+
+# Google Colabでアニメーションを表示
+HTML(ani.to_html5_video())
