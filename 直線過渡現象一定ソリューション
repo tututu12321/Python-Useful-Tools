@@ -1,0 +1,47 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from autograd import grad
+import autograd.numpy as anp
+
+# 点の指定
+a, b = 2, 3  # 点 (a, b)
+c, d = 5, 5  # 点 (c, d)
+
+# 区間2: 上に凸な曲線 (a,b) から (c,d)
+# 曲線モデル: y = A * exp(-B * (x - a)) + C
+def convex_curve(x, A, B, C):
+    return A * anp.exp(-B * (x - a)) + C
+
+# パラメータ設定 (調整可能)
+A = b - d  # 曲線の最大値から最終値までの差
+B = 1.5    # 減衰速度 (大きいほど急激に落ちる)
+C = d      # 最終値に近づく
+
+x2 = anp.linspace(a, c, 100)
+y2 = convex_curve(x2, A, B, C)
+
+# 自動微分を用いて曲線の微分を計算
+def gradient_convex_curve(x):
+    grad_function = grad(lambda x: convex_curve(x, A, B, C))
+    return anp.array([grad_function(xi) for xi in x])
+
+y2_gradient = gradient_convex_curve(x2)
+
+# プロット
+plt.figure(figsize=(12, 8))
+
+# 曲線
+plt.plot(x2, y2, label="Convex Curve (a,b) to (c,d)", color="red")
+
+# 曲線の微分
+plt.plot(x2, y2_gradient, label="Gradient of Convex Curve", color="blue", linestyle="--")
+
+# グラフの設定
+plt.title("Convex Curve and Its Gradient")
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.axhline(0, color="black", linewidth=0.5, linestyle="--")
+plt.axvline(0, color="black", linewidth=0.5, linestyle="--")
+plt.legend()
+plt.grid()
+plt.show()
