@@ -1,0 +1,59 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Predefined values
+X = 2000  # Circumference of the pond (in meters)
+V = 2.5  # Child's average speed (in m/s)
+t = 6  # Time elapsed (in seconds)
+
+# Speed calculations
+speed_per_sec = V  # Speed in meters per second (m/s)
+speed_per_min = V * 60  # Speed in meters per minute (m/min)
+speed_per_hour = V * 3.6  # Speed in kilometers per hour (km/h)
+
+# Calculate radius
+R = X / (2 * np.pi)  # Radius of the circle
+theta = np.linspace(0, 2 * np.pi, 500)  # Angles for the circle
+x_circle = R * np.cos(theta)  # X-coordinates of the circle
+y_circle = R * np.sin(theta)  # Y-coordinates of the circle
+
+# Calculate points
+progressed_distance = V * t  # Distance covered
+distance_percentage = (progressed_distance / X) * 100  # Distance as a percentage of the total lap
+start = (0, 0)  # Start point
+progressed = (progressed_distance, 0)  # Point reached
+lap = (X, 0)  # One full lap
+
+# Display speed in different units
+print(f"Child's average speed:")
+print(f"  Speed per second: {speed_per_sec:.2f} m/s")
+print(f"  Speed per minute: {speed_per_min:.2f} m/min")
+print(f"  Speed per hour: {speed_per_hour:.2f} km/h")
+print(f"  Distance covered: {progressed_distance:.2f} m ({distance_percentage:.2f}% of one lap)")
+
+# Plotting
+fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+
+# Plot 1: Circle of the pond
+axs[0].plot(x_circle, y_circle, label=f'Circle (R = {R:.2f} m)')
+axs[0].set_title('Graph 1: Pond Circle')
+axs[0].set_xlabel('X-axis (m)')
+axs[0].set_ylabel('Y-axis (m)')
+axs[0].axis('equal')
+axs[0].grid()
+axs[0].legend()
+
+# Plot 2: Movement of the child
+axs[1].scatter(*start, color='blue', label='Start (0, 0)')
+axs[1].scatter(*progressed, color='green', label=f'Progressed ({progressed[0]:.2f} m, 0)')
+axs[1].scatter(*lap, color='red', label=f'1 Lap ({lap[0]:.2f} m, 0)')
+axs[1].plot([start[0], progressed[0]], [start[1], progressed[1]], color='green', linestyle='--')
+axs[1].plot([progressed[0], lap[0]], [progressed[1], lap[1]], color='red', linestyle='--')
+axs[1].set_title('Graph 2: Movement of the Child')
+axs[1].set_xlabel('X-axis (m)')
+axs[1].set_ylabel('Y-axis (m)')
+axs[1].grid()
+axs[1].legend()
+
+plt.tight_layout()
+plt.show()
