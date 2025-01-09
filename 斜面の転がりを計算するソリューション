@@ -1,0 +1,35 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 定数の設定
+m = 2.0  # 球の質量 (kg)
+R = 0.1  # 球の半径 (m)
+g = 9.8  # 重力加速度 (m/s^2)
+theta = np.radians(30)  # 斜面の角度 (30度)
+
+# 慣性モーメント (球の場合)
+I = (2 / 5) * m * R**2
+
+# 球の加速度
+a = g * np.sin(theta) * (1 / (1 + I / (m * R**2)))
+
+# 時間と距離の計算
+t = np.linspace(0, 5, 500)  # 時間 (0〜5秒, 500点)
+d = 0.5 * a * t**2  # 距離の計算 (初速度 v0 = 0)
+
+# 0.5秒ごとの値を計算して表示
+print("Time (s) | Distance (m)")
+print("-" * 20)
+for t_val in np.arange(0, 5.5, 0.5):  # 0.5秒ごとに計算
+    d_val = 0.5 * a * t_val**2
+    print(f"{t_val:8.2f} | {d_val:10.2f}")
+
+# プロット
+plt.figure(figsize=(8, 5))
+plt.plot(t, d, label=f'Sphere (m={m} kg, R={R} m, θ=30°)')
+plt.title('Distance of a Rolling Sphere on an Inclined Plane')
+plt.xlabel('Time (s)')
+plt.ylabel('Distance (m)')
+plt.grid()
+plt.legend()
+plt.show()
