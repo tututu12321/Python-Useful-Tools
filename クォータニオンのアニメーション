@@ -1,0 +1,65 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from mpl_toolkits.mplot3d import Axes3D
+from IPython.display import HTML
+
+# クォータニオンの回転を定義
+def quaternion_rotation(v, q):
+    """ベクトルvをクォータニオンqで回転"""
+    q_conj = np.array([q[0], -q[1], -q[2], -q[3]])  # クォータニオンの共役
+    v_as_quat = np.array([0, *v])  # ベクトルをクォータニオン形式に
+    rotated_v = quaternion_multiply(quaternion_multiply(q, v_as_quat), q_conj)
+    return rotated_v[1:]  # 回転後のベクトル
+
+def quaternion_multiply(q1, q2):
+    """クォータニオンの乗算"""
+    w1, x1, y1, z1 = q1
+    w2, x2, y2, z2 = q2
+    return np.array([
+        w1*w2 - x1*x2 - y1*y2 - z1*z2,
+        w1*x2 + x1*w2 + y1*z2 - z1*y2,
+        w1*y2 - x1*z2 + y1*w2 + z1*x2,
+        w1*z2 + x1*y2 - y1*x2 + z1*w2
+    ])
+
+# 初期パラメータ
+num_points = 50  # 表示する点の数
+sphere_radius = 1  # 球の半径
+rotation_speed = 0.1  # 回転速度 (ラジアン/フレーム)
+frames = 100  # アニメーションのフレーム数
+
+# 球上の点を生成
+phi = np.linspace(0, np.pi, num_points)
+theta = np.linspace(0, 2 * np.pi, num_points)
+phi, theta = np.meshgrid(phi, theta)
+x = sphere_radius * np.sin(phi) * np.cos(theta)
+y = sphere_radius * np.sin(phi) * np.sin(theta)
+z = sphere_radius * np.cos(phi)
+points = np.stack([x.ravel(), y.ravel(), z.ravel()], axis=1)
+
+# アニメーションの設定
+fig = plt.figure(figsize=(8, 8))
+ax = fig.add_subplot(111, projection='3d')
+ax.set_xlim([-1.5, 1.5])
+ax.set_ylim([-1.5, 1.5])
+ax.set_zlim([-1.5, 1.5])
+ax.set_box_aspect([1, 1, 1])
+scatter = ax.scatter(x, y, z, c='blue', s=10)
+
+# アニメーション関数
+def update(frame):
+    angle = frame * rotation_speed
+    q = np.array([np.cos(angle / 2), np.sin(angle / 2), 0, 0])  # X軸回りの回転クォータニオン
+    rotated_points = np.array([quaternion_rotation(p, q) for p in points])
+    scatter._offsets3d = (
+        rotated_points[:, 0],
+        rotated_points[:, 1],
+        rotated_points[:, 2]
+    )
+    return scatter,
+
+ani = FuncAnimation(fig, update, frames=frames, interval=50, blit=False)
+
+# Google Colabでアニメーションを表示
+HTML(ani.to_html5_video())
