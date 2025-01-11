@@ -1,0 +1,65 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 与えられたデータ (Given data)
+temperature = 27  # 温度（℃）(Temperature in Celsius)
+time = 5.33  # 音が進む時間（秒）(Time it takes for sound to travel in seconds)
+height = 500  # 花火から地面の高さ（メートル）(Height of the firework from the ground in meters)
+
+# ステップ1: 音速の計算 (Step 1: Calculate the speed of sound)
+# 音速の式 V = 331.5 + 0.6 * t (Speed of sound formula: V = 331.5 + 0.6 * temperature)
+speed_of_sound = 331.5 + 0.6 * temperature
+
+# ステップ2: 音が進んだ距離 X を計算 (Step 2: Calculate the distance X)
+# 音速と時間を掛け合わせて、音が進んだ距離を求める (Multiply speed of sound by time to calculate the distance)
+distance = speed_of_sound * time  # Distance from the firework to the observer in meters
+
+# ステップ3: 座標の計算 (Step 3: Calculate the coordinates)
+# 花火の座標は (√(X^2 - Y^2), Y) として計算 (Firework's coordinates are calculated as (sqrt(X^2 - Y^2), Y))
+x_coord = np.sqrt(distance**2 - height**2)  # X座標 (X coordinate)
+y_coord = height  # Y座標 (Y coordinate)
+
+# ステップ4: 極座標の計算 (Step 4: Calculate the polar coordinates)
+# 距離 r と角度 θ を計算 (Calculate the distance r and angle θ in polar coordinates)
+r = np.sqrt(x_coord**2 + y_coord**2)  # 距離 (Distance)
+theta = np.arctan2(y_coord, x_coord)  # 角度（ラジアン）(Angle in radians)
+
+# 結果の表示 (Display results in Japanese)
+print(f"音速 V = {speed_of_sound:.2f} m/s")  # 音速 (Speed of sound)
+print(f"音が進んだ距離 X = {distance:.2f} m")  # 音の進んだ距離 (Distance traveled by sound)
+print(f"花火から地面の高さ Y = {height} m")  # 花火の高さ (Height of the firework)
+print(f"花火の座標: ({x_coord:.2f}, {y_coord})")  # 花火の座標 (Firework coordinates)
+print(f"極座標: r = {r:.2f}, θ = {np.degrees(theta):.2f}°")  # 極座標 (Polar coordinates)
+
+# ステップ5: グラフの作成 (Step 5: Create the plot)
+plt.figure(figsize=(8, 8))
+
+# 原点(0, 0) から花火の座標(x, y)までの直線をプロット (Plot the line from (0, 0) to the firework's coordinates)
+# (0,0) is the observer's position (観測者の位置は原点 (0,0))
+plt.plot([0, x_coord], [0, y_coord], label="Path from (0, 0) to (x, y)", color="blue")
+
+# 観測者の位置 (0, 0) をプロット (Plot the observer's position at (0, 0) as the origin)
+plt.scatter(0, 0, color="green", label="Observer at (0, 0)")
+
+# 花火の位置を赤い点でプロット (Plot the firework's position as a red dot)
+plt.scatter(x_coord, y_coord, color="red", label=f"Firework at ({x_coord:.2f}, {y_coord})")
+
+# X軸とY軸を描画 (Draw X and Y axes)
+plt.axhline(0, color='black', linewidth=1)
+plt.axvline(0, color='black', linewidth=1)
+
+# 極座標を描画 (Draw the polar coordinate line)
+plt.polar([0, theta], [0, r], color='green', label="Polar Coordinate Path")
+
+# グラフの設定 (Set up the graph)
+plt.xlim(0, x_coord + 1000)  # Set the range for the X-axis (X軸の範囲)
+plt.ylim(0, y_coord + 100)   # Set the range for the Y-axis (Y軸の範囲)
+plt.gca().set_aspect('equal', adjustable='box')  # Set equal aspect ratio (アスペクト比を同じに設定)
+plt.title("Path from Firework to Observer and Polar Coordinates")  # Title (タイトル)
+plt.xlabel("X (meters)")  # X-axis label (X軸ラベル)
+plt.ylabel("Y (meters)")  # Y-axis label (Y軸ラベル)
+plt.legend()  # Display the legend (凡例を表示)
+plt.grid(True)  # Display the grid (グリッド表示)
+
+# グラフを表示 (Show the plot)
+plt.show()
