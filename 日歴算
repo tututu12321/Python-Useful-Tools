@@ -1,0 +1,39 @@
+from datetime import datetime, timedelta
+
+def calculate_weekday(base_date, base_weekday, days_offset):
+    """
+    基準となる日付と曜日から指定した日数だけ進んだまたは戻った曜日を計算します。
+    base_date: 基準となる日付 (datetime)
+    base_weekday: 基準日曜日の曜日番号 (0=月曜日, 1=火曜日, ..., 6=日曜日)
+    days_offset: 進むまたは戻る日数 (整数)
+    """
+    # 基準日と曜日を合わせるために、基準日から曜日番号を調整
+    weekday_diff = (base_date.weekday() - base_weekday) % 7
+    adjusted_base_date = base_date - timedelta(days=weekday_diff)
+
+    # 進むまたは戻る日数を加算
+    target_date = adjusted_base_date + timedelta(days=days_offset)
+    weekday = target_date.weekday()  # 0=月曜日, 1=火曜日, ..., 6=日曜日
+    return target_date.strftime('%Y-%m-%d'), weekday
+
+# 基準日を設定（例: 2025年1月1日）
+base_date = datetime(2025, 1, 1)
+
+# 基準曜日を設定（例: 木曜日を基準）
+base_weekday = 3  # 0=月曜日, 1=火曜日, ..., 6=日曜日
+
+# 未来の日数と過去の日数を設定
+days_offset_future = 1000  # 未来
+days_offset_past = -1000   # 過去
+
+# 未来と過去の日付計算
+target_date_future, weekday_future = calculate_weekday(base_date, base_weekday, days_offset_future)
+target_date_past, weekday_past = calculate_weekday(base_date, base_weekday, days_offset_past)
+
+# 曜日の名前をリストで定義
+weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+# 結果表示
+print(f"基準日: {base_date.strftime('%Y-%m-%d')}, 基準曜日: {weekdays[base_weekday]}")
+print(f"{days_offset_future}日後の日付: {target_date_future}, 曜日: {weekdays[weekday_future]}")
+print(f"{abs(days_offset_past)}日前の日付: {target_date_past}, 曜日: {weekdays[weekday_past]}")
