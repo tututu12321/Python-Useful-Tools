@@ -1,0 +1,54 @@
+# Constants
+F1 = 100  # Force F1 in grams (converted to Newtons)
+F2 = 200  # Force F2 in grams (converted to Newtons)
+distance = 0.1  # Distance in meters
+
+# Convert grams to Newtons (1 gram = 9.81e-3 Newtons)
+F1_N = F1 * 9.81e-3  # Convert F1 to Newtons
+F2_N = F2 * 9.81e-3  # Convert F2 to Newtons
+
+# Calculate X using the equation F1 * distance = X * F2
+X = (F1_N * distance) / F2_N  # Solve for X
+
+# Calculate F1 * distance
+F1_distance = F1_N * distance
+
+# Print the values to display the results
+print(f"Original Force F1 in grams: {F1}g")
+print(f"Original Force F2 in grams: {F2}g")
+print(f"Converted Force F1 in Newtons: {F1_N} N")
+print(f"Converted Force F2 in Newtons: {F2_N} N")
+print(f"F1 * distance = {F1_distance} N·m")
+print(f"X = {X} meters")
+
+# Create the plot for force vectors and points
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(8, 6))
+
+# Plotting the black lines (from (0,0) to (-distance, 0) and (0, 0) to (X, 0))
+ax.plot([0, -distance], [0, 0], 'ko-', label="Black line: (0, 0) to (-distance, 0)")
+ax.plot([0, X], [0, 0], 'ko-', label="Black line: (0, 0) to (X, 0)")
+
+# Plotting the blue vectors
+ax.quiver(-distance, 0, 0, -F1_N, angles='xy', scale_units='xy', scale=1, color="b", label="Blue vector: (-distance, 0) to (-distance, -F1)")
+ax.quiver(X, 0, 0, -F2_N, angles='xy', scale_units='xy', scale=1, color="b", label="Blue vector: (X, 0) to (X, -F2)")
+
+# Plot the point (0,0) for the pivot point
+ax.plot(0, 0, 'go', label="Pivot Point (0, 0)")
+
+# Add labels and title
+ax.set_xlabel('X position (meters)')
+ax.set_ylabel('Y position (meters)')
+ax.set_title('Force Vectors and Points Representation')
+
+# Set limits for better visibility with the new y-axis range
+ax.set_xlim(-0.15, 0.15)
+ax.set_ylim(-3, 0.5)  # Changed the y-axis range as requested
+
+# Add grid and legend
+ax.grid(True)
+ax.legend()
+
+# Show the plot
+plt.show()
