@@ -1,0 +1,38 @@
+import matplotlib.pyplot as plt
+
+# 各地点の座標
+points = {
+    "Origin": (0, 0),
+    "Restaurant (East)": (6, 0),
+    "Bakery (North)": (0, 3),
+    "Secondhand Store (West)": (-6, 0),
+    "Shoe Store (South)": (0, -2)
+}
+
+# プロット設定
+fig, ax = plt.subplots(figsize=(8, 8))
+
+# 各地点をプロット
+for place, (x, y) in points.items():
+    ax.scatter(x, y, label=place, color='blue')
+    ax.text(x, y, f' {place}', fontsize=12, ha='right' if x < 0 else 'left', va='top' if y < 0 else 'bottom')
+
+# 軸の設定
+ax.axhline(0, color='black',linewidth=1)
+ax.axvline(0, color='black',linewidth=1)
+ax.set_xlim(-7, 7)
+ax.set_ylim(-3, 4)
+
+# タイトルとラベル
+ax.set_title("Locations of Places", fontsize=15)
+ax.set_xlabel("East-West Direction (km)", fontsize=12)
+ax.set_ylabel("North-South Direction (km)", fontsize=12)
+
+# 凡例
+ax.legend()
+
+# グリッドを表示
+ax.grid(True)
+
+# プロットを表示
+plt.show()
