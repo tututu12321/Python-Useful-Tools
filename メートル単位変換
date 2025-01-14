@@ -1,0 +1,57 @@
+# さらに他の単位への変換を追加
+def convert_length_extended(length_m=None, length_km=None, length_cm=None, length_mm=None, length_inch=None, length_ft=None):
+    # メートル(m) -> キロメートル(km), センチメートル(cm), ミリメートル(mm), インチ(inch), フィート(ft) に変換
+    if length_m is not None:
+        length_km = length_m / 1000  # メートル(m) -> キロメートル(km)
+        length_cm = length_m * 100  # メートル(m) -> センチメートル(cm)
+        length_mm = length_m * 1000  # メートル(m) -> ミリメートル(mm)
+        length_inch = length_m * 39.3701  # メートル(m) -> インチ(inch)
+        length_ft = length_m * 3.28084  # メートル(m) -> フィート(ft)
+    
+    # キロメートル(km) -> メートル(m), センチメートル(cm), ミリメートル(mm), インチ(inch), フィート(ft) に変換
+    elif length_km is not None:
+        length_m = length_km * 1000  # キロメートル(km) -> メートル(m)
+        length_cm = length_km * 100000  # キロメートル(km) -> センチメートル(cm)
+        length_mm = length_km * 1000000  # キロメートル(km) -> ミリメートル(mm)
+        length_inch = length_km * 39370.1  # キロメートル(km) -> インチ(inch)
+        length_ft = length_km * 3280.84  # キロメートル(km) -> フィート(ft)
+    
+    # センチメートル(cm) -> メートル(m), キロメートル(km), ミリメートル(mm), インチ(inch), フィート(ft) に変換
+    elif length_cm is not None:
+        length_m = length_cm / 100  # センチメートル(cm) -> メートル(m)
+        length_km = length_cm / 100000  # センチメートル(cm) -> キロメートル(km)
+        length_mm = length_cm * 10  # センチメートル(cm) -> ミリメートル(mm)
+        length_inch = length_cm / 2.54  # センチメートル(cm) -> インチ(inch)
+        length_ft = length_cm / 30.48  # センチメートル(cm) -> フィート(ft)
+    
+    # ミリメートル(mm) -> メートル(m), キロメートル(km), センチメートル(cm), インチ(inch), フィート(ft) に変換
+    elif length_mm is not None:
+        length_m = length_mm / 1000  # ミリメートル(mm) -> メートル(m)
+        length_km = length_mm / 1000000  # ミリメートル(mm) -> キロメートル(km)
+        length_cm = length_mm / 10  # ミリメートル(mm) -> センチメートル(cm)
+        length_inch = length_mm / 25.4  # ミリメートル(mm) -> インチ(inch)
+        length_ft = length_mm / 304.8  # ミリメートル(mm) -> フィート(ft)
+    
+    # インチ(inch) -> メートル(m), キロメートル(km), センチメートル(cm), ミリメートル(mm), フィート(ft) に変換
+    elif length_inch is not None:
+        length_m = length_inch * 0.0254  # インチ(inch) -> メートル(m)
+        length_km = length_inch * 0.0000254  # インチ(inch) -> キロメートル(km)
+        length_cm = length_inch * 2.54  # インチ(inch) -> センチメートル(cm)
+        length_mm = length_inch * 25.4  # インチ(inch) -> ミリメートル(mm)
+        length_ft = length_inch / 12  # インチ(inch) -> フィート(ft)
+    
+    # フィート(ft) -> メートル(m), キロメートル(km), センチメートル(cm), ミリメートル(mm), インチ(inch) に変換
+    elif length_ft is not None:
+        length_m = length_ft * 0.3048  # フィート(ft) -> メートル(m)
+        length_km = length_ft * 0.0003048  # フィート(ft) -> キロメートル(km)
+        length_cm = length_ft * 30.48  # フィート(ft) -> センチメートル(cm)
+        length_mm = length_ft * 304.8  # フィート(ft) -> ミリメートル(mm)
+        length_inch = length_ft * 12  # フィート(ft) -> インチ(inch)
+
+    return length_m, length_km, length_cm, length_mm, length_inch, length_ft
+
+# 例: 500メートルを他の単位に変換
+length_m_example = 500
+length_m, length_km, length_cm, length_mm, length_inch, length_ft = convert_length_extended(length_m=length_m_example)
+
+length_m, length_km, length_cm, length_mm, length_inch, length_ft
