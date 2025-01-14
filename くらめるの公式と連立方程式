@@ -1,0 +1,98 @@
+import sympy as sp
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 変数の設定
+x, y = sp.symbols('x y')
+
+# 数値を設定できるように関数を作成
+def solve_cramers_formula(a, b, A, c, d, B):
+    # 連立方程式の設定
+    eq1 = sp.Eq(a*x + b*y, A)
+    eq2 = sp.Eq(c*x + d*y, B)
+
+    # 行列式の計算（D, Dx, Dy）を行列に変換して計算
+    matrix1 = sp.Matrix([[a, b], [c, d]])
+    matrix2_x = sp.Matrix([[A, b], [B, d]])
+    matrix2_y = sp.Matrix([[a, A], [c, B]])
+
+    D = matrix1.det()  # Dの行列式
+    Dx = matrix2_x.det()  # Dxの行列式
+    Dy = matrix2_y.det()  # Dyの行列式
+
+    # 解の計算
+    x_solution = Dx / D
+    y_solution = Dy / D
+
+    # 結果を分数と小数形式で表示
+    x_solution_frac = sp.simplify(x_solution)
+    y_solution_frac = sp.simplify(y_solution)
+
+    x_solution_decimal = float(x_solution)
+    y_solution_decimal = float(y_solution)
+
+    return {
+        "x_solution_frac": x_solution_frac,
+        "y_solution_frac": y_solution_frac,
+        "x_solution_decimal": x_solution_decimal,
+        "y_solution_decimal": y_solution_decimal,
+        "D": D, "Dx": Dx, "Dy": Dy
+    }
+
+# パラメータを設定（分数、平方根、小数）
+a = sp.Rational(1, 2)  # 分数
+b = 3  # 小数
+A = 5  # 小数
+c = 1  # 小数
+d = sp.sqrt(2)  # 平方根
+B = 7  # 小数
+
+# 解を計算
+solution = solve_cramers_formula(a, b, A, c, d, B)
+
+# 計算結果
+x_solution_frac = solution["x_solution_frac"]
+y_solution_frac = solution["y_solution_frac"]
+x_solution_decimal = solution["x_solution_decimal"]
+y_solution_decimal = solution["y_solution_decimal"]
+
+# 計算途中の行列式も表示
+D = solution["D"]
+Dx = solution["Dx"]
+Dy = solution["Dy"]
+
+# 出力結果
+print(f"x solution (fraction): {x_solution_frac}")
+print(f"y solution (fraction): {y_solution_frac}")
+print(f"x solution (decimal): {x_solution_decimal}")
+print(f"y solution (decimal): {y_solution_decimal}")
+print(f"D (Determinant): {D}")
+print(f"Dx (Determinant for x): {Dx}")
+print(f"Dy (Determinant for y): {Dy}")
+
+# グラフのプロット
+
+# xとyの範囲を設定
+x_vals = np.linspace(-10, 10, 400)
+y_vals_1 = (A - a * x_vals) / b  # eq1: a*x + b*y = A
+y_vals_2 = (B - c * x_vals) / d  # eq2: c*x + d*y = B
+
+# プロット
+plt.figure(figsize=(8, 6))
+
+# 直線のプロット
+plt.plot(x_vals, y_vals_1, label=r'$a x + b y = A$', color='blue')
+plt.plot(x_vals, y_vals_2, label=r'$c x + d y = B$', color='red')
+
+# 解の点をプロット
+plt.plot(x_solution_decimal, y_solution_decimal, 'go', label=f'Solution: ({x_solution_decimal:.2f}, {y_solution_decimal:.2f})')
+
+# グラフのラベル
+plt.xlabel('x')
+plt.ylabel('y')
+plt.axhline(0, color='black',linewidth=0.5)
+plt.axvline(0, color='black',linewidth=0.5)
+plt.title('Graph of the system of equations')
+plt.legend()
+plt.grid(True)
+plt.show()
