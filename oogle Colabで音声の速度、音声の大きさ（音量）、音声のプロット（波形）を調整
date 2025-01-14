@@ -1,0 +1,77 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import librosa
+import librosa.display
+from pydub import AudioSegment
+from gtts import gTTS
+import IPython.display as ipd
+
+# テキストを設定
+text = "こんにちは！これはGoogle Colabで作成した音声です。音声の特徴量を調べ、波形もプロットします。"
+
+# 音声を生成 (日本語)
+tts = gTTS(text=text, lang='ja')
+
+# 音声ファイルを保存
+tts.save("output.mp3")
+
+# pydubを使用して音声ファイルを読み込む
+audio = AudioSegment.from_mp3("output.mp3")
+
+# 音声の速度調整（1.5倍速）
+speed_audio = audio.speedup(playback_speed=1.5)
+
+# 音量調整（音量を上げる）
+volume_audio = speed_audio + 10  # 10dB増加
+
+# 音声ファイルを保存（調整後）
+volume_audio.export("adjusted_output.mp3", format="mp3")
+
+# librosaで音声ファイルを読み込む（調整後の音声ファイル）
+y, sr = librosa.load("adjusted_output.mp3")
+
+# 音声波形のプロット
+plt.figure(figsize=(10, 4))
+librosa.display.waveshow(y, sr=sr)
+plt.title("Audio Waveform")
+plt.xlabel("Time (samples)")
+plt.ylabel("Amplitude")
+plt.show()
+
+# メル周波数ケプストラム係数(MFCC)を計算
+mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+
+# MFCCのプロット
+plt.figure(figsize=(10, 4))
+librosa.display.specshow(mfccs, x_axis='time', sr=sr)
+plt.colorbar(format='%+2.0f dB')
+plt.title("MFCC")
+plt.xlabel("Time (seconds)")
+plt.ylabel("MFCC Coefficients")
+plt.show()
+
+# ゼロ交差率（Zero-Crossing Rate）の計算
+zcr = librosa.feature.zero_crossing_rate(y)
+
+# ゼロ交差率のプロット
+plt.figure(figsize=(10, 4))
+plt.plot(zcr.T)
+plt.title("Zero Crossing Rate")
+plt.xlabel("Time (samples)")
+plt.ylabel("Zero Crossing Rate")
+plt.show()
+
+# スペクトログラムの計算
+D = librosa.amplitude_to_db(np.abs(librosa.stft(y)), ref=np.max)
+
+# スペクトログラムのプロット
+plt.figure(figsize=(10, 4))
+librosa.display.specshow(D, x_axis='time', y_axis='log', sr=sr)
+plt.colorbar(format='%+2.0f dB')
+plt.title("Spectrogram")
+plt.xlabel("Time (seconds)")
+plt.ylabel("Frequency (Hz)")
+plt.show()
+
+# 音声ファイルを再生
+ipd.Audio("adjusted_output.mp3")
