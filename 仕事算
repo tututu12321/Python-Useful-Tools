@@ -1,0 +1,32 @@
+# 数値を入れ替え可能なPythonコード
+
+def calculate_days(A_days, B_days, solo_days):
+    # AとBの作業速度を計算
+    A_speed = 1 / A_days
+    B_speed = 1 / B_days
+
+    # 最初の3日間（solo_days）で進む作業量
+    solo_work = solo_days * A_speed
+
+    # 残りの作業量
+    remaining_work = 1 - solo_work
+
+    # AとBが協力して作業する速度
+    combined_speed = A_speed + B_speed
+
+    # 残りの作業をAとBが協力して行う時間
+    remaining_days = remaining_work / combined_speed
+
+    # 合計の日数
+    total_days = solo_days + remaining_days
+
+    return total_days
+
+# 例: Aが12日、Bが15日で、最初の3日間Aが作業
+A_days = 12
+B_days = 15
+solo_days = 3
+
+# 結果を表示
+total_days = calculate_days(A_days, B_days, solo_days)
+total_days
