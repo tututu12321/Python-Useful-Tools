@@ -1,0 +1,38 @@
+# 必要なライブラリをインポート
+import matplotlib.pyplot as plt
+
+# パーティー参加者の人数を表示
+total_children = 13
+total_adults = 9
+total_men = 10
+total_women = 12
+
+# 男の子の人数
+boys = 5
+girls = total_children - boys  # 女の子の人数
+
+# 大人の男性の人数
+adult_men = total_men - boys
+
+# 大人の女性の人数
+adult_women = total_women - adult_men
+
+# 結果の表示
+print(f"The number of adult women is {adult_women}.")
+
+# 円グラフを使って、男女と子どもの割合を可視化
+labels = ['Boys', 'Girls', 'Adult Men', 'Adult Women']
+sizes = [boys, girls, adult_men, adult_women]
+colors = ['#ff9999','#66b3ff','#99ff99','#ffcc99']
+
+fig1, ax1 = plt.subplots()
+wedges, texts, autotexts = ax1.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
+
+# グラフに人数を追加
+for i, autotext in enumerate(autotexts):
+    autotext.set_text(f'{sizes[i]} ({autotext.get_text()})')
+
+ax1.axis('equal')  # 円を真円にする
+
+plt.title("Breakdown of Party Participants")
+plt.show()
