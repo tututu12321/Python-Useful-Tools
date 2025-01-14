@@ -1,0 +1,72 @@
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# シンプルなトランスフォーマーのヘッド
+class TransformerHead(nn.Module):
+    def __init__(self, embed_size, heads):
+        super(TransformerHead, self).__init__()
+        self.embed_size = embed_size
+        self.heads = heads
+        self.query = nn.Linear(embed_size, embed_size)
+        self.key = nn.Linear(embed_size, embed_size)
+        self.value = nn.Linear(embed_size, embed_size)
+        self.fc_out = nn.Linear(embed_size, embed_size)
+    
+    def forward(self, values, keys, query, mask):
+        N = query.shape[0]
+        value_len = values.shape[1]
+        key_len = keys.shape[1]
+        
+        # Split the embedding into self.heads different pieces
+        values = values.reshape(N, value_len, self.heads, self.embed_size // self.heads)
+        keys = keys.reshape(N, key_len, self.heads, self.embed_size // self.heads)
+        query = query.reshape(N, key_len, self.heads, self.embed_size // self.heads)
+        
+        values = values.permute(2, 0, 1, 3)
+        keys = keys.permute(2, 0, 1, 3)
+        query = query.permute(2, 0, 1, 3)
+        
+        energy = torch.matmul(query, keys.permute(0, 1, 3, 2))  # Attention Scores
+        attention = torch.nn.functional.softmax(energy, dim=-1)
+        
+        out = torch.matmul(attention, values)  # Weighted sum of values
+        out = out.permute(1, 2, 0, 3).reshape(N, key_len, self.heads * (self.embed_size // self.heads))
+        
+        out = self.fc_out(out)
+        return out
+
+# シンプルなトランスフォーマー
+class SimpleTransformer(nn.Module):
+    def __init__(self, embed_size, heads, num_layers, vocab_size):
+        super(SimpleTransformer, self).__init__()
+        self.embed_size = embed_size
+        self.vocab_size = vocab_size
+        self.num_layers = num_layers
+        
+        self.embedding = nn.Embedding(vocab_size, embed_size)
+        self.attention = TransformerHead(embed_size, heads)
+        self.fc_out = nn.Linear(embed_size, vocab_size)
+    
+    def forward(self, x):
+        x = self.embedding(x)  # Token embeddings
+        out = self.attention(x, x, x, None)  # Attention layer
+        out = self.fc_out(out)  # Linear layer for output
+        return out
+
+# ハイパーパラメータ
+embed_size = 256
+heads = 8
+num_layers = 4
+vocab_size = 10000  # 語彙数
+
+# モデルのインスタンス作成
+model = SimpleTransformer(embed_size, heads, num_layers, vocab_size)
+
+# 入力データ (バッチサイズ 2, シーケンス長 10)
+x = torch.randint(0, vocab_size, (2, 10))
+
+# フォワードパス
+output = model(x)
+
+print(output.shape)  # (バッチサイズ, シーケンス長, 語彙数)
