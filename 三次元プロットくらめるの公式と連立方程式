@@ -1,0 +1,117 @@
+import sympy as sp
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+# 変数の設定
+x, y, z = sp.symbols('x y z')
+
+# 数値を設定できるように関数を作成
+def solve_cramers_3d(a, b, c, A, e, f, g, B, h, i, j, C):
+    # 連立方程式の設定
+    eq1 = sp.Eq(a*x + b*y + c*z, A)
+    eq2 = sp.Eq(e*x + f*y + g*z, B)
+    eq3 = sp.Eq(h*x + i*y + j*z, C)
+
+    # 行列式の計算（D, Dx, Dy, Dz）を行列に変換して計算
+    matrix1 = sp.Matrix([[a, b, c], [e, f, g], [h, i, j]])
+    matrix2_x = sp.Matrix([[A, b, c], [B, f, g], [C, i, j]])
+    matrix2_y = sp.Matrix([[a, A, c], [e, B, g], [h, C, j]])
+    matrix2_z = sp.Matrix([[a, b, A], [e, f, B], [h, i, C]])
+
+    D = matrix1.det()  # Dの行列式
+    Dx = matrix2_x.det()  # Dxの行列式
+    Dy = matrix2_y.det()  # Dyの行列式
+    Dz = matrix2_z.det()  # Dzの行列式
+
+    # 解の計算
+    x_solution = Dx / D
+    y_solution = Dy / D
+    z_solution = Dz / D
+
+    # 結果を分数と小数形式で表示
+    x_solution_frac = sp.simplify(x_solution)
+    y_solution_frac = sp.simplify(y_solution)
+    z_solution_frac = sp.simplify(z_solution)
+
+    x_solution_decimal = float(x_solution)
+    y_solution_decimal = float(y_solution)
+    z_solution_decimal = float(z_solution)
+
+    return {
+        "x_solution_frac": x_solution_frac,
+        "y_solution_frac": y_solution_frac,
+        "z_solution_frac": z_solution_frac,
+        "x_solution_decimal": x_solution_decimal,
+        "y_solution_decimal": y_solution_decimal,
+        "z_solution_decimal": z_solution_decimal,
+        "D": D, "Dx": Dx, "Dy": Dy, "Dz": Dz
+    }
+
+# パラメータを設定（分数、平方根、小数）
+a = sp.Rational(1, 2)  # 分数
+b = 3  # 小数
+c = sp.sqrt(2)  # 平方根
+A = 5  # 小数
+e = 1  # 小数
+f = 2  # 小数
+g = sp.sqrt(3)  # 平方根
+B = 7  # 小数
+h = 2  # 小数
+i = 1  # 小数
+j = sp.sqrt(5)  # 平方根
+C = 8  # 小数
+
+# 解を計算
+solution = solve_cramers_3d(a, b, c, A, e, f, g, B, h, i, j, C)
+
+# 計算結果
+x_solution_frac = solution["x_solution_frac"]
+y_solution_frac = solution["y_solution_frac"]
+z_solution_frac = solution["z_solution_frac"]
+x_solution_decimal = solution["x_solution_decimal"]
+y_solution_decimal = solution["y_solution_decimal"]
+z_solution_decimal = solution["z_solution_decimal"]
+
+# 計算途中の行列式も表示
+D = solution["D"]
+Dx = solution["Dx"]
+Dy = solution["Dy"]
+Dz = solution["Dz"]
+
+# 出力結果
+print(f"x solution (fraction): {x_solution_frac}")
+print(f"y solution (fraction): {y_solution_frac}")
+print(f"z solution (fraction): {z_solution_frac}")
+print(f"x solution (decimal): {x_solution_decimal}")
+print(f"y solution (decimal): {y_solution_decimal}")
+print(f"z solution (decimal): {z_solution_decimal}")
+print(f"D (Determinant): {D}")
+print(f"Dx (Determinant for x): {Dx}")
+print(f"Dy (Determinant for y): {Dy}")
+print(f"Dz (Determinant for z): {Dz}")
+
+# 3D グラフのプロット
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+
+# 解の点をプロット
+ax.scatter(x_solution_decimal, y_solution_decimal, z_solution_decimal, color='g', label=f'Solution: ({x_solution_decimal:.2f}, {y_solution_decimal:.2f}, {z_solution_decimal:.2f})')
+
+# 直線をプロットするために x, y, z の範囲を設定
+x_vals = np.linspace(-10, 10, 400)
+y_vals_1 = (A - a * x_vals - c * x_vals) / b
+z_vals_1 = (A - a * x_vals - b * y_vals_1) / c
+
+y_vals_2 = (B - e * x_vals - g * x_vals) / f
+z_vals_2 = (B - e * x_vals - f * y_vals_2) / g
+
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Z')
+ax.set_title('3D Graph of the System of Equations')
+
+# 解をプロット
+ax.legend()
+
+plt.show()
