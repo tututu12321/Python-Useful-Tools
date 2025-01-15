@@ -1,0 +1,169 @@
+import pygame
+import random
+
+# Pygameの初期化
+pygame.init()
+
+# ウィンドウの設定
+SCREEN_WIDTH = 360
+SCREEN_HEIGHT = 720
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption('Tetris Game')
+
+# 色の定義
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+CYAN = (0, 255, 255)
+MAGENTA = (255, 0, 255)
+YELLOW = (255, 255, 0)
+
+# ピースの形状
+SHAPES = [
+    [[(0, 0), (1, 0), (0, -1), (1, -1)]],  # Square
+    [[(0, 0), (1, 0), (2, 0), (3, 0)]],  # I Shape
+    [[(0, 0), (0, -1), (1, -1), (2, -1)]],  # J Shape
+    [[(0, 0), (1, 0), (1, -1), (2, -1)]],  # L Shape
+    [[(0, 0), (0, -1), (1, -1), (1, 0)]],  # O Shape
+    [[(0, 0), (0, -1), (1, -1), (1, -2)]],  # S Shape
+    [[(0, 0), (0, -1), (-1, -1), (-1, -2)]],  # T Shape
+]
+
+# ブロッククラス
+class Block:
+    def __init__(self, x, y, color):
+        self.x = x
+        self.y = y
+        self.color = color
+
+    def draw(self, surface):
+        block_size = SCREEN_WIDTH // 12
+        pygame.draw.rect(surface, self.color, (self.x * block_size, self.y * block_size, block_size, block_size))
+
+
+# ミノクラス
+class Mino:
+    def __init__(self, x, y, shape, rotation=0):
+        self.x = x
+        self.y = y
+        self.shape = shape
+        self.rotation = rotation
+
+    def calc_blocks(self):
+        # 形状のブロックを計算
+        blocks = []
+        for (dx, dy) in SHAPES[self.shape][self.rotation]:
+            blocks.append(Block(self.x + dx, self.y + dy, CYAN))  # 色は適当にCYANにしています
+        return blocks
+
+    def rotate(self):
+        # 90度回転
+        self.rotation = (self.rotation + 1) % len(SHAPES[self.shape])
+
+    def draw(self, surface):
+        for block in self.calc_blocks():
+            block.draw(surface)
+
+
+# フィールドクラス
+class Field:
+    def __init__(self):
+        self.tiles = [[0] * 12 for _ in range(21)]  # 空のフィールド
+
+    def is_empty(self, x, y):
+        # フィールドが空いているかチェック
+        if x < 0 or x >= 12 or y < 0 or y >= 21:
+            return False
+        return self.tiles[y][x] == 0
+
+    def place_block(self, x, y):
+        self.tiles[y][x] = 1  # ブロックを配置
+
+    def draw(self, surface):
+        for y in range(21):
+            for x in range(12):
+                if self.tiles[y][x] != 0:
+                    Block(x, y, WHITE).draw(surface)  # 白いブロックを描画
+
+
+# ゲームクラス
+class Game:
+    def __init__(self):
+        self.field = Field()
+        self.mino = self.create_mino()
+        self.mino_speed = 10
+        self.is_moving_down = False
+
+    def create_mino(self):
+        shape = random.randint(0, len(SHAPES) - 1)
+        return Mino(5, 0, shape)
+
+    def move_mino(self, dx, dy):
+        # ミノを動かす
+        future_mino = Mino(self.mino.x + dx, self.mino.y + dy, self.mino.shape, self.mino.rotation)
+        if all(self.field.is_empty(b.x, b.y) for b in future_mino.calc_blocks()):
+            self.mino.x += dx
+            self.mino.y += dy
+            return True
+        return False
+
+    def rotate_mino(self):
+        # ミノを回転させる
+        future_mino = Mino(self.mino.x, self.mino.y, self.mino.shape, (self.mino.rotation + 1) % len(SHAPES[self.mino.shape]))
+        if all(self.field.is_empty(b.x, b.y) for b in future_mino.calc_blocks()):
+            self.mino.rotate()
+            return True
+        return False
+
+    def drop_mino(self):
+        # ミノを落下させる
+        if not self.move_mino(0, 1):
+            # ミノが着地した場合、フィールドに追加
+            for block in self.mino.calc_blocks():
+                self.field.place_block(block.x, block.y)
+            self.mino = self.create_mino()
+
+    def update(self):
+        if self.is_moving_down:
+            self.drop_mino()
+            self.is_moving_down = False
+
+
+# Pygameの設定
+game = Game()
+clock = pygame.time.Clock()
+
+def handle_keys():
+    global game
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_a]:
+        game.move_mino(-1, 0)  # Aキーで左に移動
+    if keys[pygame.K_d]:
+        game.move_mino(1, 0)  # Dキーで右に移動
+    if keys[pygame.K_q]:
+        game.rotate_mino()  # Qキーで回転
+    if keys[pygame.K_e]:
+        game.rotate_mino()  # Eキーで回転
+    if keys[pygame.K_s]:
+        game.is_moving_down = True  # Sキーで早く落下
+
+
+# メインループ
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+
+    handle_keys()  # キーの処理
+    game.update()  # ゲームの更新
+
+    # 描画
+    screen.fill(BLACK)  # 背景を黒に塗りつぶす
+    game.field.draw(screen)  # フィールドを描画
+    game.mino.draw(screen)  # ミノを描画
+
+    pygame.display.update()
+    clock.tick(30)  # ゲームの更新速度を設定（30FPS）
