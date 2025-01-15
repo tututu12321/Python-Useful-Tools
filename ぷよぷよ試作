@@ -1,0 +1,119 @@
+import pgzrun  # Pygame Zeroをインポート
+
+# 画面サイズの設定
+WIDTH = 800   # 画面の幅(ピクセル)
+HEIGHT = 600  # 画面の高さ(ピクセル)
+CELLW = 6     # 舞台の幅(セル数)
+CELLH = 8     # 舞台の高さ(セル数)
+CELLSIZE = 20 # 1セルのピクセル数
+DISPW = int(WIDTH/CELLSIZE)  # 横方向のセル数
+DISPH = int(HEIGHT/CELLSIZE) # 縦方向のセル数
+
+# ゲームの舞台（セル）を初期化
+cell = [[0 for j in range(DISPW)] for i in range(DISPH)]
+
+# 初期データ（ゲーム開始時の配置）
+initialdata = [
+    [0,0,0,0,0,0],
+    [0,2,0,0,0,0],
+    [0,2,3,0,0,0],
+    [0,2,3,4,0,0],
+    [0,1,3,4,0,0],
+    [0,1,2,3,3,0],
+    [0,1,2,4,3,4],
+    [2,1,3,3,4,4]
+]
+
+# セルの色（番号に対応した色）
+colortable = ['black', 'blue', 'red', 'purple', 'green']
+
+# セルの状態を変更（X座標, Y座標, 色番号）
+def setcell(x, y, data):
+    cell[y][x] = data
+
+# セルの状態を取得（X座標, Y座標）
+def getcell(x, y):
+    ret = 0
+    if x >= 0 and x < CELLW and y >= 0 and y < CELLH:
+        ret = cell[y][x]
+    return ret
+
+# セルを塗りつぶし、連結セル数を返す
+def fill(x, y, before, after, cnt):
+    if (before <= 0) or (after < 0): return 0  # 無効な色や状態をスキップ
+    if getcell(x, y) == before:
+        setcell(x, y, after)  # 色を変更する
+        cnt = cnt + 1         # 連結セル数を加算
+
+    # 上下左右のセルを確認して再帰的に塗りつぶす
+    if getcell(x, y - 1) == before: cnt = fill(x, y - 1, before, after, cnt)
+    if getcell(x, y + 1) == before: cnt = fill(x, y + 1, before, after, cnt)
+    if getcell(x - 1, y) == before: cnt = fill(x - 1, y, before, after, cnt)
+    if getcell(x + 1, y) == before: cnt = fill(x + 1, y, before, after, cnt)
+
+    return cnt  # 連結セル数を返す
+
+# セルの落下処理
+def movecell():
+    for i in range(CELLH - 1):
+        for y in range(CELLH - 1, 0, -1):
+            for x in range(CELLW):
+                num = getcell(x, y - 1)
+                if (getcell(x, y) == 0) and (num != 0):  # 空のセルにブロックが落ちる
+                    setcell(x, y - 1, 0)  # 上のセルを空に
+                    setcell(x, y, num)    # 新しいセルにブロックを配置
+
+# セルの消去処理。消去した回数を返す
+def checkcell():
+    clearcnt = 0
+    for y in range(CELLH):
+        for x in range(CELLW):
+            num = getcell(x, y)
+            if num >= 10: continue  # 既に消去済みのセルはスキップ
+            cnt = fill(x, y, num, num + 10, 0)  # 連結セル数を算出
+            if cnt >= 4:  # 4個以上連結した場合
+                cnt = fill(x, y, num + 10, 0, 0)  # セル消去
+                clearcnt += 1  # 消去した回数をカウント
+
+    # 消去後のセルを元の状態に戻す
+    for y in range(CELLH):
+        for x in range(CELLW):
+            num = getcell(x, y)
+            if num < 10: continue  # 既に復元済みのセルはスキップ
+            fill(x, y, num, num - 10, 0)  # セルの復元
+
+    return clearcnt  # 消去した回数を返す
+
+# セルの状態をバックアップする（指定した位置からコピー）
+def backup(ofsx, ofsy):
+    for y in range(CELLH):
+        for x in range(CELLW):
+            setcell(ofsx + x, ofsy + y, getcell(x, y))
+
+# 画面に描画する
+def draw():
+    screen.fill('BLACK')  # 画面を黒く塗りつぶす
+    for y in range(DISPH):
+        for x in range(DISPW):
+            color = colortable[cell[y][x]]  # セルの色を決定
+            r = int(CELLSIZE / 2)
+            pos = (x * CELLSIZE + r, y * CELLSIZE + r)  # セルの位置
+            screen.draw.filled_circle(pos, r, color)  # セルを円形で描画
+
+    # コンボ数の表示
+    for i in range(4):
+        screen.draw.text(str(i + 1) + ' COMBO',
+                         left=CELLSIZE * 8 * i, top=CELLSIZE * 27, fontsize=30)
+
+# セルの初期化と連鎖処理
+for y in range(CELLH):
+    for x in range(CELLW):
+        setcell(x, y, initialdata[y][x])
+
+for combo in range(100):  # 連鎖のループ
+    movecell()  # セルの落下
+    backup(combo * 8, 8)  # 消去前のセルをバックアップ
+    if checkcell() == 0: break  # セルの消去。消去できない場合は終了
+    backup(combo * 8, 18)  # 消去後のセルをバックアップ
+
+pgzrun.go()  # Pygame Zeroの実行
