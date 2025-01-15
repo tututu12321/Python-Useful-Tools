@@ -1,0 +1,48 @@
+from google.colab import files
+import cv2
+import numpy as np
+from fer import FER
+import matplotlib.pyplot as plt
+
+# 画像をアップロードする
+uploaded = files.upload()
+
+# アップロードされたファイルをロード
+image_path = next(iter(uploaded))  # 最初の画像ファイル名を取得
+img = cv2.imread(image_path)  # OpenCVで画像を読み込み
+img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # BGR -> RGB に変換
+
+# FER検出器を使用して感情を検出
+detector = FER()
+emotions = detector.detect_emotions(img)
+
+# 最初の（1つの）検出結果を取得
+emotion_scores = emotions[0]['emotions'] if emotions else {}
+
+# 感情のスコアを表示
+print("Emotion scores:")
+for emotion, score in emotion_scores.items():
+    print(f"{emotion}: {score:.2f}")
+
+# 画像を表示
+plt.figure(figsize=(8, 4))
+plt.subplot(1, 2, 1)
+plt.imshow(img_rgb)
+plt.axis('off')
+plt.title("Uploaded Image")
+
+# 感情スコアを棒グラフでプロット
+plt.subplot(1, 2, 2)
+if emotion_scores:
+    emotions_list = list(emotion_scores.keys())
+    scores_list = list(emotion_scores.values())
+    plt.bar(emotions_list, scores_list, color='skyblue')
+    plt.ylim(0, 1)
+    plt.title("Emotion Scores")
+    plt.ylabel("Score")
+    plt.xlabel("Emotion")
+else:
+    plt.text(0.5, 0.5, "No emotions detected", ha='center', va='center')
+
+plt.tight_layout()
+plt.show()
