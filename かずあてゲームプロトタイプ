@@ -1,0 +1,39 @@
+import random
+
+def binary_search_game():
+    print("Welcome to the Binary Search Number Guessing Game!")
+    
+    # ゲームの範囲を設定
+    lower_bound = 1
+    upper_bound = 100
+    target_number = random.randint(lower_bound, upper_bound)
+    
+    # プレイヤーにゲームの範囲を伝える
+    print(f"Guess a number between {lower_bound} and {upper_bound}.")
+
+    # コンピュータによる予測の範囲設定
+    attempts = 0
+    low = lower_bound
+    high = upper_bound
+
+    while True:
+        # 二分探索で予測する
+        guess = (low + high) // 2
+        attempts += 1
+        print(f"Computer's guess: {guess}")
+
+        # プレイヤーのフィードバックを受け取る
+        feedback = input("Is the guess too high (H), too low (L), or correct (C)? ").lower()
+
+        if feedback == 'c':
+            print(f"Congratulations! The computer guessed your number {guess} in {attempts} attempts.")
+            break
+        elif feedback == 'h':
+            high = guess - 1  # 数字が大きすぎる場合、上限を更新
+        elif feedback == 'l':
+            low = guess + 1  # 数字が小さすぎる場合、下限を更新
+        else:
+            print("Invalid input. Please enter 'H', 'L', or 'C'.")
+
+# ゲームを開始
+binary_search_game()
