@@ -1,0 +1,72 @@
+# Google Driveをマウント
+from google.colab import drive
+drive.mount('/content/drive')
+
+# KITERETUフォルダを作成（このフォルダに学習済みモデルを保存）
+!mkdir -p /content/drive/MyDrive/KITERETU
+
+# Word2Vecの学習済みモデルをGoogle Driveにダウンロード
+# 以下のコマンドで、学習済みのWord2Vecモデルのファイルをダウンロードします
+!curl -o /content/drive/MyDrive/KITERETU/gw2v160.model https://storage.googleapis.com/nlp_youwht/w2v/gw2v160.model
+!curl -o /content/drive/MyDrive/KITERETU/gw2v160.model.trainables.syn1neg.npy https://storage.googleapis.com/nlp_youwht/w2v/gw2v160.model.trainables.syn1neg.npy
+!curl -o /content/drive/MyDrive/KITERETU/gw2v160.model.wv.vectors.npy https://storage.googleapis.com/nlp_youwht/w2v/gw2v160.model.wv.vectors.npy
+
+# 必要なライブラリのインポート
+import numpy as np
+from sklearn.manifold import TSNE
+from gensim.models import Word2Vec
+from sklearn.metrics.pairwise import cosine_similarity
+import math
+
+# gensimライブラリのWord2Vecをインポート
+from gensim.models.word2vec import Word2Vec
+
+# モデルの読み込み
+# ダウンロードしたモデルファイルを指定してWord2Vecのインスタンスをロードします
+model_file_path = '/content/drive/MyDrive/KITERETU/gw2v160.model'
+model = Word2Vec.load(model_file_path)
+
+# モデルが正常にロードされたか確認のために、登録されている単語数を出力
+print(f"モデル内の単語数: {len(model.wv)}")
+
+# 任意の単語に似ている単語を取得する例（例: '東京'に似ている単語）
+similar_words = model.wv.most_similar(positive=['東京'], topn=7)
+
+# 「東京」に似ている単語TOP7を表示
+print("\n「東京」に似ている単語TOP7:")
+for word, score in similar_words:
+    print(f"{word}: {score}")
+
+# 「東京」のベクトルと類似する単語のベクトルを取得
+words = ['東京'] + [word for word, _ in similar_words]
+word_vectors = np.array([model.wv[word] for word in words])
+
+# t-SNEによる次元圧縮
+tsne = TSNE(n_components=2, random_state=42)
+word_vectors_2d = tsne.fit_transform(word_vectors)
+
+# 次元圧縮後の2次元ベクトルを表示
+print("\n次元圧縮後の2次元ベクトル:")
+for i, word in enumerate(words):
+    print(f"{word}: ({word_vectors_2d[i, 0]:.4f}, {word_vectors_2d[i, 1]:.4f})")
+
+# 極座標変換 (r, θ) - θをラジアンと度数で表示
+polar_coordinates = []
+for vec in word_vectors_2d:
+    r = np.linalg.norm(vec)  # 半径（ベクトルの大きさ）
+    theta = np.arctan2(vec[1], vec[0])  # 角度（ラジアン）
+    degrees = math.degrees(theta)  # 角度を度数に変換
+    polar_coordinates.append((r, theta, degrees))
+
+print("\n極座標系での変換結果 (r, θ ラジアン, θ 度数):")
+for i, word in enumerate(words):
+    r, theta, degrees = polar_coordinates[i]
+    print(f"{word}: (r={r:.4f}, θ={theta:.4f} radians, {degrees:.2f} degrees)")
+
+# コサイン類似度の計算 (東京と他の単語の類似度)
+tokyo_vector = model.wv['東京'].reshape(1, -1)
+cosine_similarities = cosine_similarity(tokyo_vector, word_vectors[1:])
+
+print("\n東京とのコサイン類似度:")
+for i, word in enumerate(words[1:]):
+    print(f"{word}: {cosine_similarities[0][i]:.4f}")
