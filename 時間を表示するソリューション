@@ -1,0 +1,24 @@
+import datetime
+import time
+import pytz
+
+# 日本時間を取得するためのタイムゾーン設定
+JST = pytz.timezone('Asia/Tokyo')
+
+# 現在時刻をN回表示する関数
+def do_main_function(kurikaesi_kaisuu=5):
+    if kurikaesi_kaisuu < 0:
+        print("繰り返し回数は0以上で指定してください。")
+        return
+    for count in range(kurikaesi_kaisuu):
+        print_current_time()
+        time.sleep(1)
+
+# 現在時刻を日本時間でprintする関数
+def print_current_time():
+    # 日本時間に変換
+    current_time = datetime.datetime.now(JST)
+    print(current_time.strftime('%Y/%m/%d %H:%M:%S'))
+
+# 関数定義（def)は定義のみ。以下で実行する
+do_main_function(5)
