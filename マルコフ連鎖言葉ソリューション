@@ -1,0 +1,43 @@
+import random
+
+# マルコフ連鎖を使って次の単語を生成する関数
+def generate_markov_chain(text, order=1):
+    # テキストを単語ごとに分割
+    words = text.split()
+    
+    # マルコフ連鎖の遷移確率を格納する辞書
+    markov_chain = {}
+    
+    # 遷移確率の計算
+    for i in range(len(words) - order):
+        state = tuple(words[i:i+order])
+        next_word = words[i + order]
+        if state not in markov_chain:
+            markov_chain[state] = []
+        markov_chain[state].append(next_word)
+    
+    return markov_chain
+
+# ランダムに言葉を生成する関数
+def generate_sentence(markov_chain, length=10, order=1):
+    # 最初の状態をランダムに選択
+    state = random.choice(list(markov_chain.keys()))
+    result = list(state)
+    
+    # マルコフ連鎖に基づいて言葉を生成
+    for _ in range(length - order):
+        next_word = random.choice(markov_chain[state])
+        result.append(next_word)
+        state = tuple(result[-order:])
+    
+    return ' '.join(result)
+
+# テスト用のサンプルテキスト
+text = "I am learning machine learning with Python. Python is great for data analysis and machine learning. I love machine learning."
+
+# マルコフ連鎖の作成
+markov_chain = generate_markov_chain(text, order=2)
+
+# ランダムに文章を生成
+generated_sentence = generate_sentence(markov_chain, length=10, order=2)
+print(generated_sentence)
