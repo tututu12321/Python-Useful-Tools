@@ -1,0 +1,128 @@
+from gtts import gTTS
+import numpy as np
+import scipy.io.wavfile as wav
+import matplotlib.pyplot as plt
+import math
+from pydub import AudioSegment
+import librosa
+import librosa.display
+from scipy.signal import resample
+
+# テキストを音声に変換して保存する関数
+def text_to_speech(text, filename='output.mp3'):
+    tts = gTTS(text, lang='ja')  # 日本語に設定
+    tts.save(filename)  # 音声をMP3ファイルに保存
+
+# MP3をWAVに変換する関数
+def mp3_to_wav(mp3_filename, wav_filename):
+    audio = AudioSegment.from_mp3(mp3_filename)
+    audio.export(wav_filename, format="wav")
+
+# 音声波形のプロット
+def plot_waveform(filename):
+    # WAVファイルを読み込む
+    rate, data = wav.read(filename)
+    
+    # 音声波形をプロット
+    plt.figure(figsize=(10, 4))
+    plt.plot(np.linspace(0, len(data) / rate, num=len(data)), data)
+    plt.title("Audio Waveform")
+    plt.xlabel("Time [s]")
+    plt.ylabel("Amplitude")
+    plt.grid(True)
+    plt.show()
+
+# フーリエ変換を行い、周波数スペクトルをプロット
+def plot_spectrum(filename):
+    # WAVファイルを読み込む
+    rate, data = wav.read(filename)
+    
+    # フーリエ変換
+    n = len(data)
+    freqs = np.fft.fftfreq(n, d=1/rate)
+    spectrum = np.fft.fft(data)
+    
+    # 周波数スペクトルをプロット
+    plt.figure(figsize=(10, 4))
+    plt.plot(freqs[:n//2], np.abs(spectrum)[:n//2])  # 正の周波数成分を表示
+    plt.title("Frequency Spectrum")
+    plt.xlabel("Frequency [Hz]")
+    plt.ylabel("Amplitude")
+    plt.grid(True)
+    plt.show()
+
+# STFT（短時間フーリエ変換）のプロット
+def plot_stft(filename):
+    # 音声データを読み込む
+    y, sr = librosa.load(filename, sr=None)
+    
+    # STFT（短時間フーリエ変換）
+    D = librosa.stft(y)
+    D_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
+    
+    # STFTをプロット
+    plt.figure(figsize=(10, 4))
+    librosa.display.specshow(D_db, sr=sr, x_axis='time', y_axis='log')
+    plt.colorbar(format='%+2.0f dB')
+    plt.title("STFT (Short-Time Fourier Transform)")
+    plt.show()
+
+# メル周波数ケプストラム係数（MFCC）のプロット
+def plot_mfcc(filename):
+    # 音声データを読み込む
+    y, sr = librosa.load(filename, sr=None)
+    
+    # MFCCの計算
+    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+    
+    # MFCCをプロット
+    plt.figure(figsize=(10, 4))
+    librosa.display.specshow(mfcc, x_axis='time', sr=sr)
+    plt.colorbar()
+    plt.title("MFCC (Mel-frequency Cepstral Coefficients)")
+    plt.show()
+
+# AD変換（サンプリングレートの変更）のプロット
+def plot_ad_conversion(filename, new_rate):
+    # 音声データを読み込む
+    y, sr = librosa.load(filename, sr=None)
+    
+    # 新しいサンプリングレートに基づいてリサンプリング
+    y_resampled = resample(y, int(len(y) * new_rate / sr))
+    
+    # 新しいサンプリングレートの音声波形をプロット
+    plt.figure(figsize=(10, 4))
+    plt.plot(np.linspace(0, len(y_resampled) / new_rate, num=len(y_resampled)), y_resampled)
+    plt.title(f"AD Conversion Waveform (Resampled to {new_rate} Hz)")
+    plt.xlabel("Time [s]")
+    plt.ylabel("Amplitude")
+    plt.grid(True)
+    plt.show()
+
+# ユーザーにテキストを入力させる
+text = input("読み上げたいテキストを入力してください: ")
+
+# 音声合成
+mp3_filename = "output.mp3"
+text_to_speech(text, mp3_filename)
+
+# MP3ファイルをWAVファイルに変換
+wav_filename = "output.wav"
+mp3_to_wav(mp3_filename, wav_filename)
+
+# 音声波形のプロット
+plot_waveform(wav_filename)
+
+# フーリエ変換をプロット
+plot_spectrum(wav_filename)
+
+# STFTのプロット
+plot_stft(wav_filename)
+
+# MFCCのプロット
+plot_mfcc(wav_filename)
+
+# AD変換（サンプリングレート変更）のプロット
+new_sample_rate = 22000  # 新しいサンプリングレート
+plot_ad_conversion(wav_filename, new_sample_rate)
+
