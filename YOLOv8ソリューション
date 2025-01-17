@@ -1,0 +1,50 @@
+# 必要なライブラリをインストール
+!pip install ultralytics  # YOLOv8をインストール
+
+# ライブラリのインポート
+from ultralytics import YOLO
+from google.colab import files
+import os
+from PIL import Image
+
+# YOLOモデルをロード (事前学習済みのモデルを使用)
+model = YOLO("yolov8n.pt")  # 小型モデル (必要に応じて 'yolov8x.pt' に変更)
+
+# Google Colabに画像をアップロード
+print("画像をアップロードしてください")
+uploaded_files = files.upload()
+
+# アップロードされた画像を保存
+upload_dir = "uploaded_images"
+os.makedirs(upload_dir, exist_ok=True)
+for name, data in uploaded_files.items():
+    with open(os.path.join(upload_dir, name), "wb") as f:
+        f.write(data)
+
+# 男性と女性を分類して数をカウント
+male_count = 0
+female_count = 0
+
+# 各画像を処理
+for file_name in os.listdir(upload_dir):
+    image_path = os.path.join(upload_dir, file_name)
+    print(f"Processing {file_name}...")
+
+    # 画像をロードして予測
+    results = model.predict(source=image_path, conf=0.5, show=True)
+
+    # 結果を解析
+    for result in results:
+        for box in result.boxes:
+            cls = int(box.cls[0])  # クラスID
+            label = model.names[cls]  # クラス名
+
+            # 男性/女性に分類 (クラス名はモデルに応じて調整)
+            if label == "man":
+                male_count += 1
+            elif label == "woman":
+                female_count += 1
+
+# 結果の出力
+print(f"男性の数: {male_count}")
+print(f"女性の数: {female_count}")
