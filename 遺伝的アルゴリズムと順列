@@ -1,0 +1,61 @@
+import random
+import math
+
+# 遺伝的アルゴリズムのパラメータ設定
+population_size = 10   # 個体数
+generations = 50       # 世代数
+mutation_rate = 0.1    # 突然変異率
+selection_rate = 0.5   # 親選択率
+
+# 順列を生成
+def generate_individual(length):
+    return random.sample(range(1, length + 1), length)
+
+# フィットネス関数（ここでは順列の逆順の数を最小化）
+def fitness(individual):
+    return sum(abs(individual[i] - (i + 1)) for i in range(len(individual)))
+
+# 親選択（選択された個体を返す）
+def select_parents(population):
+    selected = sorted(population, key=lambda ind: fitness(ind))[:int(len(population) * selection_rate)]
+    return random.choice(selected), random.choice(selected)
+
+# 交叉（親2つから子1つを生成）
+def crossover(parent1, parent2):
+    crossover_point = random.randint(1, len(parent1) - 1)
+    child = parent1[:crossover_point] + parent2[crossover_point:]
+    return child
+
+# 突然変異（遺伝子をランダムに変化させる）
+def mutate(individual):
+    if random.random() < mutation_rate:
+        i, j = random.sample(range(len(individual)), 2)
+        individual[i], individual[j] = individual[j], individual[i]
+    return individual
+
+# 遺伝的アルゴリズムの実行
+def genetic_algorithm():
+    # 初期集団の生成
+    population = [generate_individual(6) for _ in range(population_size)]
+    
+    for generation in range(generations):
+        # 次世代の生成
+        next_generation = []
+        
+        for _ in range(population_size // 2):  # ペアを作成
+            parent1, parent2 = select_parents(population)
+            child1 = crossover(parent1, parent2)
+            child2 = crossover(parent2, parent1)
+            
+            next_generation.append(mutate(child1))
+            next_generation.append(mutate(child2))
+        
+        # 新しい世代に置き換える
+        population = next_generation
+        
+        # 最適解とフィットネスの表示
+        best_individual = min(population, key=lambda ind: fitness(ind))
+        print(f"Generation {generation + 1}: Best Solution = {best_individual} Fitness = {fitness(best_individual)}")
+
+# 遺伝的アルゴリズムの実行
+genetic_algorithm()
