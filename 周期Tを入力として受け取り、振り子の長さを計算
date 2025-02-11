@@ -1,0 +1,13 @@
+# 定数Kを定義
+K = 25 / 1.0
+
+# 周期Tを入力として受け取り、振り子の長さを計算
+def pendulum_length(T):
+    length = K * (T ** 2)
+    return length
+
+# 例として周期T = 2秒の場合の長さを計算
+T = 2  # 周期 (秒)
+length = pendulum_length(T)  # 長さ (cm)
+
+print(f"周期 {T} 秒の場合、振り子の長さは {length} cm です。")
