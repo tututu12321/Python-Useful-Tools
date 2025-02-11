@@ -1,0 +1,91 @@
+# 必要なライブラリをインストール
+!pip install -q torch torchvision torchaudio ultralytics
+!git clone https://github.com/ultralytics/yolov5.git
+%cd yolov5
+!pip install -r requirements.txt
+
+# ライブラリをインポート
+from google.colab import files
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image
+import math
+from ultralytics import YOLO
+
+# Google Colab に画像をアップロード
+uploaded = files.upload()
+image_path = list(uploaded.keys())[0]  # 最初にアップロードした画像を取得
+
+# YOLOv5 をロード
+model = YOLO("yolov5s.pt")  # 小型モデル（軽量）
+
+# 画像を推論
+results = model(image_path)
+
+# 画像を読み込む
+img = cv2.imread(image_path)
+img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # OpenCV の BGR を RGB に変換
+
+# 車の検出と距離推定
+car_distance = None  # 初期値
+FOCAL_LENGTH = 700  # 仮定した焦点距離（調整可能）
+REAL_WIDTH = 1.8  # 実際の車の横幅（約 1.8m）
+
+for r in results:
+    for box in r.boxes:
+        cls = int(box.cls)
+        if cls == 2 or cls == 7:  # 車 (class 2: car, class 7: truck)
+            x1, y1, x2, y2 = map(int, box.xyxy[0])  # バウンディングボックス座標
+            width = x2 - x1
+            
+            # 車の推定距離
+            car_distance = (REAL_WIDTH * FOCAL_LENGTH) / width if width > 0 else None
+            
+            # 画像にバウンディングボックスを描画
+            cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 0), 2)
+            cv2.putText(img, "Car", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+            
+            print(f"車の検出: (x1={x1}, y1={y1}, x2={x2}, y2={y2})")
+            print(f"推定距離: {car_distance:.2f} m")
+
+# 画像を表示
+plt.figure(figsize=(10, 6))
+plt.imshow(img)
+plt.axis("off")
+plt.show()
+
+# 人間の目の高さ H
+H = 1.7  # [m]
+
+if car_distance is not None:
+    # 三平方の定理を使って正確な距離を計算
+    distance_actual = math.sqrt(car_distance**2 + H**2)
+
+    # 視線の角度（ラジアン→度変換）
+    angle_radians = math.atan2(H, car_distance)
+    angle_degrees = math.degrees(angle_radians)
+
+    # 結果を表示
+    print(f"実際の距離 (三平方の定理による計算): {distance_actual:.2f} m")
+    print(f"視線の角度: {angle_degrees:.2f}°")
+
+    # 視線ベクトルをプロット
+    plt.figure(figsize=(6, 6))
+    plt.plot([0, car_distance], [H, 0], 'ro-')  # 赤色の線でプロット
+    plt.text(0, H, "Eye (0, H)", fontsize=12, verticalalignment='bottom', horizontalalignment='right')
+    plt.text(car_distance, 0, "Car (D, 0)", fontsize=12, verticalalignment='top', horizontalalignment='left')
+    plt.text(car_distance / 2, H / 2, f"{angle_degrees:.2f}°", fontsize=12, color="blue")
+
+    # 軸ラベルとタイトル
+    plt.xlabel("Distance [m]")
+    plt.ylabel("Height [m]")
+    plt.title("Vector from Human Eye to Car with Angle")
+
+    # グリッドを表示
+    plt.grid(True)
+    plt.xlim(-1, car_distance + 1)
+    plt.ylim(0, H + 1)
+
+    # プロットの表示
+    plt.show()
