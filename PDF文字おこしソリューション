@@ -1,0 +1,27 @@
+# 必要なライブラリをインストール（Google Colab では初回のみ必要）
+!pip install pdfminer.six
+
+# 必要なライブラリをインポート
+from pdfminer.high_level import extract_text
+from google.colab import files
+
+# PDFファイルをアップロード
+uploaded = files.upload()
+
+# アップロードしたファイル名を取得
+pdf_filename = list(uploaded.keys())[0]
+
+# PDF からテキストを抽出
+text = extract_text(pdf_filename)
+
+# 長いテキストをすべて表示（改行ごとに出力）
+for line in text.split("\n"):
+    print(line)
+
+# 抽出したテキストをファイルに保存
+text_filename = "extracted_text.txt"
+with open(text_filename, "w", encoding="utf-8") as f:
+    f.write(text)
+
+# Google Colab からファイルをダウンロード
+files.download(text_filename)
