@@ -1,0 +1,46 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ガウス分布のパラメータ設定
+mean = 100  # 平均値 (μ)
+std_dev = 10  # 標準偏差 (σ)
+num_samples = 1000  # サンプル数
+
+# ガウス分布に従うデータの生成
+data = np.random.normal(loc=mean, scale=std_dev, size=num_samples)
+
+# 平均の計算
+calculated_mean = np.mean(data)
+
+# バラツキ（分散）の計算
+variance = np.var(data)
+
+# 標準偏差の計算
+calculated_std_dev = np.std(data)
+
+# 歩留まりの計算（しきい値100以上）
+yield_threshold = 100
+yield_count = np.sum(data >= yield_threshold)  # しきい値以上のデータ点の数
+total_count = len(data)  # サンプル数
+yield_rate = (yield_count / total_count) * 100  # 歩留まり（%）
+
+# 結果の表示
+print(f"平均: {calculated_mean:.2f}")
+print(f"バラツキ（分散）: {variance:.2f}")
+print(f"標準偏差: {calculated_std_dev:.2f}")
+print(f"歩留まり: {yield_rate:.2f}%")
+
+# ガウス分布のプロット
+plt.figure(figsize=(8, 6))
+plt.hist(data, bins=50, density=True, alpha=0.6, color='g')
+
+# 正規分布曲線のプロット
+xmin, xmax = plt.xlim()
+x = np.linspace(xmin, xmax, 100)
+p = (1/(calculated_std_dev * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - calculated_mean) / calculated_std_dev)**2)
+plt.plot(x, p, 'k', linewidth=2)
+
+plt.title("Gaussian Distribution (Normal Distribution)")
+plt.xlabel("Value")
+plt.ylabel("Density")
+plt.show()
