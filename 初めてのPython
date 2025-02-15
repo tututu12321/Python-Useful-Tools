@@ -1,0 +1,188 @@
+# Python Comprehensive Script
+# This script covers basic to advanced Python topics in one file.
+# 本スクリプトは、Pythonの基礎から応用までを1つにまとめたものです。
+
+import math  # 数学関数用
+import random  # 乱数生成
+import os  # ファイル操作
+import numpy as np  # 数値計算用
+import sys  # システム関連
+
+def section_1_1():
+    """ 1-1. 数値演算 """
+    print("=== 1-1: 数値演算 ===")
+    
+    # 簡単な算術計算
+    print(2 + 3)   # 足し算
+    print(7 - 4)   # 引き算
+    print(3 * 4)   # 掛け算
+    print(8 / 2)   # 割り算 (Python3では小数)
+    print(8 // 3)  # 整数除算
+    print(8 % 3)   # 剰余
+    print(2 ** 3)  # べき乗
+    
+    # 整数と実数
+    print(type(10))     # int
+    print(type(3.14))   # float
+    
+    # 演算子の優先順位
+    print(2 + 3 * 4)   # 乗算が先
+    print((2 + 3) * 4) # 括弧で優先順位変更
+
+    # 数学関数
+    print(math.sqrt(16))  # 平方根
+    print(math.sin(math.pi / 2))  # 正弦
+    print(math.log(100, 10))  # 対数
+
+def section_1_2():
+    """ 1-2. 変数と関数の基礎 """
+    print("\n=== 1-2: 変数と関数の基礎 ===")
+    
+    # 変数
+    x = 10
+    y = 3.14
+    print(x, y)
+
+    # 関数定義
+    def greet(name):
+        """ 指定した名前で挨拶する関数 """
+        return f"Hello, {name}!"
+
+    print(greet("Python"))
+
+    # ローカル変数
+    def local_example():
+        a = 5
+        return a
+
+    print(local_example())
+
+    # print と return の違い
+    def print_example():
+        print("This is a print function.")
+
+    def return_example():
+        return "This is a return function."
+
+    print_example()
+    print(return_example())
+
+def section_1_3():
+    """ 1-3. 条件分岐 """
+    print("\n=== 1-3: 条件分岐 ===")
+    
+    x = 10
+    if x > 5:
+        print("x is greater than 5")
+
+    # 条件に使われる None
+    val = None
+    if val is None:
+        print("val is None")
+
+def section_1_4():
+    """ 1-4. テストとデバッグ """
+    print("\n=== 1-4: テストとデバッグ ===")
+    
+    # assert文
+    def add(a, b):
+        return a + b
+
+    assert add(2, 3) == 5  # 成功
+    # assert add(2, 3) == 6  # 失敗するとエラー
+
+def section_2_1():
+    """ 2-1. 文字列 """
+    print("\n=== 2-1: 文字列 ===")
+    
+    s = "Hello, Python!"
+    print(s[0])  # インデックス
+    print(s[1:5])  # スライス
+    print(s.upper())  # 大文字変換
+    print("Python" in s)  # 文字列の検索
+
+def section_2_2():
+    """ 2-2. リスト """
+    print("\n=== 2-2: リスト ===")
+    
+    lst = [1, 2, 3, 4, 5]
+    print(lst)
+    print(lst[2])  # インデックス
+    lst.append(6)  # 要素追加
+    print(lst)
+
+def section_3_1():
+    """ 3-1. 辞書 """
+    print("\n=== 3-1: 辞書 ===")
+    
+    d = {"apple": 100, "banana": 150, "cherry": 200}
+    print(d["banana"])
+
+def section_3_2():
+    """ 3-2. 繰り返し """
+    print("\n=== 3-2: 繰り返し ===")
+    
+    for i in range(5):
+        print(i)
+
+def section_3_3():
+    """ 3-3. 関数 """
+    print("\n=== 3-3: 関数 ===")
+    
+    def square(x):
+        return x * x
+
+    print(square(4))
+
+def section_4_1():
+    """ 4-1. ファイル入出力 """
+    print("\n=== 4-1: ファイル入出力 ===")
+    
+    with open("example.txt", "w") as f:
+        f.write("Hello, File!\n")
+
+    with open("example.txt", "r") as f:
+        print(f.read())
+
+def section_5_3():
+    """ 5-3. NumPy """
+    print("\n=== 5-3: NumPy ===")
+    
+    a = np.array([1, 2, 3, 4, 5])
+    print(a * 2)
+
+def section_6_1():
+    """ 6-1. 内包表記 """
+    print("\n=== 6-1: 内包表記 ===")
+    
+    squares = [x * x for x in range(10)]
+    print(squares)
+
+def section_6_3():
+    """ 6-3. クラス """
+    print("\n=== 6-3: クラス ===")
+    
+    class Animal:
+        def __init__(self, name):
+            self.name = name
+
+        def speak(self):
+            return f"{self.name} makes a sound."
+
+    dog = Animal("Dog")
+    print(dog.speak())
+
+if __name__ == '__main__':
+    section_1_1()
+    section_1_2()
+    section_1_3()
+    section_1_4()
+    section_2_1()
+    section_2_2()
+    section_3_1()
+    section_3_2()
+    section_3_3()
+    section_4_1()
+    section_5_3()
+    section_6_1()
+    section_6_3()
