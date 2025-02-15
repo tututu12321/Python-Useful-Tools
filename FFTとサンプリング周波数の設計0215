@@ -1,0 +1,51 @@
+import math
+
+# サンプリング周波数
+Fs = 10000  # Hz
+
+# サンプリング周期 Ts
+Ts = 1 / Fs  # 秒
+
+# サンプル数
+N = 8
+sample_count = 2 ** N
+
+# シミュレーション時間 T
+T = Ts * sample_count  # 秒
+
+# 目標値（1/10）
+target_value = 1 / 10
+
+# n の値を計算する
+n_float = math.log2(target_value * (2 ** N) + 1)
+
+# n は自然数なので、最も近い自然数に丸める
+n = round(n_float)
+
+# 入力信号の周波数 fin
+fin = ((2 ** n - 1) / (2 ** N)) * Fs  # Hz
+
+# 入力信号の周期 T_in
+T_in = 1 / fin  # 秒
+
+# パーセントの値
+percent = 84
+
+# AD変換後の周期 TAD
+TAD = (percent / 100) * Ts
+
+# AD変換後のサンプリング周波数
+Fs_AD = 1 / TAD  # Hz
+
+# ((2^n - 1) / (2^N)) の計算結果
+fraction = (2 ** n - 1) / (2 ** N)
+
+# 結果を表示
+print(f"サンプリング周期 Ts = {Ts} 秒")
+print(f"シミュレーション時間 T = {T} 秒")
+print(f"入力信号の周波数 fin = {fin} Hz")
+print(f"入力信号の周期 T_in = {T_in} 秒")
+print(f"AD変換後にサンプルするための周期 TAD = {TAD} 秒")
+print(f"AD変換後にサンプルするための周波数 Fs_AD = {Fs_AD} Hz")
+print(f"n = {n}")
+print(f"((2^n - 1) / (2^N)) = {fraction}")
