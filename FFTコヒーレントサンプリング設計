@@ -1,0 +1,91 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import math
+
+# シミュレーションパラメータ
+N = 10  # FFTのサンプル数の指数
+FS = 2 ** N  # サンプリング周波数
+FS_period = 1 / FS  # サンプリング周波数の周期
+
+# ((2^n)-1) ÷ 2^N が (1/10) に近くなる n を探す
+best_n = None
+best_ratio = None
+for n in range(1, N+1):
+    candidate_Fin = (2 ** n) - 1
+    ratio = candidate_Fin / FS
+    if best_ratio is None or abs(ratio - 1/10) < abs(best_ratio - 1/10):
+        best_n = n
+        best_ratio = ratio
+
+# 最適な Fin を決定
+Fin = (2 ** best_n) - 1
+Fin_period = 1 / Fin
+
+# シミュレーション時間 T をサンプル数 ÷ FS より大きく設計
+T = (2 * FS) / FS  # 2倍のサンプル数をカバーする時間を確保
+
+print(f"Optimal n: {best_n}")
+print(f"Optimal Fin = {Fin} Hz")
+print(f"Fin Period = {Fin_period:.6f} s")
+print(f"Sampling Frequency FS = {FS} Hz")
+print(f"Sampling Period FS = {FS_period:.6f} s")
+print(f"Simulation Time T = {T:.6f} s")
+
+# 時間軸の設定
+time_data = np.linspace(0, T, 2 * FS, endpoint=False)
+
+# 入力サイン波の生成（ノイズを追加）
+noise = np.random.normal(0, 0.05, len(time_data))  # 標準偏差0.05のガウスノイズ
+input_signal = np.sin(2 * np.pi * Fin * time_data) + noise
+
+# 0.5秒から1.5秒のデータをFSでサンプリング
+sampling_start, sampling_end = 0.5, 1.5
+sampling_mask = (time_data >= sampling_start) & (time_data <= sampling_end)
+sampled_time = time_data[sampling_mask]
+sampled_signal = input_signal[sampling_mask]
+
+# FFTの計算
+N = len(input_signal)
+fs = 1 / np.mean(np.diff(time_data))  # サンプリング周波数の推定
+freqs = np.fft.fftfreq(N, 1/fs)
+fft_values = np.fft.fft(input_signal) * 2 / N
+power_spectrum = np.abs(fft_values) ** 2
+Pow_dB = 10 * np.log10(power_spectrum[:N//2])
+freqs_half = freqs[:N//2]
+
+# 最大のPower [dB] の値とその f/fs を取得
+max_power_index = np.argmax(Pow_dB)
+max_power_value = Pow_dB[max_power_index]
+max_power_freq = freqs_half[max_power_index]
+print(f"Max Power [dB] = {max_power_value:.2f} at f/fs = {max_power_freq:.6f}")
+
+# グラフ描画
+fig, axs = plt.subplots(3, 1, figsize=(10, 12))
+
+# 入力サイン波のプロット
+axs[0].plot(time_data, input_signal, label="Input Sine Wave with Noise", color='blue')
+axs[0].set_title("Input Sine Wave with Noise")
+axs[0].set_xlabel("Time [s]")
+axs[0].set_ylabel("Amplitude")
+axs[0].grid()
+axs[0].legend()
+
+# 0.5秒から1.5秒のFSサンプリングのプロット
+axs[1].scatter(sampled_time, sampled_signal, color='red', label="Sampled Points (FS Sampling)")
+axs[1].set_title("Sampled Signal (0.5s - 1.5s, FS Sampling)")
+axs[1].set_xlabel("Time [s]")
+axs[1].set_ylabel("Amplitude")
+axs[1].grid()
+axs[1].legend()
+
+# スペクトルのプロット
+axs[2].plot(freqs_half, Pow_dB, label="Power Spectrum", color="red")
+axs[2].set_title("Power Spectrum")
+axs[2].set_xlabel("f/fs")
+axs[2].set_ylabel("Power [dB]")
+axs[2].grid()
+axs[2].legend()
+
+plt.tight_layout()
+plt.show()
