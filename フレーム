@@ -1,0 +1,15 @@
+# Python function to print frame-related information
+
+def print_frame_info(frames):
+    # 1 frame is equivalent to 1/60 of a second (since the game runs at 60fps)
+    time_in_seconds = frames / 60.0
+    
+    # Print the result
+    print(f"{frames} frames is equal to {time_in_seconds:.3f} seconds.")
+
+# Example usage:
+# Print the time for 60 frames (1 second)
+print_frame_info(60)
+
+# Print the time for 40 frames (approx 0.667 seconds)
+print_frame_info(40)
