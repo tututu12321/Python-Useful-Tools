@@ -1,0 +1,90 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# パラメータ設定
+VDD = 1.0  # VDD = 1.0V
+fs = 10000  # サンプリング周波数 (Hz)
+f = 50  # サイン波の周波数 (Hz)
+duration = 0.02  # 期間 (s)
+steps = int(fs * duration)  # サンプル数
+t = np.linspace(0, duration, steps, endpoint=False)  # 時間配列
+
+# 入力信号（バイアス0.5、振幅0.5のサイン波）
+Vin_signal = 0.5 + 0.5 * np.sin(2 * np.pi * f * t)
+
+# SAR ADC の変換処理 (8ビット量子化)
+def sar_adc(Vin_signal, VDD, num_bits=8):
+    levels = 2**num_bits  # 量子化レベル (8ビットなら 256)
+    quantized_values = np.round((Vin_signal / VDD) * (levels - 1)).astype(int)  # 量子化
+    bit_sequences = [format(qv, f'0{num_bits}b') for qv in quantized_values]  # バイナリー変換
+    decimal_values = [int(bits, 2) for bits in bit_sequences]  # 10進数変換
+
+    return quantized_values, bit_sequences, decimal_values
+
+# SAR ADC による変換
+quantized_values, bit_sequences, decimal_values = sar_adc(Vin_signal, VDD)
+
+# 10進数の時間軸を作成（サンプリング点ごとに対応）
+t_decimal = t
+
+# FFTの計算
+N = len(decimal_values)
+freqs = np.fft.fftfreq(N, 1/fs)  # 周波数軸
+fft_values = np.fft.fft(decimal_values) * 2 / N  # FFT計算と正規化
+power_spectrum = np.abs(fft_values) ** 2  # パワースペクトル
+Pow_dB = 10 * np.log10(power_spectrum[:N//2])  # dBスケールのパワースペクトル
+freqs_half = freqs[:N//2]  # 片側スペクトル
+
+# SNDR, ENOB, SFDR の計算
+signal_index = np.argmax(power_spectrum[1:]) + 1  # 信号成分のピークインデックス
+Signal = power_spectrum[signal_index]
+Noise = np.sum(power_spectrum[1:]) - Signal  # ノイズパワー
+
+SNDR = 10 * np.log10(Signal / Noise)  # SNDR計算
+ENOB = (SNDR - 1.76) / 6.02  # ENOB計算
+spurious = [np.max(Pow_dB[(signal_index * i) - 2 : signal_index * i + 2]) for i in range(2, 5)]
+SFDR = Pow_dB[signal_index] - np.max(spurious)  # SFDR計算
+
+# 結果出力
+print(f"SNDR = {SNDR:.2f} dB")
+print(f"ENOB = {ENOB:.2f} bit")
+print(f"SFDR = {SFDR:.2f} dB")
+
+# グラフ描画
+fig, axs = plt.subplots(2, 2, figsize=(12, 8))
+
+# 入力サイン波のプロット
+axs[0, 0].plot(t, Vin_signal, label="Input Sine Wave", color='blue')
+axs[0, 0].scatter(t, Vin_signal, color='red', label="Sampled Points", zorder=3)
+axs[0, 0].set_xlabel("Time [s]")
+axs[0, 0].set_ylabel("Voltage [V]")
+axs[0, 0].set_title("Input Sine Wave (Sampled at fs)")
+axs[0, 0].grid()
+axs[0, 0].legend()
+
+# 量子化された8ビットの値を点としてプロット
+axs[0, 1].scatter(t_decimal, decimal_values, color='green', label="8-bit Quantized Values")
+axs[0, 1].set_xlabel("Time [s]")
+axs[0, 1].set_ylabel("Decimal Value (8-bit)")
+axs[0, 1].set_title("8-bit Quantized Values as Points")
+axs[0, 1].grid()
+axs[0, 1].legend()
+
+# 波形のプロット（量子化後の信号）
+axs[1, 0].plot(t, decimal_values, marker=".", linestyle="none", markersize=5, label="Quantized Signal", color="purple")
+axs[1, 0].set_title("Quantized Signal Waveform (8-bit)")
+axs[1, 0].set_xlabel("Time [sec]")
+axs[1, 0].set_ylabel("Quantized Code")
+axs[1, 0].grid()
+axs[1, 0].legend()
+
+# パワースペクトルのプロット（FFT）
+axs[1, 1].plot(freqs_half, Pow_dB, label="Power Spectrum", color="red")
+axs[1, 1].set_title("Power Spectrum (FFT)")
+axs[1, 1].set_xlabel("Frequency [Hz]")
+axs[1, 1].set_ylabel("Power [dB]")
+axs[1, 1].grid()
+axs[1, 1].legend()
+
+plt.tight_layout()
+plt.show()
