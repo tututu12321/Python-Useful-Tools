@@ -1,0 +1,62 @@
+import pygame
+import sys
+
+# 初期設定
+pygame.init()
+
+# 画面サイズの設定
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Physics Simulation: Collision")
+
+# 色の設定
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+
+# ボールの設定
+ball_radius = 20
+ball_x = WIDTH // 2
+ball_y = HEIGHT // 2
+ball_dx = 5  # x軸の速度
+ball_dy = 5  # y軸の速度
+gravity = 0.1  # 重力
+
+# フレームレート設定
+clock = pygame.time.Clock()
+
+# ゲームループ
+while True:
+    # イベント処理
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    # ボールの位置更新
+    ball_x += ball_dx
+    ball_y += ball_dy
+    ball_dy += gravity  # 重力を加える
+
+    # 衝突判定（壁）
+    if ball_x - ball_radius <= 0 or ball_x + ball_radius >= WIDTH:
+        ball_dx = -ball_dx  # 水平方向の反射
+
+    # 衝突判定（床）
+    if ball_y + ball_radius >= HEIGHT:
+        ball_y = HEIGHT - ball_radius  # 床で止まる
+        ball_dy = -ball_dy * 0.9  # 垂直方向の反射とエネルギー損失（摩擦）
+
+    # 衝突判定（天井）
+    if ball_y - ball_radius <= 0:
+        ball_dy = -ball_dy  # 垂直方向の反射
+
+    # 画面の描画
+    screen.fill(WHITE)  # 背景を白にする
+    pygame.draw.circle(screen, RED, (ball_x, ball_y), ball_radius)  # ボールを描画
+
+    # 画面更新
+    pygame.display.flip()
+
+    # フレームレート
+    clock.tick(60)
