@@ -1,0 +1,60 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Design variables
+FS = 12.46e6  # Sampling frequency (12.46 MHz)
+Fin = 124.8e3  # Input signal frequency (124.8 kHz)
+
+# Calculate sampling period (Ts)
+Ts = 1 / FS
+
+# Calculate pulse width (PWC, PWS)
+PWC = Ts / 2 - (0.05 * Ts)
+PWS = Ts / 2 - (0.05 * Ts)
+
+# Calculate the reciprocals of PWC and PWS
+PWC_inv = 1 / PWC
+PWS_inv = 1 / PWS
+
+# Calculate the reciprocal of the input signal frequency (Fin)
+Fin_inv = 1 / Fin
+
+# Simulation time
+sim_time = 0.0003305675129  # Simulation time in seconds
+
+# Calculate the percentage of Ts, PWC, PWS relative to the simulation time
+Ts_percent = (Ts / sim_time) * 100
+PWC_percent = (PWC / sim_time) * 100
+PWS_percent = (PWS / sim_time) * 100
+Fin_percent = (1 / Fin / sim_time) * 100  # Percentage of the input signal period (Fin)
+
+# Print the results
+print(f"Ts (Sampling period): {Ts:.6e} seconds")
+print(f"PWC (Pulse Width Modulation): {PWC:.6e} seconds")
+print(f"PWS (Pulse Width Modulation): {PWS:.6e} seconds")
+print(f"PWC reciprocal: {PWC_inv:.6e} Hz")
+print(f"PWS reciprocal: {PWS_inv:.6e} Hz")
+print(f"Reciprocal of input signal (Fin reciprocal): {Fin_inv:.6e} seconds")
+print(f"Ts as percentage of simulation time: {Ts_percent:.2f} %")
+print(f"PWC as percentage of simulation time: {PWC_percent:.2f} %")
+print(f"PWS as percentage of simulation time: {PWS_percent:.2f} %")
+print(f"Input signal period (Fin) as percentage of simulation time: {Fin_percent:.2f} %")
+
+# Sine wave settings
+bias = 375e-3  # Bias (375mV)
+amplitude = 375e-3  # Amplitude (375mV)
+duration = 1 / Fin  # Duration for one period (seconds)
+time = np.linspace(0, duration, int(FS * duration))  # Time axis (sampling points)
+
+# Calculate the sine wave
+signal = amplitude * np.sin(2 * np.pi * Fin * time) + bias
+
+# Plot the sine wave
+plt.figure(figsize=(10, 6))
+plt.plot(time, signal, label='Input Sine Wave (Bias 375mV, Amplitude 375mV)')
+plt.title("Input Sine Wave")
+plt.xlabel("Time [s]")
+plt.ylabel("Voltage [V]")
+plt.grid(True)
+plt.legend()
+plt.show()
