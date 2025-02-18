@@ -1,0 +1,28 @@
+import math
+
+# Function to calculate flow velocity, cooling temperature, and pressure loss
+def calculate_flow_properties(flow_rate, cross_sectional_area, initial_temp, temp_difference, friction_factor, length, diameter, fluid_density):
+    # Calculate flow velocity
+    flow_velocity = flow_rate / cross_sectional_area
+    print(f"Flow Velocity (流速) = {flow_velocity:.2f} m/s")
+    
+    # Calculate cooling temperature
+    cooling_temp = initial_temp - temp_difference
+    print(f"Cooling Temperature (冷やす温度) = {cooling_temp:.2f} °C")
+    
+    # Calculate pressure loss using Darcy-Weisbach equation
+    pressure_loss = friction_factor * (length / diameter) * (fluid_density * flow_velocity**2) / 2
+    print(f"Pressure Loss (圧力損失) = {pressure_loss:.2f} Pa")
+    
+# Example usage:
+flow_rate = 10.0  # Example flow rate in m^3/s
+cross_sectional_area = 2.0  # Example cross-sectional area in m^2
+initial_temp = 30.0  # Initial temperature in °C
+temp_difference = 5.0  # Temperature difference in °C
+friction_factor = 0.02  # Example friction factor (dimensionless)
+length = 100.0  # Length of the pipe in meters
+diameter = 0.1  # Diameter of the pipe in meters
+fluid_density = 1000.0  # Density of water in kg/m^3 (assuming water)
+
+# Call the function
+calculate_flow_properties(flow_rate, cross_sectional_area, initial_temp, temp_difference, friction_factor, length, diameter, fluid_density)
