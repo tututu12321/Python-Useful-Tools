@@ -1,0 +1,55 @@
+import numpy as np
+
+# 基準音A4の周波数 (440 Hz)
+base_frequency = 440.0  # A4の周波数
+
+# 音階の半音（12音の等距離の音階）
+semitones = {
+    "C4": base_frequency * 2**(-9/12),
+    "C#4": base_frequency * 2**(-8/12),
+    "D4": base_frequency * 2**(-7/12),
+    "D#4": base_frequency * 2**(-6/12),
+    "E4": base_frequency * 2**(-5/12),
+    "F4": base_frequency * 2**(-4/12),
+    "F#4": base_frequency * 2**(-3/12),
+    "G4": base_frequency * 2**(-2/12),
+    "G#4": base_frequency * 2**(-1/12),
+    "A4": base_frequency,
+    "A#4": base_frequency * 2**(1/12),
+    "B4": base_frequency * 2**(2/12),
+    "C5": base_frequency * 2**(3/12),
+}
+
+# 接頭辞（プレフィックス）を定義
+prefixes = {
+    "Zetta": 10**21,
+    "Exa": 10**18,
+    "Peta": 10**15,
+    "Tera": 10**12,
+    "Giga": 10**9,
+    "Mega": 10**6,
+    "Kilo": 10**3,
+    "Hecto": 10**2,
+    "Deca": 10**1,
+    "Deci": 10**(-1),
+    "Centi": 10**(-2),
+    "Milli": 10**(-3),
+    "Micro": 10**(-6),
+    "Nano": 10**(-9),
+    "Pico": 10**(-12),
+    "Femto": 10**(-15),
+    "Atto": 10**(-18),
+    "Zepto": 10**(-21),
+    "Yocto": 10**(-24)
+}
+
+# 周波数と周期を計算して表示
+for note, freq in semitones.items():
+    period = 1 / freq  # 周期を計算
+    # 周波数と周期をプリント、接頭辞も表示
+    print(f"音階: {note} | 周波数: {freq:.2f} Hz | 周期: {period:.6f} 秒")
+
+    # 追加: 接頭辞を使用して数値を表示（例: Giga, Mega など）
+    for prefix, scale in prefixes.items():
+        scaled_freq = freq / scale
+        print(f"音階: {note} | 周波数 ({prefix}): {scaled_freq:.2f} {prefix}Hz | 周期: {period / scale:.6f} {prefix}秒")
