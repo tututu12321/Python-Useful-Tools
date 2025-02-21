@@ -1,0 +1,35 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define the range of reactant concentration
+concentration = np.linspace(0.1, 2, 100)  # Concentration of reactant [mol/L] (from 0.1 to 2 mol/L)
+
+# Reaction rate constant
+k = 1.0  # Rate constant k (can be adjusted)
+
+# First-order reaction rate v = k * [reactant]
+v_first_order = k * concentration
+
+# Second-order reaction rate v = k * [reactant]^2
+v_second_order = k * concentration**2
+
+# Plotting
+plt.figure(figsize=(10, 6))
+
+# Plot for first-order reaction
+plt.plot(concentration, v_first_order, label='First-order reaction (v = k * [reactant])', color='blue')
+
+# Plot for second-order reaction
+plt.plot(concentration, v_second_order, label='Second-order reaction (v = k * [reactant]^2)', color='red')
+
+# Set plot labels and title
+plt.title('Reaction Rate vs Reactant Concentration')
+plt.xlabel('Reactant Concentration [mol/L]')
+plt.ylabel('Reaction Rate v [mol/L·s]')
+plt.legend()
+
+# Enable grid
+plt.grid(True)
+
+# Display the plot
+plt.show()
