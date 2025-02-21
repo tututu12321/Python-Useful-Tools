@@ -1,0 +1,48 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define the loss function L(x)
+def loss_function(x):
+    return (x**2 / (2.00 - x)**2 - 2.0)**2
+
+# Define the gradient of the loss function (derivative of L(x))
+def gradient(x):
+    # Gradient of the loss function with respect to x
+    return 2 * (x**2 / (2.00 - x)**2 - 2.0) * (2 * x / (2.00 - x)**2 + 2 * x**2 / (2.00 - x)**3)
+
+# Gradient Descent function with better precision
+def gradient_descent(learning_rate=0.001, max_iterations=5000, tolerance=1e-6, initial_guess=1.0):
+    x = initial_guess
+    history = []  # To store loss history
+    for i in range(max_iterations):
+        grad = gradient(x)  # Compute the gradient
+        prev_x = x  # Store the previous value of x for checking convergence
+        x = x - learning_rate * grad  # Update x using the gradient
+        
+        # Calculate and store the loss
+        loss = loss_function(x)
+        history.append(loss)
+        
+        # Print progress every 500 iterations
+        if i % 500 == 0:
+            print(f"Iteration {i}: x = {x:.5f}, Loss = {loss:.5e}")
+        
+        # Check for convergence by comparing the change in x
+        if abs(x - prev_x) < tolerance:
+            print(f"Converged at iteration {i}.")
+            break
+    
+    return x, history
+
+# Run gradient descent with improved precision
+final_x, loss_history = gradient_descent()
+
+# Output the final solution
+print(f"Optimal solution found by Gradient Descent: x = {final_x:.5f}")
+
+# Plot the loss function history for convergence visualization
+plt.plot(loss_history)
+plt.title("Loss Function Convergence")
+plt.xlabel("Iterations")
+plt.ylabel("Loss")
+plt.show()
