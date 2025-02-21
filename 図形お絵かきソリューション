@@ -1,0 +1,53 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# 半径rと間隔aを定義
+r = 1  # 半径
+a = 2 * r  # aはrの2倍と仮定
+
+# 六角形を描くための関数
+def draw_hexagon(center, size):
+    angles = np.linspace(0, 2 * np.pi, 7)
+    x_hexagon = center[0] + size * np.cos(angles)
+    y_hexagon = center[1] + size * np.sin(angles)
+    plt.plot(x_hexagon, y_hexagon, 'k')
+
+# 円を描くための関数
+def draw_circle(center, radius):
+    theta = np.linspace(0, 2 * np.pi, 100)
+    x_circle = center[0] + radius * np.cos(theta)
+    y_circle = center[1] + radius * np.sin(theta)
+    plt.plot(x_circle, y_circle, 'k')
+
+# 図形の作成
+fig, ax = plt.subplots()
+
+# 六角形の中心座標を設定
+centers = [
+    (0, 0),  # 中心
+    (a, 0),  # 右
+    (a / 2, np.sqrt(3) * a / 2),  # 上右
+    (-a / 2, np.sqrt(3) * a / 2),  # 上左
+    (-a, 0),  # 左
+    (-a / 2, -np.sqrt(3) * a / 2),  # 下左
+    (a / 2, -np.sqrt(3) * a / 2)  # 下右
+]
+
+# 中心に六角形を描く
+for center in centers:
+    draw_hexagon(center, r)
+
+# 円を描く
+# 中心座標と半径で円を描画
+for center in centers:
+    draw_circle(center, r)
+
+# 軸の設定
+ax.set_aspect('equal')
+ax.set_xlim([-2*a, 2*a])
+ax.set_ylim([-2*a, 2*a])
+ax.set_xticks([])
+ax.set_yticks([])
+
+# 図を表示
+plt.show()
