@@ -1,0 +1,22 @@
+# 汎用的な計算とプリント関数の作成
+def generalized_print(variable_name, value):
+    """任意の変数名とその値をフォーマットして表示する関数"""
+    print(f"{variable_name} = {value:.2e}")  # 科学的記数法で表示
+
+# 変数の定義（一般化）
+P1 = 9.09 * 10**6 * 1.0  # P1の計算
+T1 = 427 + 273  # T1の計算
+P2 = 1.01 * 10**5  # P2の計算（V × 1.01 × 10^5としてVを含んでいない）
+T2 = 0 + 273  # T2の計算
+
+# 汎用プリント関数を使って計算結果を表示
+generalized_print("P1", P1)
+generalized_print("T1", T1)
+generalized_print("P2", P2)
+generalized_print("T2", T2)
+
+# P1 / T1 = P2 / T2 の計算
+V = (P1 / T1) * (T2 / P2)  # Vを求める計算
+
+# 体積Vを表示
+generalized_print("V", V)
