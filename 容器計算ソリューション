@@ -1,0 +1,12 @@
+import sympy as sp
+
+# Define the variable
+x = sp.symbols('x')
+
+# Given constant K2 and the equation
+K2 = 4.0
+equation = (2.00 + 2*x)**2 / ((1.00 - x)*(2.00 - x)) - K2
+
+# Solve for x
+solutions = sp.solve(equation, x)
+solutions
