@@ -1,0 +1,112 @@
+import numpy as np
+
+# Task 1: Calculate error for f1 = (1 + x)^α and f2 = (1 + αx)
+def calculate_error_task1(x, alpha):
+    f1 = (1 + x)**alpha
+    f2 = (1 + alpha * x)
+    error = ((f1 - f2) / f1) * 100
+    return f1, f2, error
+
+# Task 2: Calculate error between f3 * f4 and (1 + x + y)
+def calculate_error_task2(x, y):
+    f3 = (1 + x)
+    f4 = (1 + y)
+    result_f3f4 = f3 * f4
+    result_f1xy = (1 + x + y)
+    error = result_f3f4 - result_f1xy
+    return result_f3f4, result_f1xy, error
+
+# Task 3: Calculate the Taylor expansion errors for f5 = 1/(1+x) and f6 = 1/(1-x)
+def taylor_expansion_error(x):
+    f5_approx = 1 / (1 + x)
+    f6_approx = 1 / (1 - x)
+    
+    # Taylor expansion approximations
+    f5_taylor = 1 - x + x**2
+    f6_taylor = 1 + x + x**2
+    
+    # Calculate the errors
+    error_f5 = abs(f5_approx - f5_taylor)
+    error_f6 = abs(f6_approx - f6_taylor)
+    
+    return f5_approx, f6_approx, f5_taylor, f6_taylor, error_f5, error_f6
+
+# Task 4: Compare (1/(1-x)) - (1+x) and (x^2)/(1-x) and x^2
+def compare_task4(x):
+    term1 = 1 / (1 - x) - (1 + x)
+    term2 = (x**2) / (1 - x)
+    term3 = x**2
+    return term1, term2, term3
+
+# Task 5: Compare (K/(1-x1)) - K(1+x1) with (K/(1-x1)) and K(1+x1)
+def compare_task5(K, x1):
+    term1 = (K / (1 - x1)) - K * (1 + x1)
+    term2 = K / (1 - x1)
+    term3 = K * (1 + x1)
+    return term1, term2, term3
+
+# Task 6: Calculate values for (A + B) / A = 1 + (C / D)
+def calculate_task6(A, B):
+    C = B * A
+    D = A - B
+    return C, D
+
+# Task 7: Calculate E(F - G), EF, and EG
+def calculate_task7(E, F, G):
+    result_FG = E * (F - G)
+    result_EF = E * F
+    result_EG = E * G
+    return result_FG, result_EF, result_EG
+
+# Task 8: Calculate (1/π^2), (1/π), and π^2
+def calculate_task8():
+    pi = np.pi
+    result1 = 1 / (pi**2)
+    result2 = 1 / pi
+    result3 = pi**2
+    return result1, result2, result3
+
+# Example values for each task
+x = 0.05
+alpha = 2
+y = 0.05
+K = 0.25
+x1 = 0.02
+A = 9.8596
+B = 9.8596 - 9.8
+E = 0.02
+F = 0.006
+G = 0.0000004
+
+# Task 1
+f1, f2, error_task1 = calculate_error_task1(x, alpha)
+print(f"Task 1:\nf1 = {f1}, f2 = {f2}, error = {error_task1}%\n")
+
+# Task 2
+result_f3f4, result_f1xy, error_task2 = calculate_error_task2(x, y)
+print(f"Task 2:\nf3 * f4 = {result_f3f4}, (1 + x + y) = {result_f1xy}, error = {error_task2}\n")
+
+# Task 3
+f5_approx, f6_approx, f5_taylor, f6_taylor, error_f5, error_f6 = taylor_expansion_error(x)
+print(f"Task 3:\n f5_approx = {f5_approx}, f5_taylor = {f5_taylor}, error_f5 = {error_f5}")
+print(f"f6_approx = {f6_approx}, f6_taylor = {f6_taylor}, error_f6 = {error_f6}\n")
+
+# Task 4
+term1, term2, term3 = compare_task4(x)
+print(f"Task 4:\n(1/(1-x)) - (1+x) = {term1}, (x^2)/(1-x) = {term2}, x^2 = {term3}\n")
+
+# Task 5
+term1, term2, term3 = compare_task5(K, x1)
+print(f"Task 5:\n(K/(1-x1)) - K(1+x1) = {term1}, K/(1-x1) = {term2}, K(1+x1) = {term3}\n")
+
+# Task 6
+C, D = calculate_task6(A, B)
+print(f"Task 6:\nC = {C}, D = {D}\n")
+
+# Task 7
+result_FG, result_EF, result_EG = calculate_task7(E, F, G)
+print(f"Task 7:\nE(F - G) = {result_FG}, EF = {result_EF}, EG = {result_EG}\n")
+
+# Task 8
+result1, result2, result3 = calculate_task8()
+print(f"Task 8:\n1/π^2 = {result1}, 1/π = {result2}, π^2 = {result3}\n")
