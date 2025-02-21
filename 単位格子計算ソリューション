@@ -1,0 +1,26 @@
+# 変数の定義
+a = 2.9  # aの値
+
+# A = (a × (10^(-7)))^3 の計算
+A = (a * 10**(-7))**3
+print(f"A = (a × 10^(-7))^3: {A:.5e}")  # 科学的記数法で表示
+
+# 1 ÷ A の計算
+inverse_A = 1 / A
+print(f"1 ÷ A: {inverse_A:.5e}")  # 科学的記数法で表示
+
+# a^2 と a^3 の計算
+a_squared = a**2
+a_cubed = a**3
+print(f"a^2: {a_squared:.5f}")
+print(f"a^3: {a_cubed:.5f}")
+
+# a^2 を求めて有効数字指定してbとする
+# bはa^2の値で有効数字をN桁に指定
+N = 2  # 有効数字の桁数
+b = round(a_squared, N)
+print(f"b (a^2を有効数字{N}桁で求めた値): {b}")
+
+# b × a の計算
+b_times_a = b * a
+print(f"b × a: {b_times_a:.5f}")
