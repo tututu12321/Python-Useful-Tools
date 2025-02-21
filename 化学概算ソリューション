@@ -1,0 +1,25 @@
+import math
+
+# 定数の定義
+Avogadro_number = 6.02 * 10**23  # 分子数
+gas_volume = 2.24  # 気体体積 (L)
+pressure = 1.013 * 10**5  # 気圧 (Pa)
+A = 8.3 * 10**3  # 定数 A
+temperature = 273  # 温度 (K)
+some_number = 9.65 * 10**4  # 任意の数
+some_small_number = 2.9 * 10**(-8)  # 任意の小さい数
+
+# 計算とプリント
+print("1/分子数:", 1 / Avogadro_number)
+print("1/気体体積:", 1 / gas_volume)
+print("1/気圧:", 1 / pressure)
+print("1/定数 A:", 1 / A)
+print("1/8.31×10^3:", 1 / 8.31e3)
+print("1/273K:", 1 / temperature)
+print("1/9.65×10^4:", 1 / some_number)
+print("1/2.9×10^(-8)の3乗:", 1 / (some_small_number**3))
+print("1/π:", 1 / math.pi)
+print("1/π^2:", 1 / (math.pi**2))
+print("1/π^3:", 1 / (math.pi**3))
+print("π^2:", math.pi**2)
+print("π^3:", math.pi**3)
