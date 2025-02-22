@@ -1,0 +1,22 @@
+import numpy as np
+
+# K2の定義
+K2 = 1
+
+# x2をA/Bとして定義し、0.05より小さい条件を満たすAとBを求める
+results = []
+
+for A in range(1, 1000):  # Aは1〜999の自然数
+    for B in range(1, 1000):  # Bは1〜999の自然数
+        x2 = A / B  # x2 = A / B
+        
+        # x2が0.05より小さい場合に計算
+        if x2 < 0.05:
+            K2_expr_1 = K2 * (1 / (1 - x2))  # K2(1/(1-x2))
+            K2_expr_2 = K2 * (1 + x2)  # K2(1+x2)
+            results.append((A, B, x2, K2_expr_1, K2_expr_2))
+
+# 結果を表示
+for result in results:
+    A, B, x2, K2_expr_1, K2_expr_2 = result
+    print(f"A = {A}, B = {B}, x2 = {x2:.4f}, K2(1/(1-x2)) = {K2_expr_1:.4f}, K2(1+x2) = {K2_expr_2:.4f}")
