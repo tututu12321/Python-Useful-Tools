@@ -1,0 +1,21 @@
+# 値の設定
+A = 9.8
+B = 9.8596
+
+# A ÷ B の計算
+A_div_B = A / B
+
+# C の計算
+C = A * (1 / (A / B) - 1)
+
+# 1 / (1 + C / A) の計算
+expr1 = 1 / (1 + C / A)
+
+# (1 - C / A) の計算
+expr2 = 1 - C / A
+
+# 結果を表示
+print("A ÷ B =", A_div_B)
+print("C =", C)
+print("1 / (1 + C / A) =", expr1)
+print("1 - C / A =", expr2)
