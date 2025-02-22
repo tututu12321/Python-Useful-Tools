@@ -1,0 +1,55 @@
+import numpy as np
+
+# K1の定義
+K1 = 1
+
+# 結果を保存するリスト
+x1_values = []
+K1_expr_1_values = []
+K1_expr_2_values = []
+diff_1_values = []
+K1_expr_3_values = []
+K1_expr_4_values = []
+diff_2_values = []
+
+# 初期値の設定
+x1 = 0.0001
+true_value_1 = K1 * (1 / (1 + x1))  # K1(1/(1+x1)) の真の値
+true_value_2 = K1 * (1 - x1)        # K1(1-x1) の真の値
+true_value_3 = K1 * (1 / (1 - x1))  # K1(1/(1-x1)) の真の値
+true_value_4 = K1 * (1 + x1)        # K1(1+x1) の真の値
+
+# x1を0.0001ずつ増加させて、0.05でストップ
+while x1 <= 0.05:
+    # K1(1/(1+x1)) と K1(1-x1) の計算
+    K1_expr_1 = K1 * (1 / (1 + x1))
+    K1_expr_2 = K1 * (1 - x1)
+    
+    # その差の計算
+    diff_1 = K1_expr_1 - K1_expr_2
+    
+    # K1(1/(1-x1)) と K1(1+x1) の計算
+    K1_expr_3 = K1 * (1 / (1 - x1))
+    K1_expr_4 = K1 * (1 + x1)
+    
+    # その差の計算
+    diff_2 = K1_expr_3 - K1_expr_4
+    
+    # リストに結果を追加
+    x1_values.append(x1)
+    K1_expr_1_values.append(K1_expr_1)
+    K1_expr_2_values.append(K1_expr_2)
+    diff_1_values.append(diff_1)
+    K1_expr_3_values.append(K1_expr_3)
+    K1_expr_4_values.append(K1_expr_4)
+    diff_2_values.append(diff_2)
+    
+    # x1を0.0001増加させる
+    x1 += 0.0001
+
+# 結果を表示
+for i in range(len(x1_values)):
+    print(f"x1 = {x1_values[i]:.4f}, K1(1/(1+x1)) = {K1_expr_1_values[i]:.4f}, K1(1-x1) = {K1_expr_2_values[i]:.4f}, "
+          f"Difference (K1(1/(1+x1)) - K1(1-x1)) = {diff_1_values[i]:.4f}, "
+          f"K1(1/(1-x1)) = {K1_expr_3_values[i]:.4f}, K1(1+x1) = {K1_expr_4_values[i]:.4f}, "
+          f"Difference (K1(1/(1-x1)) - K1(1+x1)) = {diff_2_values[i]:.4f}")
