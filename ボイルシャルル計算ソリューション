@@ -1,0 +1,24 @@
+# 定数の設定 (Setting constants)
+P1_initial = 1.0e5  # 初期圧力 (Pa)
+P2_final = 0.5e5  # 圧力が変化した最終圧力 (Pa)
+V1_initial = 10.0  # 初期体積 (cm^3)（仮定）
+V2_final = 12.0  # 最終体積 (cm^3)（仮定）
+T1_initial = 300  # 初期温度 (K)（仮定）
+T2_final = 350  # 最終温度 (K)（仮定）
+
+# ボイル・シャルルの法則を使った体積計算
+# V1 * P1 / T1 = V2 * P2 / T2
+# 体積変化に基づく移動距離計算
+
+def calculate_piston_move(P1, V1, T1, P2, T2):
+    # ボイル・シャルルの法則に基づくV2の計算
+    V2 = V1 * P1 * T2 / (P2 * T1)
+    return V2
+
+# 最初の状態でのピストン移動（5.0 cm 右に移動）
+V2 = calculate_piston_move(P1_initial, V1_initial, T1_initial, P2_final, T2_final)
+
+# 体積の変化からピストンの移動距離を求める
+initial_move = 5.0  # 最初の移動距離 (cm)
+final_move = (V2 - V1_initial) * initial_move / (V2 - V1_initial)
+print(f"ピストンが移動する距離: {initial_move + final_move:.2f} cm")
