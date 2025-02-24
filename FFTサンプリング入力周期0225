@@ -1,0 +1,25 @@
+# 入力パラメータの設定
+input_frequency = 124.551e3  # 入力周波数 (Hz)
+sampling_frequency = 1e6  # サンプリング周波数 (Hz)
+fft_points = 2048  # FFT点数
+
+# 入力周期 (Input period) の計算
+input_period = 1 / input_frequency  # 単位は秒 (秒)
+# サンプリング周期 (Sampling period) の計算
+sampling_period = 1 / sampling_frequency  # 単位は秒 (秒)
+
+# FFT点数 × サンプリング周期の計算
+fft_sampling_time = fft_points * sampling_period  # 時間の単位は秒 (秒)
+
+# 結果をプリント
+print(f"入力周期: {input_period:.6e} 秒")
+print(f"サンプリング周期: {sampling_period:.6e} 秒")
+print(f"FFT点数 × サンプリング周期: {fft_sampling_time:.6e} 秒")
+
+# 100 × 入力周期 ÷ (FFT点数 × サンプリング周期) の計算
+input_period_normalized = (100 * input_period) / fft_sampling_time  # 入力周期の正規化
+sampling_period_normalized = (100 * sampling_period) / fft_sampling_time  # サンプリング周期の正規化
+
+# 結果をプリント
+print(f"100 × 入力周期 ÷ (FFT点数 × サンプリング周期): {input_period_normalized:.6e}")
+print(f"100 × サンプリング周期 ÷ (FFT点数 × サンプリング周期): {sampling_period_normalized:.6e}")
