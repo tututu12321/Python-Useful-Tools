@@ -1,0 +1,89 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from google.colab import files
+
+# CSVファイルのアップロード（Google Colabで使用）
+print("CSVファイルをアップロードしてください")
+uploaded = files.upload()
+
+# アップロードしたCSVファイルを読み込む
+file_name = list(uploaded.keys())[0]
+data = pd.read_csv(file_name)
+
+# 'time_data' と 'signal_data' の列を取得
+time_data = data['time_data'].values  # time_data 列
+signal_data = data['signal_data'].values  # signal_data 列
+
+# 位相遅延の設定
+phase_delay = 0.00000028  # 位相遅延（秒）
+
+# クロック信号の生成
+clock_frequency = 1000000  # クロック信号の周波数（Hz）
+simulation_time = 0.002048  # シミュレーション時間（秒）
+sampling_rate = clock_frequency * 10  # サンプリング周波数（クロック信号の10倍）
+
+# 時間軸の生成
+t = np.linspace(0, simulation_time, int(sampling_rate * simulation_time), endpoint=False)
+
+# クロック信号の生成（0と1の交互）
+original_signal = 0.5 * (1 + np.sign(np.sin(2 * np.pi * clock_frequency * t)))
+
+# 位相遅延を加えたクロック信号の生成
+delayed_signal = 0.5 * (1 + np.sign(np.sin(2 * np.pi * clock_frequency * (t - phase_delay))))
+
+# クロック信号が0から1に変わる瞬間（0から1への遷移）
+transition_indices = np.where(np.diff(original_signal.astype(int)) == 1)[0]
+
+# サンプリング：位相遅延を加えたクロック信号が0から1に変わった瞬間
+sampled_time = t[transition_indices]
+sampled_signal_data = np.interp(sampled_time, time_data, signal_data)  # 時間で補間
+
+# プロットの作成
+plt.figure(figsize=(10, 6))
+
+# 元のクロック信号のプロット
+plt.plot(t, original_signal, label='Original Clock Signal', color='b', linestyle='-', linewidth=2)
+
+# 位相遅延を加えたクロック信号のプロット
+plt.plot(t, delayed_signal, label='Clock Signal with Phase Delay', color='r', linestyle='--', linewidth=2)
+
+# サンプリングしたCSVデータのプロット（クロック信号が0から1に変わった瞬間）
+plt.scatter(sampled_time, sampled_signal_data, color='g', label='Sampled CSV Data', zorder=5)
+
+# SNDR, ENOB, SFDR の計算
+# Power Spectrum Calculation (example, you need to replace this with actual calculation if not done)
+signal_frequency = np.fft.fftfreq(len(t), t[1] - t[0])
+power_spectrum = np.abs(np.fft.fft(original_signal))**2  # 仮のパワースペクトル
+freqs_half = signal_frequency[:len(signal_frequency)//2]
+power_spectrum_half = power_spectrum[:len(signal_frequency)//2]
+
+# Signal Peak Detection
+signal_index = np.argmax(power_spectrum_half[1:]) + 1  # 信号成分のピークインデックス
+Signal = power_spectrum_half[signal_index]
+Noise = np.sum(power_spectrum_half[1:]) - Signal  # ノイズパワー
+
+SNDR = 10 * np.log10(Signal / Noise)  # SNDR計算
+ENOB = (SNDR - 1.76) / 6.02  # ENOB計算
+spurious = [np.max(power_spectrum_half[(signal_index * i) - 2 : signal_index * i + 2]) for i in range(2, 5)]
+SFDR = power_spectrum_half[signal_index] - np.max(spurious)  # SFDR計算
+
+# 結果出力
+print(f"SNDR = {SNDR:.2f} dB")
+print(f"ENOB = {ENOB:.2f} bit")
+print(f"SFDR = {SFDR:.2f} dB")
+
+# Power Spectrum Plot
+plt.figure(figsize=(10, 6))
+plt.plot(freqs_half, 10 * np.log10(power_spectrum_half), label="Power Spectrum", color="red")
+plt.title("Power Spectrum")
+plt.xlabel("f/fs")
+plt.ylabel("Power [dB]")
+plt.grid(True)
+plt.legend()
+
+# プロットのレイアウトを調整
+plt.tight_layout()
+
+# プロットの表示
+plt.show()
