@@ -1,0 +1,25 @@
+import veriloggen as vg
+
+def make_simple_counter():
+    # Create a module
+    m = vg.Module("simple_counter")
+
+    # Declare input and output ports
+    clk = m.Input("clk")
+    rst = m.Input("rst")
+    count = m.OutputReg("count", 4)  # 4-bit counter
+
+    # Design logic (counting on rising edge of clk)
+    m.Always(Posedge(clk), Posedge(rst))(
+        If(rst)(
+            count(0)
+        ).Else(
+            count(count + 1)
+        )
+    )
+
+    return m
+
+# Instantiate the module and output the Verilog code
+counter = make_simple_counter()
+counter.to_verilog("simple_counter.v")
