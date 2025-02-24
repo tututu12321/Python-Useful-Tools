@@ -1,0 +1,17 @@
+# Cythonを使ってCコードを埋め込む
+import cython
+
+# C言語の関数を埋め込む
+from cython import inline
+
+code = """
+cdef int double_value(int x):
+    return x * 2
+"""
+
+# Cythonコードをインラインで実行
+inline(code)
+
+# PythonからC関数を呼び出す
+result = double_value(10)
+print("結果:", result)
