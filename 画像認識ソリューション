@@ -1,0 +1,42 @@
+import tensorflow as tf
+from tensorflow.keras import datasets, layers, models
+import matplotlib.pyplot as plt
+
+# CIFAR-10データセットのロード
+(train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
+
+# データの前処理：画像を0-1の範囲にスケール
+train_images, test_images = train_images / 255.0, test_images / 255.0
+
+# モデルの構築
+model = models.Sequential([
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10)
+])
+
+# モデルのコンパイル
+model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
+
+# モデルのトレーニング
+model.fit(train_images, train_labels, epochs=10, validation_data=(test_images, test_labels))
+
+# モデルの評価
+test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
+print('\nTest accuracy:', test_acc)
+
+# テスト画像の予測
+predictions = model.predict(test_images)
+
+# 最初の10枚のテスト画像とその予測を表示
+for i in range(10):
+    plt.imshow(test_images[i])
+    plt.title(f"Predicted: {predictions[i].argmax()}")
+    plt.show()
