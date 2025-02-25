@@ -1,0 +1,43 @@
+# パラメータの設定
+Fs = 12.46e6  # サンプリング周波数 (Hz)
+Fin = 124.8e3  # 入力周波数 (Hz)
+simulation_time = 0.0003305675129  # シミュレーション時間 (秒)
+
+# シミュレーション時間をe表記に変換
+simulation_time_e = "{:.2e}".format(simulation_time)
+
+# サンプリング周期の計算 (Ts = 1/Fs)
+Ts = 1 / Fs
+
+# 入力周波数の周期の計算 (T_in = 1/Fin)
+T_in = 1 / Fin
+
+# パルス幅 (PWC = Ts/2 * (0.05 * Ts))
+PWC = Ts / 2 * (0.05 * Ts)
+
+# パルス幅の補正 (PWS = Ts/2 * (0.05 * Ts))
+PWS = Ts / 2 * (0.05 * Ts)
+
+# 入力周波数の周期とシミュレーション時間の関係（％で計算）
+ratio_input_period_to_simulation = (T_in / simulation_time) * 100
+
+# サンプリング周期とシミュレーション時間の関係（％で計算）
+ratio_sampling_to_simulation = (Ts / simulation_time) * 100
+
+# パルス幅 (PWC) とシミュレーション時間の関係（％で計算）
+ratio_pwc_to_simulation = (PWC / simulation_time) * 100
+
+# パルス幅の補正 (PWS) とシミュレーション時間の関係（％で計算）
+ratio_pws_to_simulation = (PWS / simulation_time) * 100
+
+# 結果をプリントで表示
+print(f"シミュレーション時間 (秒): {simulation_time:.10f} 秒")
+print(f"シミュレーション時間 (e表記): {simulation_time_e}")
+print(f"サンプリング周期 (Ts): {Ts:.2e} 秒")
+print(f"入力周波数の周期 (T_in): {T_in:.2e} 秒")
+print(f"パルス幅 (PWC): {PWC:.2e} 秒")
+print(f"パルス幅の補正 (PWS): {PWS:.2e} 秒")
+print(f"入力周波数の周期とシミュレーション時間の関係 (％): {ratio_input_period_to_simulation:.2f}%")
+print(f"サンプリング周期とシミュレーション時間の関係 (％): {ratio_sampling_to_simulation:.2f}%")
+print(f"パルス幅 (PWC) とシミュレーション時間の関係 (％): {ratio_pwc_to_simulation:.2f}%")
+print(f"パルス幅の補正 (PWS) とシミュレーション時間の関係 (％): {ratio_pws_to_simulation:.2f}%")
