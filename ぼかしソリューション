@@ -1,0 +1,87 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image, ImageFilter, ImageOps
+import cv2
+from google.colab import files
+
+# 画像ファイルのアップロード
+uploaded = files.upload()
+
+# アップロードした画像ファイルの名前を取得
+image_path = list(uploaded.keys())[0]
+
+# 画像を開く
+img = Image.open(image_path)
+
+# 画像の表示（元画像）
+plt.figure(figsize=(6, 6))
+plt.imshow(img)
+plt.title("Original Image")
+plt.axis('off')
+plt.show()
+
+# 1. 画像のリサイズ
+new_size = (200, 200)  # 新しいサイズ (幅, 高さ)
+resized_img = img.resize(new_size)
+
+# リサイズ後の画像表示
+plt.figure(figsize=(6, 6))
+plt.imshow(resized_img)
+plt.title("Resized Image")
+plt.axis('off')
+plt.show()
+
+# 2. 画像の切り抜き (クロッピング)
+left = 50
+top = 50
+right = 150
+bottom = 150
+cropped_img = img.crop((left, top, right, bottom))
+
+# 切り抜き後の画像表示
+plt.figure(figsize=(6, 6))
+plt.imshow(cropped_img)
+plt.title("Cropped Image")
+plt.axis('off')
+plt.show()
+
+# 3. 画像の回転
+rotated_img = img.rotate(45)  # 45度回転
+
+# 回転後の画像表示
+plt.figure(figsize=(6, 6))
+plt.imshow(rotated_img)
+plt.title("Rotated Image (45 degrees)")
+plt.axis('off')
+plt.show()
+
+# 4. RGBからグレースケールへの変換
+grayscale_img = img.convert("L")  # "L"はグレースケールを意味するモード
+
+# グレースケール画像表示
+plt.figure(figsize=(6, 6))
+plt.imshow(grayscale_img, cmap='gray')
+plt.title("Grayscale Image")
+plt.axis('off')
+plt.show()
+
+# 5. ノイズ除去（ぼかしなど）
+blurred_img = img.filter(ImageFilter.GaussianBlur(radius=2))  # ガウシアンぼかし
+
+# ぼかし後の画像表示
+plt.figure(figsize=(6, 6))
+plt.imshow(blurred_img)
+plt.title("Blurred Image")
+plt.axis('off')
+plt.show()
+
+# 6. 画像の色空間変換（例：RGBからHSVに変換）
+# OpenCVを使用してHSVに変換
+img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2HSV)
+
+# HSV画像表示
+plt.figure(figsize=(6, 6))
+plt.imshow(img_cv)
+plt.title("HSV Image")
+plt.axis('off')
+plt.show()
