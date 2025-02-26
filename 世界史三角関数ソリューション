@@ -1,0 +1,27 @@
+import numpy as np
+import hashlib
+
+# サンプル単語リスト
+words = ["ローマ", "戦い", "ゲルマン", "帝国", "カエサル", "軍団"]
+
+# ハッシュ関数を用いて単語を数値に変換（角度として使用）
+def word_to_angle(word):
+    hash_object = hashlib.md5(word.encode())  # MD5ハッシュを計算
+    hash_int = int(hash_object.hexdigest(), 16)  # 16進数を整数に変換
+    return hash_int % 360  # 角度 (0°~359°) に正規化
+
+# 単語ごとに三角関数を適用
+word_trig_values = {
+    word: {
+        "角度": word_to_angle(word),
+        "sin": np.sin(np.radians(word_to_angle(word))),
+        "cos": np.cos(np.radians(word_to_angle(word))),
+    }
+    for word in words
+}
+
+# 結果を表示
+print(f"{'単語':<8} {'角度 (°)':<10} {'sin':<10} {'cos':<10}")
+print("=" * 40)
+for word, values in word_trig_values.items():
+    print(f"{word:<8} {values['角度']:<10} {values['sin']:<10.4f} {values['cos']:<10.4f}")
