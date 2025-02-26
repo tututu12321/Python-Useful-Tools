@@ -1,0 +1,29 @@
+import pandas as pd
+from IPython.display import Image, display
+
+# 仮のデータを手動で作成（通常はCSVから読み込むデータの例）
+data = {
+    'Object Number': ['49.13', '50.24', '51.15'],
+    'Is Public Domain': [True, False, True],
+    'Object ID': [10524, 10525, 10526],
+    'Object Name': ['Painting', 'Sculpture', 'Drawing'],
+    'Title': ['The Starry Night', 'The Thinker', 'The Waterfall'],
+    'Artist Display Name': ['Vincent van Gogh', 'Auguste Rodin', 'Albert Bierstadt'],
+    'Link Resource': ['http://metmuseum.org/works/10524', 'http://metmuseum.org/works/10525', 'http://metmuseum.org/works/10526'],
+    'Image URL': [
+        'https://images.metmuseum.org/CRDImages/ad/original/DT2032.jpg',  # 画像URL (仮)
+        'https://images.metmuseum.org/CRDImages/sc/original/DT2001.jpg',  # 画像URL (仮)
+        'https://images.metmuseum.org/CRDImages/pp/original/DT3001.jpg'   # 画像URL (仮)
+    ]
+}
+
+# DataFrameを作成
+df_met = pd.DataFrame(data)
+
+# パブリック・ドメインの作品のみをフィルタリング
+df_met_pd = df_met[df_met['Is Public Domain'] == True]
+
+# パブリック・ドメイン画像を表示
+for index, row in df_met_pd.iterrows():
+    print(f"Title: {row['Title']}, Artist: {row['Artist Display Name']}")
+    display(Image(url=row['Image URL']))  # 画像表示
