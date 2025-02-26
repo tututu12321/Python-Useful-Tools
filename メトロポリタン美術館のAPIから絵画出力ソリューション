@@ -1,0 +1,70 @@
+import requests
+import random
+from PIL import Image as PILImage
+from io import BytesIO
+from IPython.display import display
+
+# メトロポリタン美術館のAPIエンドポイント
+MET_API_URL = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/'
+
+# キーワード検索用関数
+def search_met(keyword):
+    # MET APIでオブジェクトを検索
+    search_url = f'https://collectionapi.metmuseum.org/public/collection/v1/search?q={keyword}&hasImages=true'
+    response = requests.get(search_url)
+    data = response.json()
+
+    # 検索結果からオブジェクトIDを取得
+    if 'objectIDs' in data:
+        return data['objectIDs']
+    else:
+        print("No results found.")
+        return []
+
+# ランダムにオブジェクトIDを選択し、作品の画像URLを取得
+def get_random_artwork(object_ids):
+    if not object_ids:
+        print("No artwork to display.")
+        return
+
+    # ランダムにオブジェクトIDを選択
+    random_object_id = random.choice(object_ids)
+    object_url = MET_API_URL + str(random_object_id)
+    response = requests.get(object_url)
+    artwork = response.json()
+
+    # 画像URLが存在する場合、画像を表示
+    if 'primaryImage' in artwork and artwork['primaryImage']:
+        title = artwork.get('title', 'No title')
+        artist = artwork.get('artistDisplayName', 'Unknown Artist')
+        print(f"Title: {title}")
+        print(f"Artist: {artist}")
+
+        # 画像をダウンロードし、サイズを変更
+        img_url = artwork['primaryImage']
+        img_response = requests.get(img_url)
+        img = PILImage.open(BytesIO(img_response.content))
+        
+        # 画像のリサイズ（ここでサイズを指定）
+        img = img.resize((300, 300))  # 画像サイズを300x300に変更
+
+        # 小さくした画像を表示
+        display(img)
+    else:
+        print("No image available.")
+
+# メイン処理
+def main():
+    keyword = input("Enter a keyword to search for artworks: ")
+    object_ids = search_met(keyword)
+
+    # ランダムで画像を表示
+    if object_ids:
+        print("\nRandom Artwork:")
+        get_random_artwork(object_ids)
+    else:
+        print("No artworks found for the specified keyword.")
+
+# プログラム実行
+if __name__ == '__main__':
+    main()
