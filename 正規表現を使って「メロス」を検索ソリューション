@@ -1,0 +1,30 @@
+import re
+
+# ファイルの生成
+file_name = "run_meiros.txt"
+content = "走れメロス\nこれはPythonによるファイル読み込みの例です。メロスは速い。\nメロスが走る。"
+
+# ファイルに書き込み
+with open(file_name, "w", encoding="utf-8") as file:
+    file.write(content)
+
+# ファイルの内容を読み込んで表示
+with open(file_name, "r", encoding="utf-8") as file:
+    file_content = file.read()
+
+# ファイルの内容を表示
+print("ファイルの内容:\n", file_content)
+
+# 正規表現を使って「メロス」を検索
+pattern = r"メロス"
+matches = re.findall(pattern, file_content)
+
+# 「メロス」の出現回数を表示
+print(f"「メロス」の出現回数（正規表現使用）: {len(matches)}")
+
+# 正規表現で漢字の出現回数をカウント（例：走れ、メロス）
+kanji_pattern = r"[一-龥]"
+kanji_matches = re.findall(kanji_pattern, file_content)
+
+# 漢字の出現回数を表示
+print(f"漢字の出現回数: {len(kanji_matches)}")
