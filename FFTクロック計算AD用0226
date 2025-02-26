@@ -1,0 +1,48 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# パラメータの定義 / Define parameters
+input_frequency = 124.511e3  # 入力周波数 [Hz] / Input frequency [Hz]
+sampling_frequency = 1e6  # サンプリング周波数 [Hz] / Sampling frequency [Hz]
+fft_sample_points = 2048  # FFTサンプル点数 / Number of FFT sample points
+
+# 計算 / Calculations
+input_period = 1 / input_frequency  # 入力周期 [s] / Input period [s]
+sampling_period = 1 / sampling_frequency  # サンプリング周期 [s] / Sampling period [s]
+simulation_time = sampling_period * fft_sample_points  # シミュレーション時間 [s] / Simulation time [s]
+
+# 割合計算 / Percentage calculations
+input_period_percentage = (input_period / simulation_time) * 100
+sampling_period_percentage = (sampling_period / simulation_time) * 100
+
+# シミュレーション時間 ÷ 入力周期 / Simulation cycles
+simulation_cycles = simulation_time / input_period
+
+# ひとつの波のサンプル数 / Samples per wave
+samples_per_wave = fft_sample_points / simulation_cycles
+
+# 結果の出力 / Print results
+print(f"入力周波数: {input_frequency / 1e3:.3f} kHz")
+print(f"入力周期: {input_period:.6e} s")
+print(f"サンプリング周波数: {sampling_frequency:.1e} Hz")
+print(f"サンプリング周期: {sampling_period:.6e} s")
+print(f"FFTサンプル点数: {fft_sample_points}")
+print(f"シミュレーション時間: {simulation_time:.6e} s")
+print(f"入力周期 / シミュレーション時間: {input_period_percentage:.2f} %")
+print(f"サンプリング周期 / シミュレーション時間: {sampling_period_percentage:.2f} %")
+print(f"シミュレーション時間 ÷ 入力周期: {simulation_cycles:.2f}")
+print(f"ひとつの波のサンプル数: {samples_per_wave:.2f}")
+
+# 時間ベクトルの作成 / Create time vector
+t = np.linspace(0, simulation_time, fft_sample_points)
+input_waveform = np.sin(2 * np.pi * input_frequency * t)  # 入力周波数のサイン波 / Sine wave of input frequency
+
+# プロット / Plot
+plt.figure(figsize=(10, 5))
+plt.plot(t, input_waveform, label='Sine Wave at Input Frequency', color='b')
+plt.xlabel('Time [s]')
+plt.ylabel('Amplitude')
+plt.title('Sine Wave at Input Frequency')
+plt.grid(True)
+plt.legend()
+plt.show()
