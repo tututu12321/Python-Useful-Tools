@@ -1,0 +1,24 @@
+
+import numpy as np
+import random
+
+# 1. サンプル単語リスト
+words = ["ローマ", "戦い", "ゲルマン", "帝国", "カエサル", "軍団"]
+
+# 2. 単語を数値ベクトルに変換（ここではランダムな行列を使用）
+np.random.seed(42)
+word_matrix = np.random.rand(len(words), len(words))
+
+# 3. 行列の逆行列を計算
+if np.linalg.det(word_matrix) != 0:  # 行列が正則であることを確認
+    inverse_matrix = np.linalg.inv(word_matrix)
+    print("逆行列:\n", inverse_matrix)
+else:
+    print("この行列は逆行列を持ちません")
+
+# 4. 逆行列を適用して元の単語リストに戻すシミュレーション
+reconstructed_matrix = np.dot(word_matrix, inverse_matrix)
+
+# 5. 近い単語を表示（元の行列との類似性をチェック）
+print("\n元の単語リスト:", words)
+print("復元した行列（理想的には単位行列）:\n", reconstructed_matrix)
