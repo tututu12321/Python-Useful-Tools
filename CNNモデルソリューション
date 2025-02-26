@@ -1,0 +1,67 @@
+import tensorflow as tf
+from tensorflow.keras import layers, models
+import numpy as np
+import matplotlib.pyplot as plt
+from keras.datasets import mnist
+
+# MNISTデータセットの読み込み（手書き数字）
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+# 画像の前処理：サイズの変更と正規化
+x_train = x_train.reshape(-1, 28, 28, 1).astype('float32') / 255
+x_test = x_test.reshape(-1, 28, 28, 1).astype('float32') / 255
+
+# CNNモデルの構築
+model = models.Sequential()
+
+# 畳み込み層1: フィルタ数32、カーネルサイズ3x3、活性化関数ReLU
+model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
+
+# プーリング層1: 最大プーリング、サイズ2x2
+model.add(layers.MaxPooling2D((2, 2)))
+
+# 畳み込み層2: フィルタ数64、カーネルサイズ3x3、活性化関数ReLU
+model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+
+# プーリング層2: 最大プーリング、サイズ2x2
+model.add(layers.MaxPooling2D((2, 2)))
+
+# 畳み込み層3: フィルタ数64、カーネルサイズ3x3、活性化関数ReLU
+model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+
+# 平坦化層: 畳み込み層の出力を1次元に変換
+model.add(layers.Flatten())
+
+# 全結合層: ユニット数64、活性化関数ReLU
+model.add(layers.Dense(64, activation='relu'))
+
+# 出力層: 10クラス分類（手書き数字の0-9）
+model.add(layers.Dense(10, activation='softmax'))
+
+# モデルのコンパイル
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+# モデルの概要を表示
+model.summary()
+
+# モデルの学習
+model.fit(x_train, y_train, epochs=5, batch_size=64, validation_data=(x_test, y_test))
+
+# モデル評価
+test_loss, test_acc = model.evaluate(x_test, y_test)
+print(f"Test Accuracy: {test_acc:.4f}")
+
+# CNNで予測した結果を表示
+predictions = model.predict(x_test)
+
+# 予測結果の表示（サンプル）
+plt.figure(figsize=(10, 10))
+for i in range(9):
+    plt.subplot(3, 3, i + 1)
+    plt.imshow(x_test[i].reshape(28, 28), cmap='gray')
+    plt.title(f"Pred: {np.argmax(predictions[i])}")
+    plt.axis('off')
+plt.tight_layout()
+plt.show()
