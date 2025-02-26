@@ -1,0 +1,29 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+from tensorflow.keras.datasets import mnist
+
+# MNISTデータセットをロード
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+# ユーザーから入力を受け取る（例: A = 1914）
+input_digits = input("Enter a number (e.g., 1914): ")
+
+# 入力された数字をリストに変換
+digits = [int(digit) for digit in input_digits]
+
+# 各数字に対応する画像を取得
+digit_images = []
+for digit in digits:
+    digit_indices = np.where(y_train == digit)[0][:1]  # 対応する数字の最初の画像を取得
+    digit_images.append(x_train[digit_indices[0]])
+
+# 数字を並べて表示
+fig, axes = plt.subplots(1, len(digits), figsize=(12, 4))
+for ax, digit_image, label in zip(axes, digit_images, input_digits):
+    ax.imshow(digit_image, cmap='gray')
+    ax.set_title(f'Label: {label}')
+    ax.axis('off')
+
+plt.tight_layout()
+plt.show()
