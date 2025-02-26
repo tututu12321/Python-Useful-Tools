@@ -1,0 +1,13 @@
+!pip install spacy
+!python -m spacy download ja_core_news_sm # Download the Japanese language model
+import pandas as pd
+import spacy
+
+# サンプルテキストデータ
+data = {"文": ["私は猫が好きです。", "自然言語処理を学ぶのは楽しい。"]}
+df = pd.DataFrame(data)
+
+# spaCyを使用した形態素解析
+nlp = spacy.load("ja_core_news_sm")
+df["トークン"] = df["文"].apply(lambda x: [token.text for token in nlp(x)])
+print(df)
