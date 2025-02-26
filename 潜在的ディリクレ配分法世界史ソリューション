@@ -1,0 +1,60 @@
+!pip install gensim
+!pip install nltk
+!pip install pyLDAvis
+import pandas as pd
+import numpy as np
+import nltk
+from nltk.corpus import stopwords
+from gensim import corpora
+from gensim.models import LdaModel
+import pyLDAvis
+import pyLDAvis.gensim_models
+import matplotlib.pyplot as plt
+
+# 必要なデータの準備
+# ここではサンプルテキストを使用しています。実際には、歴史的なテキスト（例えばWikipediaの歴史的な記事など）を使用できます。
+
+# サンプルデータ（ここでは適当な歴史的な文書を使う）
+documents = [
+    "The Renaissance was a period of cultural rebirth in Europe, beginning in the 14th century.",
+    "The Enlightenment was an intellectual movement that emphasized reason and individualism, starting in the 17th century.",
+    "The Cold War was a period of tension between the Soviet Union and the United States after World War II.",
+    "Renaissance art, like that of Leonardo da Vinci and Michelangelo, was focused on realism and humanism.",
+    "The Enlightenment thinkers such as John Locke and Voltaire promoted the idea of democracy and human rights.",
+    "The Cold War was characterized by the space race and nuclear arms competition between the two superpowers.",
+    "The Renaissance also influenced the development of science and architecture.",
+    "During the Enlightenment, the ideas of reason and science challenged traditional authorities and beliefs.",
+    "The Cold War had global implications, affecting countries from Asia to Latin America."
+]
+
+# NLTKのストップワードを使用
+nltk.download('stopwords')
+stop_words = stopwords.words('english')
+
+# テキストの前処理
+def preprocess_text(text):
+    # 小文字に変換、トークン化、ストップワードの除去
+    tokens = text.lower().split()
+    tokens = [word for word in tokens if word not in stop_words]
+    return tokens
+
+# 文書ごとに前処理を実施
+processed_docs = [preprocess_text(doc) for doc in documents]
+
+# 辞書とコーパスの作成
+dictionary = corpora.Dictionary(processed_docs)
+corpus = [dictionary.doc2bow(doc) for doc in processed_docs]
+
+# LDAモデルのトピック数を指定
+num_topics = 3  # 例：3つのトピックを抽出
+
+# LDAモデルの訓練
+lda_model = LdaModel(corpus, num_topics=num_topics, id2word=dictionary, passes=15)
+
+# トピックの表示
+for idx, topic in lda_model.print_topics(-1):
+    print(f"Topic #{idx}: {topic}")
+
+# 可視化
+vis = pyLDAvis.gensim_models.prepare(lda_model, corpus, dictionary)
+pyLDAvis.display(vis)
