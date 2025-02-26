@@ -1,0 +1,26 @@
+import cv2
+import numpy as np
+from google.colab import files
+import matplotlib.pyplot as plt
+
+# 画像のアップロード
+uploaded = files.upload()
+
+# アップロードした画像を読み込む
+image_path = list(uploaded.keys())[0]
+image = cv2.imread(image_path)
+
+# 画像を行列に変換 (OpenCVで読み込むとBGR形式)
+image_matrix = np.array(image)
+
+# 画像をRGBに変換
+image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+# 画像の表示
+plt.imshow(image_rgb)
+plt.axis('off')  # 軸を非表示に
+plt.show()
+
+# 行列の表示 (行列形式で出力)
+print("画像を行列に変換した結果:")
+print(image_matrix)
