@@ -1,0 +1,20 @@
+# ファイルの生成
+file_name = "run_meiros.txt"
+content = "走れメロス\nこれはPythonによるファイル読み込みの例です。"
+
+# ファイルに書き込み
+with open(file_name, "w", encoding="utf-8") as file:
+    file.write(content)
+
+# ファイルの内容を読み込んで表示
+with open(file_name, "r", encoding="utf-8") as file:
+    file_content = file.read()
+
+# ファイルの内容を表示
+print("ファイルの内容:\n", file_content)
+
+# 'メロス'という単語のカウント
+count_melos = file_content.count("メロス")
+
+# 'メロス'の出現回数を表示
+print(f"「メロス」の出現回数: {count_melos}")
