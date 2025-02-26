@@ -1,0 +1,46 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.decomposition import TruncatedSVD
+from scipy.ndimage import gaussian_filter
+
+# ダミーデータ画像の生成（10個のランダムな100x100画像を生成）
+num_images = 10
+image_height, image_width = 100, 100
+image_data = np.random.rand(num_images, image_height, image_width)  # 10枚の100x100ピクセルのランダム画像
+
+# 画像データをフラット化して1Dに変換
+flat_images = image_data.reshape(num_images, -1)  # 100x100の画像を1次元のベクトルに変換
+
+# 1. ノイズ除去（ガウシアンフィルタを使用）
+denoised_images = np.array([gaussian_filter(img, sigma=1) for img in image_data])
+
+# 2. PCAによる次元削減
+pca = PCA(n_components=2)  # 2次元に削減
+reduced_images_pca = pca.fit_transform(flat_images)
+
+# 3. SVDによる行列分解
+svd = TruncatedSVD(n_components=2)
+reduced_images_svd = svd.fit_transform(flat_images)
+
+# 画像データをプロット
+plt.figure(figsize=(12, 6))
+
+# PCAによる次元削減結果
+plt.subplot(1, 2, 1)
+plt.scatter(reduced_images_pca[:, 0], reduced_images_pca[:, 1], color='blue', label='PCA Features')
+plt.title('PCA: Reduced Image Features')
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.legend()
+
+# SVDによる行列分解結果
+plt.subplot(1, 2, 2)
+plt.scatter(reduced_images_svd[:, 0], reduced_images_svd[:, 1], color='red', label='SVD Features')
+plt.title('SVD: Reduced Image Features')
+plt.xlabel('SVD Component 1')
+plt.ylabel('SVD Component 2')
+plt.legend()
+
+plt.tight_layout()
+plt.show()
