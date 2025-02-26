@@ -1,0 +1,19 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ダミーデータの画像を作成（ランダムな行列を画像として表示）
+height, width = 100, 100  # 画像のサイズ（100x100ピクセル）
+
+# ランダムな整数データを生成（0〜255の範囲の整数）
+dummy_data = np.random.randint(0, 256, size=(height, width), dtype=np.uint8)
+
+# 画像のプロット（表示）
+plt.figure(figsize=(6,6))
+plt.imshow(dummy_data, cmap='gray')  # グレースケール表示
+plt.title('Dummy Image')
+plt.axis('off')  # 軸を非表示
+plt.show()
+
+# 画像データ（行列）の表示
+print("ダミーデータ画像（行列）:")
+print(dummy_data)
