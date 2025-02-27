@@ -1,0 +1,21 @@
+import spacy
+
+# 英語用の事前学習済みモデルを読み込む
+nlp = spacy.load("en_core_web_sm")
+
+# 解析する文を指定
+sentence = "The quick brown fox jumps over the lazy dog."
+
+# 文を処理してDocオブジェクトを作成
+doc = nlp(sentence)
+
+# 各単語の品詞、依存関係を出力
+print("構文解析結果:")
+for token in doc:
+    print(f"単語: {token.text}, 品詞: {token.pos_}, 依存関係: {token.dep_}")
+
+# 構文解析ツリーを表示
+import spacy.displacy
+
+# Jupyter Notebook内で依存関係ツリーを可視化
+spacy.displacy.render(doc, style='dep', jupyter=True)
