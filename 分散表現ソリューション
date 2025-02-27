@@ -1,0 +1,50 @@
+import nltk
+import gensim
+from gensim.models import Word2Vec, Doc2Vec
+from sklearn.metrics.pairwise import cosine_similarity
+from gensim.models.doc2vec import TaggedDocument
+
+# NLTKリソースのダウンロード
+nltk.download('punkt')
+
+# サンプルテキスト（単語のベクトル化）
+sentences = [
+    ["I", "love", "machine", "learning"],
+    ["machine", "learning", "is", "fun"],
+    ["I", "enjoy", "solving", "problems", "using", "Python"],
+    ["Python", "is", "great", "for", "data", "science"]
+]
+
+# Word2Vecモデルを学習
+model_w2v = Word2Vec(sentences, vector_size=50, window=3, min_count=1, workers=4)
+
+# "machine"と"learning"の類似度を計算
+word1 = model_w2v.wv['machine']
+word2 = model_w2v.wv['learning']
+similarity_w2v = cosine_similarity([word1], [word2])
+print("Word2Vec Cosine Similarity between 'machine' and 'learning':", similarity_w2v[0][0])
+
+# サンプルテキスト（文書のベクトル化）
+documents = [
+    "I love machine learning.",
+    "Machine learning is fun.",
+    "I enjoy solving problems using Python.",
+    "Python is great for data science."
+]
+
+# 文書をトークン化
+tokenized_docs = [nltk.word_tokenize(doc.lower()) for doc in documents]
+
+# TaggedDocument形式に変換
+tagged_docs = [TaggedDocument(words=doc, tags=[str(i)]) for i, doc in enumerate(tokenized_docs)]
+
+# Doc2Vecモデルを学習
+model_d2v = Doc2Vec(vector_size=50, window=3, min_count=1, workers=4)
+model_d2v.build_vocab(tagged_docs)
+model_d2v.train(tagged_docs, total_examples=model_d2v.corpus_count, epochs=10)
+
+# "I love machine learning." と "Machine learning is fun." の類似度を計算
+doc1 = model_d2v.infer_vector(nltk.word_tokenize("I love machine learning.".lower()))
+doc2 = model_d2v.infer_vector(nltk.word_tokenize("Machine learning is fun.".lower()))
+similarity_d2v = cosine_similarity([doc1], [doc2])
+print("Doc2Vec Cosine Similarity between the two documents:", similarity_d2v[0][0])
