@@ -1,0 +1,27 @@
+import spacy
+
+# 英語用の事前学習済みモデルを読み込む
+nlp = spacy.load("en_core_web_sm")
+
+# アノテーションを付けるためのサンプルテキスト
+text = "Apple is looking at buying U.K. startup for $1 billion. Microsoft is based in Redmond."
+
+# テキストを処理してDocオブジェクトを作成
+doc = nlp(text)
+
+# 各単語に対してアノテーションを追加して表示
+print("Text with Annotations:")
+for token in doc:
+    print(f"Word: {token.text}, POS: {token.pos_}, Dependency: {token.dep_}, Lemma: {token.lemma_}")
+
+# 固有表現（NER）のアノテーションを表示
+print("\nNamed Entities (NER):")
+for ent in doc.ents:
+    print(f"Entity: {ent.text}, Label: {ent.label_}")
+
+# 依存関係ツリーの可視化
+import spacy.displacy
+spacy.displacy.render(doc, style='dep', jupyter=True)
+
+# 固有表現の可視化
+spacy.displacy.render(doc, style='ent', jupyter=True)
