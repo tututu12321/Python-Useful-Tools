@@ -1,0 +1,31 @@
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+
+# 必要なNLTKリソースをダウンロード
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+
+# サンプルテキスト
+text = "The quick brown foxes are running faster than the lazy dogs."
+
+# 1. トークン化（単語分割）
+tokens = word_tokenize(text)
+print("Tokens:", tokens)
+
+# 2. ストップワードの削除
+stop_words = set(stopwords.words('english'))  # 英語のストップワードを取得
+filtered_tokens = [word for word in tokens if word.lower() not in stop_words]
+print("Filtered Tokens (No Stop Words):", filtered_tokens)
+
+# 3. ステミング（Stemming）
+stemmer = PorterStemmer()
+stemmed_words = [stemmer.stem(word) for word in filtered_tokens]
+print("Stemmed Words:", stemmed_words)
+
+# 4. レンマタイゼーション（Lemmatization）
+lemmatizer = WordNetLemmatizer()
+lemmatized_words = [lemmatizer.lemmatize(word) for word in filtered_tokens]
+print("Lemmatized Words:", lemmatized_words)
