@@ -13,8 +13,16 @@ sampling_period = 1 / sampling_frequency  # サンプリング周期 [s] / Sampl
 simulation_time = sampling_period * fft_sample_points  # シミュレーション時間 [s] / Simulation time [s]
 
 # 割合計算 / Percentage calculations
-input_period_percentage = (input_period / simulation_time) * 100
-sampling_period_percentage = (sampling_period / simulation_time) * 100
+voltage_sampling_percentage = 40  # Voltage sampling percentage
+csv_sampling_percentage = 60  # CSV sampling percentage
+
+# Calculate voltage sampling time and CSV sampling time based on the given formula
+voltage_sampling_time = (voltage_sampling_percentage / 100) * sampling_period  # Voltage sampling time [s]
+csv_sampling_time = (csv_sampling_percentage / 100) * sampling_period  # CSV sampling time [s]
+
+# Output results for voltage and CSV sampling times
+print(f"Voltage Sampling Time: {voltage_sampling_time:.6e} s")
+print(f"CSV Sampling Time: {csv_sampling_time:.6e} s")
 
 # シミュレーション時間 ÷ 入力周期 / Simulation cycles
 simulation_cycles = simulation_time / input_period
@@ -29,8 +37,6 @@ print(f"サンプリング周波数: {sampling_frequency:.1e} Hz")
 print(f"サンプリング周期: {sampling_period:.6e} s")
 print(f"FFTサンプル点数: {fft_sample_points}")
 print(f"シミュレーション時間: {simulation_time:.6e} s")
-print(f"入力周期 / シミュレーション時間: {input_period_percentage:.2f} %")
-print(f"サンプリング周期 / シミュレーション時間: {sampling_period_percentage:.2f} %")
 print(f"シミュレーション時間 ÷ 入力周期: {simulation_cycles:.2f}")
 print(f"ひとつの波のサンプル数: {samples_per_wave:.2f}")
 
@@ -47,3 +53,4 @@ plt.title('Sine Wave at Input Frequency')
 plt.grid(True)
 plt.legend()
 plt.show()
+
