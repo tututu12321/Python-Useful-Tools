@@ -1,0 +1,80 @@
+
+!pip install nltk
+!pip install spacy
+!pip install janome
+!pip install gensim
+!pip install ja-ginza
+# 日本語 形態素解析
+from janome.tokenizer import Tokenizer
+
+text_ja = "私はPythonが大好きです。"
+tokenizer = Tokenizer()
+tokens_ja = tokenizer.tokenize(text_ja)
+
+for token in tokens_ja:
+    print(token)
+
+# 英語 形態素解析
+import nltk
+nltk.download('punkt')
+
+text_en = "I love Python."
+tokens_en = nltk.word_tokenize(text_en)
+
+print(tokens_en)
+
+# 日本語 構文解析 (GinZaを使用)
+import spacy
+
+nlp_ja = spacy.load('ja_ginza')
+doc_ja = nlp_ja("私はPythonが大好きです。")
+
+for sent in doc_ja.sents:
+    for token in sent:
+        print(f"{token.text}: {token.dep_}")
+
+# 英語 構文解析 (SpaCyを使用)
+import spacy
+
+nlp_en = spacy.load('en_core_web_sm')
+doc_en = nlp_en("I love Python.")
+
+for sent in doc_en.sents:
+    for token in sent:
+        print(f"{token.text}: {token.dep_}")
+
+# 日本語 意味解析 (Word2Vecを使用)
+from gensim.models import Word2Vec
+import numpy as np
+
+# サンプルのテキストデータ
+sentences_ja = [["私は", "Python", "が", "大好き", "です"]]
+model_ja = Word2Vec(sentences_ja, min_count=1)
+
+# "Python"のベクトルを取得
+vector_ja = model_ja.wv["Python"]
+print(vector_ja)
+
+# 英語 意味解析 (Word2Vecを使用)
+sentences_en = [["I", "love", "Python"]]
+model_en = Word2Vec(sentences_en, min_count=1)
+
+# "Python"のベクトルを取得
+vector_en = model_en.wv["Python"]
+print(vector_en)
+
+# 文脈解析 日本語 (依存関係解析)
+import spacy
+
+nlp_ja = spacy.load('ja_ginza')
+doc_ja = nlp_ja("私はPythonが大好きです。")
+
+for token in doc_ja:
+    print(f"単語: {token.text}, 依存関係: {token.dep_}, 親: {token.head.text}")
+
+# 文脈解析 英語 (依存関係解析)
+nlp_en = spacy.load('en_core_web_sm')
+doc_en = nlp_en("I love Python.")
+
+for token in doc_en:
+    print(f"Word: {token.text}, Dependency: {token.dep_}, Head: {token.head.text}")
