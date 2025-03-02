@@ -1,0 +1,61 @@
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import numpy as np
+
+# 連立方程式
+# 3x + 2y = 5
+# 4x -  y = 1
+
+# ニューラルネットワークモデル
+class NeuralSolver(nn.Module):
+    def __init__(self):
+        super(NeuralSolver, self).__init__()
+        # 2つの変数 (x, y) を学習するためのパラメータ
+        self.x = nn.Parameter(torch.randn(1, requires_grad=True))
+        self.y = nn.Parameter(torch.randn(1, requires_grad=True))
+
+    def forward(self):
+        # 2つの方程式の誤差
+        eq1 = 3 * self.x + 2 * self.y - 5
+        eq2 = 4 * self.x - self.y - 1
+        return eq1, eq2
+
+# モデルのインスタンス作成
+model = NeuralSolver()
+
+# 損失関数（誤差の2乗和）
+def loss_function(eq1, eq2):
+    return eq1.pow(2) + eq2.pow(2)  # 2乗誤差
+
+# 最適化関数（Adam）
+optimizer = optim.Adam(model.parameters(), lr=0.1)
+
+# 学習ループ
+epochs = 1000
+for epoch in range(epochs):
+    optimizer.zero_grad()  # 勾配の初期化
+    eq1, eq2 = model()  # 方程式の誤差計算
+    loss = loss_function(eq1, eq2)  # 損失計算
+    loss.backward()  # 勾配計算
+    optimizer.step()  # パラメータ更新
+
+    # 100エポックごとに結果を表示
+    if epoch % 100 == 0:
+        print(f"Epoch {epoch}: Loss = {loss.item()}")
+
+# 最終結果の表示
+x_sol = model.x.item()
+y_sol = model.y.item()
+print(f"解（ニューラルネットワーク）: x = {x_sol:.4f}, y = {y_sol:.4f}")
+
+# 行列計算による最適な解を求める
+A = np.array([[3, 2], [4, -1]])
+B = np.array([5, 1])
+optimal_solution = np.linalg.solve(A, B)
+print(f"解（行列計算）: x = {optimal_solution[0]:.4f}, y = {optimal_solution[1]:.4f}")
+
+# 誤差の計算
+error_x = abs(x_sol - optimal_solution[0])
+error_y = abs(y_sol - optimal_solution[1])
+print(f"誤差: x = {error_x:.4e}, y = {error_y:.4e}")
