@@ -1,0 +1,52 @@
+# 帰納法と演繹法のシミュレーション
+
+def print_section(title):
+    """ セクションタイトルを装飾して表示 """
+    print("\n" + "="*50)
+    print(f"  {title}")
+    print("="*50)
+
+# 1. 帰納法（Inductive Reasoning）
+def inductive_reasoning(observations):
+    """ 複数の観測データから一般的な法則を導く（帰納法） """
+    unique_values = set(observations)
+    
+    if len(unique_values) == 1:
+        return f"観測されたすべての対象は '{list(unique_values)[0]}' です。"
+    else:
+        return "対象にばらつきがあるため、一般的な法則を導くのは難しいです。"
+
+# 2. 演繹法（Deductive Reasoning）
+def deductive_reasoning(general_rule, specific_case):
+    """ 一般法則から特定の結論を導く（演繹法） """
+    if specific_case in general_rule:
+        return f"{specific_case} に関しては、法則に基づき結論を導けます。"
+    else:
+        return f"{specific_case} は法則に含まれていないため、結論を導けません。"
+
+# 実行テスト
+if __name__ == "__main__":
+    print_section("1. 帰納法の例")
+
+    # 具体例1: 白鳥の色の観察
+    observations1 = ["白", "白", "白", "白", "白"]
+    print("観察データ:", observations1)
+    print(inductive_reasoning(observations1))  # すべての白鳥が白い？
+
+    # 具体例2: 異なるデータを観察
+    observations2 = ["白", "黒", "白", "白", "白"]
+    print("\n観察データ:", observations2)
+    print(inductive_reasoning(observations2))  # ばらつきがあるため一般化困難
+
+    print_section("2. 演繹法の例")
+
+    # 一般法則
+    general_rule = {"人間": "死すべきもの", "猫": "哺乳類", "鳥": "飛べる"}
+    
+    # 具体例1: ソクラテスは人間か？
+    print("一般法則:", general_rule)
+    print(deductive_reasoning(general_rule, "人間"))
+
+    # 具体例2: 魚はこの法則に含まれるか？
+    print("\n対象: 魚")
+    print(deductive_reasoning(general_rule, "魚"))
