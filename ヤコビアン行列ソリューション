@@ -1,0 +1,45 @@
+import numpy as np
+from scipy.linalg import inv
+from sympy import symbols, Matrix, diff
+
+# 関数 F(x, y) を定義
+def F(X):
+    x, y = X
+    return np.array([
+        x**2 + y**2 - 2,  # f1(x, y) = x^2 + y^2 - 2
+        x - y             # f2(x, y) = x - y
+    ])
+
+# ヤコビアン行列 J(X) を計算
+def J(X):
+    x, y = X
+    return np.array([
+        [2*x, 2*y],  # df1/dx, df1/dy
+        [1, -1]      # df2/dx, df2/dy
+    ])
+
+# ニュートン・ラフソン法
+def newton_multivariable(F, J, X0, tol=1e-6, max_iter=10):
+    X = X0
+    for i in range(max_iter):
+        delta_X = np.linalg.solve(J(X), -F(X))  # J(X)の逆行列を使って更新量を計算
+        X_new = X + delta_X
+        if np.linalg.norm(delta_X) < tol:
+            return X_new
+        X = X_new
+    return X  # 収束しない場合
+
+# 初期値
+X0 = np.array([1.0, 1.0])
+solution = newton_multivariable(F, J, X0)
+print(f"Solution: x = {solution[0]:.6f}, y = {solution[1]:.6f}")
+
+# ヤコビアン行列をSymPyで計算
+x, y = symbols('x y')
+F_sym = Matrix([
+    [x**2 + y**2 - 2],
+    [x - y]
+])
+J_sym = F_sym.jacobian([x, y])
+print("Jacobian Matrix (Symbolic):")
+print(J_sym)
