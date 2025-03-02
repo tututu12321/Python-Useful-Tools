@@ -1,0 +1,71 @@
+# 帰納法と演繹法のシミュレーション（数式付き）
+
+def print_section(title):
+    """ セクションタイトルを装飾して表示 """
+    print("\n" + "="*50)
+    print(f"  {title}")
+    print("="*50)
+
+# 1. 帰納法（Inductive Reasoning）
+def inductive_reasoning(observations):
+    """
+    帰納法: 具体的な事例 x1, x2, ..., xn から一般法則 ∀x P(x) を導く
+    数式表現: P(x1), P(x2), ..., P(xn) → ∀x P(x)
+    """
+    unique_values = set(observations)
+    
+    if len(unique_values) == 1:
+        return f"すべての観測対象は '{list(unique_values)[0]}' であるため、一般法則を推測: ∀x P(x) = {list(unique_values)[0]}"
+    else:
+        return "観測データにばらつきがあるため、∀x P(x) を確定できない。"
+
+# 2. 演繹法（Deductive Reasoning）
+def deductive_reasoning(general_rule, specific_case):
+    """
+    演繹法: 一般法則 ∀x P(x) から特定の事例 P(a) を導く
+    数式表現: ∀x P(x), a ∈ X → P(a)
+    """
+    if specific_case in general_rule:
+        return f"一般法則 ∀x P(x) = {general_rule[specific_case]} に基づき、{specific_case} も P({specific_case}) = {general_rule[specific_case]}"
+    else:
+        return f"{specific_case} は法則に含まれないため、P({specific_case}) を決定できない。"
+
+# 実行テスト
+if __name__ == "__main__":
+    print_section("1. 帰納法の例")
+
+    # 具体例1: 白鳥の色の観察
+    observations1 = ["白", "白", "白", "白", "白"]
+    print("観察データ:", observations1)
+    print("数式: P(白鳥1), P(白鳥2), ..., P(白鳥n) → ∀x P(x)")
+    print(inductive_reasoning(observations1))  # すべての白鳥が白い？
+
+    # 具体例2: 異なるデータを観察
+    observations2 = ["白", "黒", "白", "白", "白"]
+    print("\n観察データ:", observations2)
+    print("数式: P(白鳥1), P(白鳥2), ..., P(白鳥n) → ?")
+    print(inductive_reasoning(observations2))  # ばらつきがあるため一般化困難
+
+    print_section("2. 演繹法の例")
+
+    # 一般法則（数学的表現）
+    general_rule = {
+        "人間": "死すべきもの",  # ∀x ∈ 人間, P(x) = 死すべきもの
+        "偶数": "和も偶数",  # ∀x, y ∈ 偶数, x+y は偶数
+        "自然数": "x+1 も自然数"  # ∀x ∈ ℕ, x+1 ∈ ℕ
+    }
+    
+    # 具体例1: ソクラテスは人間か？
+    print("一般法則: ∀x P(x) =", general_rule)
+    print("数式: ∀x ∈ 人間, P(x) = '死すべきもの', ソクラテス ∈ 人間 → P(ソクラテス)")
+    print(deductive_reasoning(general_rule, "人間"))
+
+    # 具体例2: 3 は自然数か？
+    print("\n対象: 3 ∈ ℕ ?")
+    print("数式: ∀x ∈ ℕ, x+1 ∈ ℕ, 3 ∈ ℕ → P(3+1) ∈ ℕ")
+    print(deductive_reasoning(general_rule, "自然数"))
+
+    # 具体例3: 魚はこの法則に含まれるか？
+    print("\n対象: 魚")
+    print("数式: 魚 ∉ P(x) のため、帰結なし")
+    print(deductive_reasoning(general_rule, "魚"))
