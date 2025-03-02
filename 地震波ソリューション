@@ -1,0 +1,29 @@
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define constants
+K1 = 5  # Distance per second for the first case
+K2 = 10 # Distance per second for the second case
+
+# Generate time values (x-axis)
+time_values = np.linspace(0, 50, 100)  # Time in seconds
+
+# Calculate distances (y-axis)
+distance_K1 = K1 * time_values
+distance_K2 = K2 * time_values
+
+# Plot the results
+plt.figure(figsize=(8,6))
+plt.plot(time_values, distance_K1, label=f'Distance = {K1} × Time', linestyle='-', color='b')
+plt.plot(time_values, distance_K2, label=f'Distance = {K2} × Time', linestyle='--', color='r')
+
+# Labels and title
+plt.xlabel('Time until P-wave/S-wave arrival (seconds)')
+plt.ylabel('Distance from epicenter (km)')
+plt.title('Seismic Wave Propagation')
+plt.legend()
+plt.grid()
+
+# Show the plot
+plt.show()
