@@ -1,0 +1,39 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# AとBの設定
+A = 3  # 任意の値を設定
+B = 4  # 任意の値を設定
+
+# Rとθの計算
+R = np.sqrt(A**2 + B**2)  # R = sqrt(A^2 + B^2)
+theta_rad = np.arctan2(B, A)  # θ (ラジアン)
+theta_deg = np.degrees(theta_rad)  # θ (度数法)
+
+# 角度範囲の設定
+x = np.linspace(0, 2 * np.pi, 1000)  # 0 から 2π まで
+
+# 合成前の三角関数
+y_original = A * np.sin(x) + B * np.cos(x)
+
+# 合成後の三角関数
+y_composite = R * np.sin(x + theta_rad)
+
+# プロット
+plt.figure(figsize=(10, 5))
+
+plt.plot(x, y_original, label=r"$A\sin x + B\cos x$", linestyle='dashed')
+plt.plot(x, y_composite, label=r"$R\sin(x + \theta)$", color='red')
+
+plt.xlabel("x")
+plt.ylabel("Amplitude")
+plt.title("Trigonometric Function Composition")
+plt.legend()
+plt.grid()
+plt.show()
+
+# 結果の表示
+print(f"A = {A}, B = {B}")
+print(f"R = sqrt(A^2 + B^2) = {R:.3f}")
+print(f"θ (ラジアン) = arctan(B/A) = {theta_rad:.3f} rad")
+print(f"θ (度数法) = arctan(B/A) = {theta_deg:.3f} degrees")
