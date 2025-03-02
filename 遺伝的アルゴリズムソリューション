@@ -1,0 +1,75 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import minimize
+
+# 目的関数（放物線）
+def objective_function(x):
+    a, b, c = 3, 3, 6  # a=3, b=3, c=6 を設定
+    return a * x**2 + b * x + c  # y = 3x^2 + 3x + 6
+
+# 遺伝的アルゴリズムのパラメータ
+population_size = 20  # 個体数
+generations = 100  # 世代数
+mutation_rate = 0.1  # 突然変異率
+search_range = (-10, 10)  # 探索範囲
+
+# 初期集団の生成
+population = np.random.uniform(search_range[0], search_range[1], population_size)
+
+# 遺伝的アルゴリズムの実行
+for gen in range(generations):
+    # 適応度（関数の値が小さいほど良い）
+    fitness = -objective_function(population)  # 最小化のために符号を反転
+
+    # 選択（ルーレット選択）
+    probabilities = np.exp(fitness - np.max(fitness))  # スケーリング
+    probabilities /= probabilities.sum()
+    selected_indices = np.random.choice(population_size, size=population_size, p=probabilities)
+    selected_population = population[selected_indices]
+
+    # 交叉（2点交叉）
+    offspring = []
+    for _ in range(population_size // 2):
+        parents = np.random.choice(selected_population, 2, replace=False)
+        alpha = np.random.rand()
+        child1 = alpha * parents[0] + (1 - alpha) * parents[1]
+        child2 = alpha * parents[1] + (1 - alpha) * parents[0]
+        offspring.extend([child1, child2])
+
+    # 突然変異
+    offspring = np.array(offspring)
+    mutation_mask = np.random.rand(population_size) < mutation_rate
+    mutation_values = np.random.uniform(-1, 1, population_size)
+    offspring[mutation_mask] += mutation_values[mutation_mask]
+
+    # 新しい世代へ更新
+    population = np.clip(offspring, search_range[0], search_range[1])  # 範囲を超えないようにする
+
+# 最適解の表示（遺伝的アルゴリズム）
+best_solution = population[np.argmin(objective_function(population))]
+best_value = objective_function(best_solution)
+print(f"最適解（遺伝的アルゴリズム）: x = {best_solution:.4f}, f(x) = {best_value:.4f}")
+
+# 最適な最小値（数値計算による厳密解）
+result = minimize(objective_function, x0=0, bounds=[search_range])
+optimal_x = result.x[0]
+optimal_value = result.fun
+print(f"最適解（数値最適化）: x = {optimal_x:.4f}, f(x) = {optimal_value:.4f}")
+
+# 誤差の計算
+error_x = abs(best_solution - optimal_x)
+error_f = abs(best_value - optimal_value)
+print(f"誤差: Δx = {error_x:.4e}, Δf(x) = {error_f:.4e}")
+
+# グラフ表示
+x_vals = np.linspace(search_range[0], search_range[1], 100)
+y_vals = objective_function(x_vals)
+
+plt.plot(x_vals, y_vals, label="y = 3x^2 + 3x + 6")
+plt.scatter(best_solution, best_value, color="red", label="GA Optimal Solution", zorder=3)
+plt.scatter(optimal_x, optimal_value, color="blue", marker="x", label="Numerical Optimal Solution", zorder=3)
+plt.xlabel("x")
+plt.ylabel("f(x)")
+plt.legend()
+plt.grid()
+plt.show()
