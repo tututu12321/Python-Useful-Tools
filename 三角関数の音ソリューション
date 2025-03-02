@@ -1,0 +1,71 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.io.wavfile import write
+from IPython.display import Audio
+
+# パラメータ設定
+fs = 44100  # サンプリングレート（Hz）
+duration = 2  # 再生時間（秒）
+t = np.linspace(0, duration, int(fs * duration), endpoint=False)  # 時間軸
+
+# 周波数設定（Hz）
+freq_a = 440  # a の周波数（ラ: A4）
+freq_b = 493.88  # b の周波数（シ: B4）
+
+# 各式の計算
+sin_a = np.sin(2 * np.pi * freq_a * t)  # sin(a)
+sin_b = np.sin(2 * np.pi * freq_b * t)  # sin(b)
+cos_b = np.cos(2 * np.pi * freq_b * t)  # cos(b)
+cos_a = np.cos(2 * np.pi * freq_a * t)  # cos(a)
+
+# 加法定理: sin(a)cos(b) + cos(a)sin(b) = sin(a + b)
+add_formula = sin_a * cos_b + cos_a * sin_b
+
+# 2倍角の公式: sin(2a)
+double_angle = np.sin(2 * np.pi * 2 * freq_a * t)
+
+# 和積の公式: sin(a) + sin(b)
+sum_product = sin_a + sin_b
+
+# 波形のプロット
+plt.figure(figsize=(10, 6))
+
+plt.subplot(3, 1, 1)
+plt.plot(t[:1000], add_formula[:1000])
+plt.title("Addition Formula: sin(a)cos(b) + cos(a)sin(b)")
+plt.xlabel("Time [s]")
+plt.ylabel("Amplitude")
+
+plt.subplot(3, 1, 2)
+plt.plot(t[:1000], double_angle[:1000])
+plt.title("Double Angle Formula: sin(2a)")
+plt.xlabel("Time [s]")
+plt.ylabel("Amplitude")
+
+plt.subplot(3, 1, 3)
+plt.plot(t[:1000], sum_product[:1000])
+plt.title("Sum-to-Product Formula: sin(a) + sin(b)")
+plt.xlabel("Time [s]")
+plt.ylabel("Amplitude")
+
+plt.tight_layout()
+plt.show()
+
+# 音声データの正規化
+def normalize_audio(signal):
+    return np.int16(signal / np.max(np.abs(signal)) * 32767)
+
+# WAV ファイルとして保存
+write("add_formula.wav", fs, normalize_audio(add_formula))
+write("double_angle.wav", fs, normalize_audio(double_angle))
+write("sum_product.wav", fs, normalize_audio(sum_product))
+
+# Google Colab で再生
+print("Addition Formula Sound")
+display(Audio("add_formula.wav", rate=fs))
+
+print("Double Angle Formula Sound")
+display(Audio("double_angle.wav", rate=fs))
+
+print("Sum-to-Product Formula Sound")
+display(Audio("sum_product.wav", rate=fs))
