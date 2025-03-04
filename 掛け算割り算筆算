@@ -1,0 +1,65 @@
+
+def multiply_longhand(num1, num2):
+    """ 掛け算の筆算を再現する関数 """
+    num1_str = str(num1)
+    num2_str = str(num2)
+
+    intermediate_results = []
+    max_length = len(num1_str) + len(num2_str)  # 最大桁数
+
+    print(f"{num1} × {num2} の筆算:")
+
+    # かける数（num2）の各桁ごとに計算
+    for i, digit in enumerate(reversed(num2_str)):  # 下の桁から処理
+        partial_result = int(digit) * num1
+        intermediate_results.append(partial_result * (10 ** i))  # 桁位置調整
+
+        # 計算結果を表示
+        print(f"{num1} × {digit} = {partial_result}".rjust(max_length))
+
+    # 各桁の積を足し合わせて最終結果を求める
+    final_result = sum(intermediate_results)
+
+    print("-" * max_length)
+    print(str(final_result).rjust(max_length))
+    print("\n")
+
+
+def divide_longhand(dividend, divisor):
+    """ 割り算の筆算を再現する関数 """
+    quotient = ""
+    remainder = 0
+    dividend_str = str(dividend)
+
+    print(f"{dividend} ÷ {divisor} の筆算:")
+
+    # 左から順に割っていく
+    for i in range(len(dividend_str)):
+        remainder = remainder * 10 + int(dividend_str[i])  # 桁を下ろす
+
+        # 商を求める
+        q = remainder // divisor
+        quotient += str(q)
+
+        # 余りを更新
+        remainder = remainder % divisor
+
+        # 計算過程を表示
+        print(f"{remainder * 10 + int(dividend_str[i])} ÷ {divisor} = {q} 余り {remainder}")
+
+    print("-" * len(dividend_str))
+    print(f"商: {int(quotient)}, 余り: {remainder}")
+    print("\n")
+
+
+# 入力値
+num1 = 123
+num2 = 45
+dividend = 789
+divisor = 4
+
+# 掛け算の筆算
+multiply_longhand(num1, num2)
+
+# 割り算の筆算
+divide_longhand(dividend, divisor)
