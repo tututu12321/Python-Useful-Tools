@@ -1,0 +1,38 @@
+import numpy as np
+import sympy as sp
+
+# 係数の設定
+a = 2
+b = 4
+c = 6
+
+# 因数分解のための変数定義
+x = sp.Symbol('x')
+expr = a * x**2 + b * x + c
+
+# 因数分解
+factored_expr = sp.factor(expr)
+print(f"因数分解: {factored_expr}")
+
+# A, B, C を求める
+A = factored_expr.as_coefficients_dict()[x**2]  # x^2 の係数
+factors = list(sp.Poly(factored_expr).all_coeffs())  # 係数取得
+B = -factors[1] / factors[0]  # x の係数から B を取得
+C = -factors[2] / factors[0]  # 定数項から C を取得
+
+print(f"A = {A}, B = {B}, C = {C}")
+
+# スイープ定数
+S = 10
+
+# 二次関数の定義
+def F(x):
+    return a * x**2 + b * x + c
+
+# S から -S までの範囲で計算
+x_values = np.arange(-S, S + 1, 1)  # -S から S まで 1刻み
+f_values = [F(x) for x in x_values]
+
+# 結果の表示
+for x, fx in zip(x_values, f_values):
+    print(f"F({x}) = {fx}")
