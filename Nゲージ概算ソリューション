@@ -1,0 +1,22 @@
+
+# Nゲージの遠心力を計算する
+
+# パラメータ設定
+n_gauge_mass = 0.04  # Nゲージ1両の質量 (kg) 例: 40g
+n_gauge_velocity = np.linspace(0.5, 2.5, 5)  # 速度 (m/s) 例: 0.5m/s から 2.5m/s の範囲
+n_gauge_radius = np.array([0.3, 0.5, 1.0])  # カーブ半径 (m) 例: 30cm, 50cm, 1m
+
+# 計算結果を格納する
+n_gauge_results = []
+
+# 各カーブ半径で遠心力を計算
+for r in n_gauge_radius:
+    forces = calculate_centrifugal_force(n_gauge_mass, n_gauge_velocity, r)
+    for v, f in zip(n_gauge_velocity, forces):
+        n_gauge_results.append([r, v, f])
+
+# データフレームに変換して表示
+df_n_gauge = pd.DataFrame(n_gauge_results, columns=["Curve Radius (m)", "Velocity (m/s)", "Centrifugal Force (N)"])
+
+# 結果を表示
+tools.display_dataframe_to_user(name="N-Gauge Centrifugal Force Calculation", dataframe=df_n_gauge)
