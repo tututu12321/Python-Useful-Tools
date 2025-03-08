@@ -1,0 +1,30 @@
+def print_in_chunks(text, chunk_size=40, numbered=True, return_list=False, delimiter=None):
+    """
+    文字列を指定の文字数ごとに分割して表示し、文字数カウントや行番号を追加
+    - chunk_size: 分割する文字数
+    - numbered: 行番号を表示するか (True/False)
+    - return_list: 分割後のリストを返すか (True/False)
+    - delimiter: 指定の文字で区切る場合 (None なら固定長で分割)
+    """
+    if delimiter:
+        chunks = text.split(delimiter)  # 指定文字で区切る
+    else:
+        chunks = [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
+
+    # 表示
+    for idx, chunk in enumerate(chunks, 1):
+        prefix = f"[{idx:02d}] " if numbered else ""  # 行番号
+        print(f"{prefix}{chunk} ({len(chunk)}文字)")  # 各行の文字数も表示
+
+    # 総文字数表示
+    print("\n総文字数:", len(text))
+
+    # リストとして返す場合
+    if return_list:
+        return chunks
+
+# テスト用の文字列
+sample_text = "これはPythonで文字列を40文字ごとに分割して表示するサンプルコードです。ログ出力や長い文章を読みやすく整えるのに役立ちます。"
+
+# 実行
+print_in_chunks(sample_text, chunk_size=40, numbered=True, return_list=False)
