@@ -1,0 +1,18 @@
+# 人間の平均歩幅（cm）
+WALKING_STRIDE_CM = 75  
+
+def calculate_distance(steps: int) -> float:
+    """
+    歩数から歩いた距離(km)を計算する関数
+    :param steps: 歩数 (A)
+    :return: 歩いた距離 (km)
+    """
+    distance_km = steps * WALKING_STRIDE_CM / 100 / 1000  # cm → m → km に変換
+    return distance_km
+
+# --- ユーザー入力 ---
+steps = int(input("歩数を入力してください: "))
+distance = calculate_distance(steps)
+
+# --- 結果を表示 ---
+print(f"{steps} 歩歩くと、約 {distance:.2f} km 歩いたことになります。")
