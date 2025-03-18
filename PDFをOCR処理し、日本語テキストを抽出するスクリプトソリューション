@@ -1,0 +1,38 @@
+!apt-get install -y poppler-utils
+!pip install pytesseract pdf2image
+!apt-get install -y tesseract-ocr
+!apt-get install -y tesseract-ocr-jpn
+
+import pytesseract
+from pdf2image import convert_from_path
+import os
+
+# Google Colab では tesseract のパスを明示的に指定する
+pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
+
+# PDFファイルのアップロード
+from google.colab import files
+uploaded = files.upload()
+
+# アップロードされたファイルのパスを取得
+pdf_path = list(uploaded.keys())[0]
+
+# PDFを画像に変換
+images = convert_from_path(pdf_path, dpi=300)
+
+# OCR処理
+extracted_text = ""
+for i, img in enumerate(images):
+    text = pytesseract.image_to_string(img, lang="jpn")  # 日本語対応
+    extracted_text += text + "\n\n"
+    print(f"ページ {i+1} のテキスト:\n{text}\n" + "-"*50)  # プリント関数で出力
+
+# 結果をテキストファイルに保存
+output_text_file = "extracted_text.txt"
+with open(output_text_file, "w", encoding="utf-8") as f:
+    f.write(extracted_text)
+
+# テキストファイルのダウンロード
+files.download(output_text_file)
+
+print("\nOCR処理が完了しました。抽出されたテキストを 'extracted_text.txt' に保存しました。")
