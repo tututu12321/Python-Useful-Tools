@@ -1,0 +1,79 @@
+import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+from google.colab import files
+from scipy.fftpack import fft2, fftshift, ifft2
+from scipy.ndimage import convolve
+
+# 画像アップロード
+uploaded = files.upload()
+file_name = list(uploaded.keys())[0]
+image = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
+
+# 画像リサイズ
+image = cv2.resize(image, (512, 512))
+
+# 微分フィルター
+sobel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+sobel_y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
+image_dx = convolve(image, sobel_x)
+image_dy = convolve(image, sobel_y)
+image_diff = np.hypot(image_dx, image_dy)
+
+# 積分フィルター
+kernel = np.ones((5, 5)) / 25
+image_integral = convolve(image, kernel)
+
+# ローパスフィルター
+image_lowpass = cv2.GaussianBlur(image, (15, 15), 0)
+
+# ハイパスフィルター
+image_highpass = image - image_lowpass
+
+# バンドパスフィルター
+image_bandpass = image_highpass - cv2.GaussianBlur(image_highpass, (7, 7), 0)
+
+# FFT
+fft_image = fft2(image)
+fft_shifted = fftshift(fft_image)
+magnitude_spectrum = np.log(np.abs(fft_shifted) + 1)
+
+# 結果表示
+plt.figure(figsize=(12, 8))
+plt.subplot(2, 4, 1)
+plt.imshow(image, cmap='gray')
+plt.title("Original Image")
+plt.axis("off")
+
+plt.subplot(2, 4, 2)
+plt.imshow(image_diff, cmap='gray')
+plt.title("Differential Filter")
+plt.axis("off")
+
+plt.subplot(2, 4, 3)
+plt.imshow(image_integral, cmap='gray')
+plt.title("Integral Filter")
+plt.axis("off")
+
+plt.subplot(2, 4, 4)
+plt.imshow(image_lowpass, cmap='gray')
+plt.title("Low-Pass Filter")
+plt.axis("off")
+
+plt.subplot(2, 4, 5)
+plt.imshow(image_highpass, cmap='gray')
+plt.title("High-Pass Filter")
+plt.axis("off")
+
+plt.subplot(2, 4, 6)
+plt.imshow(image_bandpass, cmap='gray')
+plt.title("Band-Pass Filter")
+plt.axis("off")
+
+plt.subplot(2, 4, 7)
+plt.imshow(magnitude_spectrum, cmap='gray')
+plt.title("FFT Spectrum")
+plt.axis("off")
+
+plt.tight_layout()
+plt.show()
